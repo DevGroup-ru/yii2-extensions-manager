@@ -13,7 +13,8 @@
     "minimum-stability": "dev",
     "require": {
         "yiisoft/yii2": "^2.0.6",
-        "devgroup/yii2-tag-dependency-helper": "^1.3.0"
+        "devgroup/yii2-tag-dependency-helper": "^1.3.0",
+        "devgroup/yii2-deferred-tasks": "^0.0.1"
     },
     "require-dev": {
         "phpunit/phpunit": "~4.0",
@@ -35,5 +36,15 @@
     "config": {
         "process-timeout": 1800,
         "preferred-install": "dist"
+    },
+    "extra": {
+        "yii2-extension": {
+            "name": "Extensions manager",
+            "name_ru": "Менеджер расширений",
+            "description_ru": "Управляйте и устанавливайте свои расширения для yii2 прямо в браузере!"
+        },
+        "migrationPath": [],
+        "configurables": "src/configurables.php",
+        "translationCategory": "extensions-manager"
     }
 }
