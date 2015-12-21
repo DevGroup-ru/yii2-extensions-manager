@@ -43,8 +43,11 @@
             "name_ru": "Менеджер расширений",
             "description_ru": "Управляйте и устанавливайте свои расширения для yii2 прямо в браузере!"
         },
-        "migrationPath": [],
+        "migrationPath": [
+            "src/migrations"
+        ],
         "configurables": "src/configurables.php",
-        "translationCategory": "extensions-manager"
+        "translationCategory": "extensions-manager",
+        "bootstrap": "DevGroup\\ExtensionsManager\\Bootstrap"
     }
 }
