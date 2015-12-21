@@ -14,7 +14,7 @@
     "require": {
         "yiisoft/yii2": "^2.0.6",
         "devgroup/yii2-tag-dependency-helper": "^1.3.0",
-        "devgroup/yii2-deferred-tasks": "^0.0.1"
+        "devgroup/yii2-deferred-tasks": "dev-master"
     },
     "require-dev": {
         "phpunit/phpunit": "~4.0",
