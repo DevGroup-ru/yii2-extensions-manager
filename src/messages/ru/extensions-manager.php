@@ -7,4 +7,5 @@ return [
     'Activate' => 'Активировать',
     'Deactivate' => 'Деактивировать',
     'Update' => 'Обновить',
+    'Configuration' => 'Конфигурация',
 ];

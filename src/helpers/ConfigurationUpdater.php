@@ -6,8 +6,6 @@ use DevGroup\ExtensionsManager\components\ConfigurationSaveEvent;
 use DevGroup\ExtensionsManager\models\BaseConfigurationModel;
 use Yii;
 use yii\base\Component;
-use yii\helpers\ArrayHelper;
-use yii\helpers\Json;
 
 /**
  * Class ConfigurationUpdater deals with saving configuration.
@@ -24,6 +22,13 @@ class ConfigurationUpdater extends Component
      * @var string
      */
     public $configurablesStatePath = '@app/config/configurables-state';
+
+    /**
+     * Path to store generated configs.
+     *
+     * @var string
+     */
+    public $generatedConfigsPath = '@app/config/generated';
 
     /**
      * Array of configs where:
@@ -48,6 +53,7 @@ class ConfigurationUpdater extends Component
     {
         parent::init();
         $this->configurablesStatePath = rtrim($this->configurablesStatePath, '/') . '/';
+        $this->generatedConfigsPath = rtrim($this->generatedConfigsPath, '/') . '/';
     }
 
     /**
@@ -57,14 +63,7 @@ class ConfigurationUpdater extends Component
     protected function getConfigurables()
     {
         if (count($this->configurables) === 0) {
-            $vendorsInstalledFile = Yii::getAlias('@vendor/composer/installed.json');
-            $installed = Json::decode(file_get_contents($vendorsInstalledFile));
-
-            $this->configurables = [];
-            foreach ($installed as $package) {
-                $packageConfigurables = ArrayHelper::getValue($package, 'extra.configurables', []);
-                $this->configurables = ArrayHelper::merge($this->configurables, $packageConfigurables);
-            }
+            $this->configurables = ExtensionsHelper::getConfigurables();
         }
     }
 
@@ -80,7 +79,7 @@ class ConfigurationUpdater extends Component
         $configWriters = [];
         foreach ($this->configs as $filename => $functionName) {
             $configWriters[$filename] = new ApplicationConfigWriter([
-                'filename' => $this->configurablesStatePath . $filename,
+                'filename' => $this->generatedConfigsPath . $filename . '.php',
             ]);
         }
         $this->getConfigurables();

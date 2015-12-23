@@ -15,16 +15,6 @@ use yii\base\Module;
 class ExtensionsManager extends Module implements BootstrapInterface
 {
     /**
-     * ApplicationConfigWriter component
-     * You can configure it as usual yii2 Component.
-     *
-     * @var \DevGroup\ExtensionsManager\helpers\ApplicationConfigWriter
-     */
-    public $applicationConfigWriter = [
-        'class' => 'DevGroup\ExtensionsManager\helpers\ApplicationConfigWriter',
-    ];
-
-    /**
      * ConfigurationUpdater component is used for writing application configs.
      * You can configure it as usual yii2 Component.
      *
@@ -65,7 +55,6 @@ class ExtensionsManager extends Module implements BootstrapInterface
     {
         parent::init();
 
-        $this->applicationConfigWriter = Yii::createObject($this->applicationConfigWriter);
         $this->configurationUpdater = Yii::createObject($this->configurationUpdater);
 
     }
@@ -77,6 +66,10 @@ class ExtensionsManager extends Module implements BootstrapInterface
      */
     public function bootstrap($app)
     {
+        $app->i18n->translations['extensions-manager'] = [
+            'class' => 'yii\i18n\PhpMessageSource',
+            'basePath' => __DIR__ . DIRECTORY_SEPARATOR . 'messages',
+        ];
 
     }
 

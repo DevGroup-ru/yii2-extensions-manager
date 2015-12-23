@@ -2,10 +2,44 @@
 
 namespace DevGroup\ExtensionsManager\models;
 
+use DevGroup\ExtensionsManager\ExtensionsManager;
 use Yii;
 
 class ExtensionsConfiguration extends BaseConfigurationModel
 {
+    public function __construct($config = [])
+    {
+        $attributes = [
+            'extensionsStorage'
+        ];
+
+        parent::__construct($attributes, $config);
+        $module = Yii::$app->getModule('extensions-manager');
+        if ($module === null) {
+            $module = new ExtensionsManager('extensions-manager');
+        }
+        $this->extensionsStorage = $module->extensionsStorage;
+    }
+
+    /**
+     * Validation rules for this model
+     *
+     * @return array
+     */
+    public function rules()
+    {
+        return [
+            ['extensionsStorage', 'string'],
+        ];
+    }
+
+    public function attributeLabels()
+    {
+        return [
+            'extensionsStorage' => Yii::t('extensions-manager', 'Extensions storage'),
+        ];
+    }
+
     /**
      * Returns array of module configuration that should be stored in application config.
      * Array should be ready to merge in app config.
@@ -13,7 +47,7 @@ class ExtensionsConfiguration extends BaseConfigurationModel
      *
      * @return array
      */
-    public function webApplicationAttributes ()
+    public function webApplicationAttributes()
     {
         return [];
     }
@@ -25,7 +59,7 @@ class ExtensionsConfiguration extends BaseConfigurationModel
      *
      * @return array
      */
-    public function consoleApplicationAttributes ()
+    public function consoleApplicationAttributes()
     {
         return [];
     }
@@ -37,7 +71,7 @@ class ExtensionsConfiguration extends BaseConfigurationModel
      *
      * @return array
      */
-    public function commonApplicationAttributes ()
+    public function commonApplicationAttributes()
     {
         return [
             'components' => [
@@ -50,6 +84,12 @@ class ExtensionsConfiguration extends BaseConfigurationModel
                     ]
                 ],
             ],
+            'modules' => [
+                'extension-manager' => [
+                    'class' => ExtensionsManager::className(),
+                    'extensionsStorage' => $this->extensionsStorage,
+                ]
+            ],
         ];
     }
 
@@ -58,9 +98,9 @@ class ExtensionsConfiguration extends BaseConfigurationModel
      *
      * @return mixed
      */
-    public function appParams ()
+    public function appParams()
     {
-        // TODO: Implement appParams() method.
+        return [];
     }
 
     /**
@@ -68,7 +108,8 @@ class ExtensionsConfiguration extends BaseConfigurationModel
      *
      * @return array
      */
-    public function aliases ()
+    public function aliases()
     {
-        // TODO: Implement aliases() method.
-}}
+        return [];
+    }
+}

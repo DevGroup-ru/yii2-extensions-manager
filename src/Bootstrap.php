@@ -29,6 +29,7 @@ class Bootstrap implements BootstrapInterface
                     foreach ($packageMigrations as $migrationPath) {
                         $app->params['yii.migrations'][] = $packagePath . $migrationPath;
                     }
+
                 }
             }
 
