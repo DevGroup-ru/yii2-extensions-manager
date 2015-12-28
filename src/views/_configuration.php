@@ -1,5 +1,5 @@
 <?php
-/** @var string $model */
+/** @var \DevGroup\ExtensionsManager\models\BaseConfigurationModel $model */
 /** @var array $configurable */
 /** @var \yii\bootstrap\ActiveForm $form */
 ?>
