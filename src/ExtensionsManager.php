@@ -43,6 +43,24 @@ class ExtensionsManager extends Module implements BootstrapInterface
      */
     public $extensionsStorage = '@app/config/extensions.php';
 
+    /** @var string Packegist URL */
+    public $packagistUrl = 'https://packagist.org';
+
+    /**
+     * @var string token to access api.github.com.
+     * Without this token you will able to perform 60 requests daily only
+     */
+    public $githubAccessToken;
+
+    /**
+     * @var string  due to https://developer.github.com/v3/#user-agent-required
+     * you have to pass username or application name in headers while requesting github API
+     */
+    public $applicationName = 'DevGroup-ru/yii2-extensions-manager';
+
+    /** @var string github API URL */
+    public $githubApiUrl = 'https://api.github.com';
+
     /**
      * @var array Array of extensions descriptions
      */

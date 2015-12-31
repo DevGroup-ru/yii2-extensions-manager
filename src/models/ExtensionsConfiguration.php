@@ -10,7 +10,11 @@ class ExtensionsConfiguration extends BaseConfigurationModel
     public function __construct($config = [])
     {
         $attributes = [
-            'extensionsStorage'
+            'extensionsStorage',
+            'packagistUrl',
+            'githubAccessToken',
+            'applicationName',
+            'githubApiUrl',
         ];
 
         parent::__construct($attributes, $config);
@@ -19,6 +23,10 @@ class ExtensionsConfiguration extends BaseConfigurationModel
             $module = new ExtensionsManager('extensions-manager');
         }
         $this->extensionsStorage = $module->extensionsStorage;
+        $this->packagistUrl = $module->packagistUrl;
+        $this->githubAccessToken = $module->githubAccessToken;
+        $this->githubApiUrl = $module->githubApiUrl;
+        $this->applicationName = $module->applicationName;
     }
 
     /**
@@ -29,13 +37,23 @@ class ExtensionsConfiguration extends BaseConfigurationModel
     public function rules()
     {
         return [
-            ['extensionsStorage', 'string'],
+            [
+                ['extensionsStorage', 'packagistUrl', 'githubAccessToken', 'applicationName', 'githubApiUrl'],
+                'string',
+                'max' => 180
+            ],
+            [['packagistUrl', 'applicationName'], 'required'],
+            [['extensionsStorage', 'packagistUrl', 'githubAccessToken', 'applicationName', 'githubApiUrl'], 'string'],
         ];
     }
 
     public function attributeLabels()
     {
         return [
+            'packagistUrl' => Yii::t('extensions-manager', 'Packagist URL'),
+            'githubAccessToken' => Yii::t('extensions-manager', 'Hithub API access token'),
+            'applicationName' => Yii::t('extensions-manager', 'Github application name'),
+            'githubApiUrl' => Yii::t('extensions-manager', 'Hithub API URL'),
             'extensionsStorage' => Yii::t('extensions-manager', 'Extensions storage'),
         ];
     }
@@ -85,9 +103,13 @@ class ExtensionsConfiguration extends BaseConfigurationModel
                 ],
             ],
             'modules' => [
-                'extension-manager' => [
+                'extensions-manager' => [
                     'class' => ExtensionsManager::className(),
                     'extensionsStorage' => $this->extensionsStorage,
+                    'packagistUrl' => $this->packagistUrl,
+                    'githubAccessToken' => $this->githubAccessToken,
+                    'applicationName' => $this->applicationName,
+                    'githubApiUrl' => $this->githubApiUrl,
                 ]
             ],
         ];
