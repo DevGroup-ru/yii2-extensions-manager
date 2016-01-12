@@ -3,20 +3,28 @@ namespace DevGroup\ExtensionsManager\controllers;
 
 use cebe\markdown\GithubMarkdown;
 use DevGroup\AdminUtils\controllers\BaseController;
+use DevGroup\DeferredTasks\actions\ReportQueueItem;
+use DevGroup\DeferredTasks\helpers\DeferredHelper;
+use DevGroup\DeferredTasks\helpers\ReportingTask;
 use DevGroup\ExtensionsManager\actions\ConfigurationIndex;
 use DevGroup\ExtensionsManager\ExtensionsManager;
 use Packagist\Api\Client;
 use Packagist\Api\Result\Package\Version;
+use yii\base\Event;
 use yii\data\ArrayDataProvider;
 use DevGroup\ExtensionsManager\models\Extension;
 use Yii;
 use yii\helpers\Json;
 use yii\web\NotFoundHttpException;
+use yii\web\Response;
+use yii\web\ServerErrorHttpException;
+use DevGroup\ExtensionsManager\helpers\ExtensionFileWriter;
 
 class ExtensionsController extends BaseController
 {
     private static $packagist;
     private static $currentVersion;
+    private static $installed;
 
     public function init()
     {
@@ -28,6 +36,9 @@ class ExtensionsController extends BaseController
         return [
             'config' => [
                 'class' => ConfigurationIndex::className(),
+            ],
+            'deferred-report-queue-item' => [
+                'class' => ReportQueueItem::className(),
             ],
         ];
     }
@@ -119,6 +130,7 @@ class ExtensionsController extends BaseController
         if (false === Yii::$app->request->isAjax) {
             throw new NotFoundHttpException("Page not found");
         }
+        self::getInstalledExtensions();
         $packageName = Yii::$app->request->post('packageName');
         $packagist = self::getPackagist();
         $package = $packagist->get($packageName);
@@ -134,7 +146,7 @@ class ExtensionsController extends BaseController
             $headers = [
                 'User-Agent: ' . $applicationName,
             ];
-            if (true === empty($gitAccessToken)) {
+            if (false === empty($gitAccessToken)) {
                 $headers[] = 'Authorization: token ' . $gitAccessToken;
             }
             $gitReadmeUrl = $gitApiUrl . '/repos/' . $repository . '/readme';
@@ -169,6 +181,7 @@ class ExtensionsController extends BaseController
                 'authors' => $authors,
                 'license' => $license,
                 'packageName' => $packageName,
+                'installed' => in_array($packageName, self::$installed),
             ]
         );
     }
@@ -190,6 +203,20 @@ class ExtensionsController extends BaseController
             $string = $data['package']['description'];
         }
         return $string;
+    }
+
+    /**
+     *
+     */
+    public static function getInstalledExtensions()
+    {
+        $installed = [];
+        $fileName = Yii::getAlias(self::module()->extensionsStorage);
+        if (true === file_exists($fileName)) {
+            $extensions = include $fileName;
+            $installed = array_keys($extensions);
+        }
+        self::$installed = $installed;
     }
 
     /**
@@ -256,9 +283,67 @@ class ExtensionsController extends BaseController
         return $versions;
     }
 
+    /**
+     * @return array
+     * @throws NotFoundHttpException
+     * @throws ServerErrorHttpException
+     */
     public function actionInstall()
     {
+        if (false === Yii::$app->request->isAjax) {
+            throw new NotFoundHttpException('Page not found');
+        }
+        $packageName = Yii::$app->request->post('packageName');
+        $task = new ReportingTask();
+        $task->cliCommand(
+            'php',
+            [
+                './composer.phar',
+                'require',
+                $packageName
+            ]
+        );
+        if ($task->registerTask()) {
+            DeferredHelper::runImmediateTask($task->model()->id);
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return [
+                'queueItemId' => $task->model()->id,
+            ];
+        } else {
+            throw new ServerErrorHttpException("Unable to start task");
+        }
+    }
 
+    /**
+     * @return array
+     * @throws NotFoundHttpException
+     * @throws ServerErrorHttpException
+     */
+    public function actionUninstall()
+    {
+        if (false === Yii::$app->request->isAjax) {
+            throw new NotFoundHttpException('Page not found');
+        }
+        $packageName = Yii::$app->request->post('packageName');
+        $task = new ReportingTask();
+        $task->cliCommand(
+            'php',
+            [
+                './composer.phar',
+                'remove',
+                $packageName,
+                '--update-with-dependencies',
+            ]
+        );
+        if ($task->registerTask()) {
+            DeferredHelper::runImmediateTask($task->model()->id);
+            Yii::$app->response->format = Response::FORMAT_JSON;
+            return [
+                'queueItemId' => $task->model()->id,
+            ];
+        } else {
+            throw new ServerErrorHttpException("Unable to start task");
+        }
     }
 
     /**
@@ -268,4 +353,11 @@ class ExtensionsController extends BaseController
     {
         return Yii::$app->getModule('extensions-manager');
     }
+
+    public function beforeAction($action)
+    {
+        return parent::beforeAction($action); // TODO: Change the autogenerated stub
+    }
+
+
 }

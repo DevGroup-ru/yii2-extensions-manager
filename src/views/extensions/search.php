@@ -10,11 +10,21 @@ use kartik\icons\Icon;
 use yii\grid\GridView;
 
 \DevGroup\ExtensionsManager\assets\AdminBundle::register($this);
+\DevGroup\DeferredTasks\assets\AdminBundle::register($this);
+
 $sortBy = [];
 $detailsUrl = Url::to(['/extensions-manager/extensions/details']);
+$installUrl = Url::to(['/extensions-manager/extensions/install']);
+$uninstallUrl = Url::to(['/extensions-manager/extensions/uninstall']);
+$endpointUrl = Url::to(['/extensions-manager/extensions/deferred-report-queue-item']);
+
 $JS = <<<JS
     window.ExtensionsManager = window.ExtensionsManager || {};
     window.ExtensionsManager.detailsUrl = '$detailsUrl';
+    window.ExtensionsManager.installUrl = '$installUrl';
+    window.ExtensionsManager.uninstallUrl = '$uninstallUrl';
+    window.ExtensionsManager.endpointUrl = '$endpointUrl';
+    window.ExtensionsManager.detailsTemplate = '<tr class="extension-info-tr"><td colspan="4">{details}</td></tr>';
 JS;
 $this->registerJs($JS, \yii\web\View::POS_HEAD);
 
@@ -67,12 +77,17 @@ $this->registerJs($JS, \yii\web\View::POS_HEAD);
                 [
                     'label' => Yii::t('extensions-manager', 'Details'),
                     'content' => function ($data) {
-                        return Html::button(Yii::t('extensions-manager', 'Details'), [
-                            'class' => 'btn btn-info btn-xs',
-                            'data-package-name' => $data->getName(),
-                            'data-action' => 'ext-info'
-                        ]);
+                        return Html::button(Yii::t('extensions-manager', 'Details') .
+                            '  ' . Icon::show('refresh fa-spin', ['style' => 'display: none;']),
+                            [
+                                'class' => 'btn btn-info btn-xs',
+                                'data-package-name' => $data->getName(),
+                                'data-action' => 'ext-info'
+                            ]);
                     },
+                    'options' => [
+                        'width' => '200px',
+                    ]
                 ],
                 [
                     'label' => Yii::t('extensions-manager', 'Downloads'),
