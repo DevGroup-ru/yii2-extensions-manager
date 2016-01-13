@@ -2,9 +2,12 @@
 
 namespace DevGroup\ExtensionsManager;
 
+use DevGroup\DeferredTasks\commands\DeferredController;
+use DevGroup\ExtensionsManager\handlers\DeferredQueueCompleteHandler;
 use Yii;
 use yii\base\Application;
 use yii\base\BootstrapInterface;
+use yii\base\Event;
 use yii\base\Module;
 
 /**
@@ -89,6 +92,10 @@ class ExtensionsManager extends Module implements BootstrapInterface
             'basePath' => __DIR__ . DIRECTORY_SEPARATOR . 'messages',
         ];
 
+        Event::on(DeferredController::className(),
+            DeferredController::EVENT_DEFERRED_QUEUE_COMPLETE,
+            [DeferredQueueCompleteHandler::className(), 'handleEvent']
+        );
     }
 
     /**
@@ -97,7 +104,10 @@ class ExtensionsManager extends Module implements BootstrapInterface
     public function getExtensions()
     {
         if (count($this->extensions) === 0) {
-            $this->extensions = include(Yii::getAlias($this->extensionsStorage));
+            $fileName = Yii::getAlias($this->extensionsStorage);
+            if (true === file_exists($fileName) && is_readable($fileName)) {
+                $this->extensions = include $fileName;
+            }
         }
         return $this->extensions;
     }

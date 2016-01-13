@@ -4,8 +4,12 @@ namespace DevGroup\ExtensionsManager\controllers;
 use cebe\markdown\GithubMarkdown;
 use DevGroup\AdminUtils\controllers\BaseController;
 use DevGroup\DeferredTasks\actions\ReportQueueItem;
+use DevGroup\DeferredTasks\commands\DeferredController;
 use DevGroup\DeferredTasks\helpers\DeferredHelper;
 use DevGroup\DeferredTasks\helpers\ReportingTask;
+use DevGroup\DeferredTasks\helpers\OnetimeTask;
+use DevGroup\DeferredTasks\models\DeferredGroup;
+use DevGroup\DeferredTasks\models\DeferredQueue;
 use DevGroup\ExtensionsManager\actions\ConfigurationIndex;
 use DevGroup\ExtensionsManager\ExtensionsManager;
 use Packagist\Api\Client;
@@ -15,6 +19,7 @@ use yii\data\ArrayDataProvider;
 use DevGroup\ExtensionsManager\models\Extension;
 use Yii;
 use yii\helpers\Json;
+use yii\helpers\VarDumper;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\web\ServerErrorHttpException;
@@ -24,7 +29,8 @@ class ExtensionsController extends BaseController
 {
     private static $packagist;
     private static $currentVersion;
-    private static $installed;
+    const COMPOSER_INSTALL_DEFERRED_GROUP = 'ext_manager_composer_install';
+    const COMPOSER_UNINSTALL_DEFERRED_GROUP = 'ext_manager_composer_uninstall';
 
     public function init()
     {
@@ -130,7 +136,6 @@ class ExtensionsController extends BaseController
         if (false === Yii::$app->request->isAjax) {
             throw new NotFoundHttpException("Page not found");
         }
-        self::getInstalledExtensions();
         $packageName = Yii::$app->request->post('packageName');
         $packagist = self::getPackagist();
         $package = $packagist->get($packageName);
@@ -163,8 +168,8 @@ class ExtensionsController extends BaseController
         $jsonUrl = rtrim(self::module()->packagistUrl, '/') . '/packages/' . trim($packageName, '/ ') . '.json';
         $packageJson = self::doRequest($jsonUrl);
         $packageData = Json::decode($packageJson);
-        $description = self::getPackageDataField($packageData, 'description');
-        $name = self::getPackageDataField($packageData, 'name');
+        $description = self::getLocalizedDataField($packageData, 'description');
+        $name = self::getLocalizedDataField($packageData, 'name');
         $dependencies['require'] = self::getOtherPackageData($packageData, 'require');
         $dependencies['require-dev'] = self::getOtherPackageData($packageData, 'require-dev');
         $authors = self::getOtherPackageData($packageData, 'authors');
@@ -181,7 +186,7 @@ class ExtensionsController extends BaseController
                 'authors' => $authors,
                 'license' => $license,
                 'packageName' => $packageName,
-                'installed' => in_array($packageName, self::$installed),
+                'installed' => array_key_exists($packageName, self::module()->getExtensions()),
             ]
         );
     }
@@ -191,7 +196,7 @@ class ExtensionsController extends BaseController
      * @param string $field
      * @return string
      */
-    private static function getPackageDataField($data, $field)
+    public static function getLocalizedDataField($data, $field)
     {
         $string = '';
         $langId = Yii::$app->language;
@@ -203,20 +208,6 @@ class ExtensionsController extends BaseController
             $string = $data['package']['description'];
         }
         return $string;
-    }
-
-    /**
-     *
-     */
-    public static function getInstalledExtensions()
-    {
-        $installed = [];
-        $fileName = Yii::getAlias(self::module()->extensionsStorage);
-        if (true === file_exists($fileName)) {
-            $extensions = include $fileName;
-            $installed = array_keys($extensions);
-        }
-        self::$installed = $installed;
     }
 
     /**
@@ -294,7 +285,21 @@ class ExtensionsController extends BaseController
             throw new NotFoundHttpException('Page not found');
         }
         $packageName = Yii::$app->request->post('packageName');
+        if (null === $group = DeferredGroup::findOne(['name' => self::COMPOSER_INSTALL_DEFERRED_GROUP])) {
+            $group = new DeferredGroup();
+            $group->loadDefaultValues();
+            $group->name = self::COMPOSER_INSTALL_DEFERRED_GROUP;
+            $group->group_notifications = 0;
+            $group->save();
+        }
+        if (intval($group->group_notifications) != 0) {
+            // otherwise DeferredController 'deferred-queue-complete' event will not trigger
+            // and we'll unable to write config
+            $group->group_notifications = 0;
+            $group->save(['group_notifications']);
+        }
         $task = new ReportingTask();
+        $task->model()->deferred_group_id = $group->id;
         $task->cliCommand(
             'php',
             [
@@ -325,7 +330,9 @@ class ExtensionsController extends BaseController
             throw new NotFoundHttpException('Page not found');
         }
         $packageName = Yii::$app->request->post('packageName');
+
         $task = new ReportingTask();
+
         $task->cliCommand(
             'php',
             [
@@ -353,11 +360,4 @@ class ExtensionsController extends BaseController
     {
         return Yii::$app->getModule('extensions-manager');
     }
-
-    public function beforeAction($action)
-    {
-        return parent::beforeAction($action); // TODO: Change the autogenerated stub
-    }
-
-
 }

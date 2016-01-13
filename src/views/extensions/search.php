@@ -17,7 +17,6 @@ $detailsUrl = Url::to(['/extensions-manager/extensions/details']);
 $installUrl = Url::to(['/extensions-manager/extensions/install']);
 $uninstallUrl = Url::to(['/extensions-manager/extensions/uninstall']);
 $endpointUrl = Url::to(['/extensions-manager/extensions/deferred-report-queue-item']);
-
 $JS = <<<JS
     window.ExtensionsManager = window.ExtensionsManager || {};
     window.ExtensionsManager.detailsUrl = '$detailsUrl';
@@ -27,7 +26,6 @@ $JS = <<<JS
     window.ExtensionsManager.detailsTemplate = '<tr class="extension-info-tr"><td colspan="4">{details}</td></tr>';
 JS;
 $this->registerJs($JS, \yii\web\View::POS_HEAD);
-
 ?>
 <section>
     <div class="manage-controller__search-extensions box">
