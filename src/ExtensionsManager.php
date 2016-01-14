@@ -17,6 +17,15 @@ use yii\base\Module;
  */
 class ExtensionsManager extends Module implements BootstrapInterface
 {
+    const COMPOSER_INSTALL_DEFERRED_GROUP = 'ext_manager_composer_install';
+    const COMPOSER_UNINSTALL_DEFERRED_GROUP = 'ext_manager_composer_uninstall';
+
+    const INSTALL_TASK = 'install-task';
+    const UNINSTALL_TASK = 'uninstall-task';
+    const ACTIVATE_TASK = 'activate-task';
+    const DEACTIVATE_TASK = 'deactivate-task';
+    const CHECK_UPDATES_TASK = 'check-updates';
+
     /**
      * ConfigurationUpdater component is used for writing application configs.
      * You can configure it as usual yii2 Component.
@@ -64,6 +73,9 @@ class ExtensionsManager extends Module implements BootstrapInterface
     /** @var string github API URL */
     public $githubApiUrl = 'https://api.github.com';
 
+    /** @var int number of Extension shown on Extension Search and Extension Index pages */
+    public $extensionsPerPage = 10;
+
     /**
      * @var array Array of extensions descriptions
      */
@@ -75,9 +87,7 @@ class ExtensionsManager extends Module implements BootstrapInterface
     public function init()
     {
         parent::init();
-
         $this->configurationUpdater = Yii::createObject($this->configurationUpdater);
-
     }
 
     /**
@@ -91,7 +101,7 @@ class ExtensionsManager extends Module implements BootstrapInterface
             'class' => 'yii\i18n\PhpMessageSource',
             'basePath' => __DIR__ . DIRECTORY_SEPARATOR . 'messages',
         ];
-
+        //TODO rewrite event names to constants
         Event::on(DeferredController::className(),
             'deferred-queue-complete',
             [DeferredQueueCompleteHandler::className(), 'handleEvent']

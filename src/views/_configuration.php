@@ -9,3 +9,4 @@
 <?= $form->field($model, 'githubAccessToken') ?>
 <?= $form->field($model, 'applicationName') ?>
 <?= $form->field($model, 'githubApiUrl') ?>
+<?= $form->field($model, 'extensionsPerPage') ?>

@@ -3,8 +3,7 @@ window.ExtensionsManager = window.ExtensionsManager || {};
 (function ($) {
     var $extList = $('#ext-search-list'),
         $detailsButton = $('[data-action="ext-info"]', $extList),
-        installButtonSelector = '[data-action="ext-install"]',
-        uninstallButtonSelector = '[data-action="ext-uninstall"]';
+        runTaskButtonSelector = '[data-action="run-ext-task"]';
 
     $detailsButton.click(function () {
         var $this = $(this),
@@ -40,23 +39,16 @@ window.ExtensionsManager = window.ExtensionsManager || {};
         return false;
     });
 
-    $extList.on('click', installButtonSelector, function () {
+    $extList.on('click', runTaskButtonSelector, function () {
         var $this = $(this),
-            packageName = $this.data('package-name');
+            packageName = $this.data('package-name'),
+            taskType = $this.data('ext-task');
         reportingQueueItem.executeRouteWithReportingQueueItem(
-            window.ExtensionsManager.installUrl,
-            {"packageName": packageName},
-            'POST',
-            {'endpoint':  window.ExtensionsManager.endpointUrl}
-        );
-        return false;
-    });
-    $extList.on('click', uninstallButtonSelector, function () {
-        var $this = $(this),
-            packageName = $this.data('package-name');
-        reportingQueueItem.executeRouteWithReportingQueueItem(
-            window.ExtensionsManager.uninstallUrl,
-            {"packageName": packageName},
+            window.ExtensionsManager.runTaskUrl,
+            {
+                "packageName": packageName,
+                "taskType" : taskType
+            },
             'POST',
             {'endpoint':  window.ExtensionsManager.endpointUrl}
         );

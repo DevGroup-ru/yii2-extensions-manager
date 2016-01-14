@@ -10,18 +10,21 @@
  * @var string $packageName
  * @var bool $installed
  */
+use DevGroup\ExtensionsManager\ExtensionsManager;
 ?>
 <div class="details-part">
     <div class="box">
         <div class="row">
             <div class="col-sm-12">
                 <?php if (false === $installed) : ?>
-                    <button class="btn btn-success pull-right" data-action="ext-install"
+                    <button class="btn btn-success pull-right" data-action="run-ext-task"
+                            data-ext-task="<?= ExtensionsManager::INSTALL_TASK ?>"
                             data-package-name="<?= $packageName ?>">
                         <?= Yii::t('extensions-manager', 'Install') ?>
                     </button>
                 <?php else : ?>
-                    <button class="btn btn-danger pull-right" data-action="ext-uninstall"
+                    <button class="btn btn-danger pull-right" data-action="run-ext-task"
+                            data-ext-task="<?= ExtensionsManager::UNINSTALL_TASK ?>"
                             data-package-name="<?= $packageName ?>">
                         <?= Yii::t('extensions-manager', 'Uninstall') ?>
                     </button>

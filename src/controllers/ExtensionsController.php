@@ -1,42 +1,31 @@
 <?php
 namespace DevGroup\ExtensionsManager\controllers;
 
-use cebe\markdown\GithubMarkdown;
 use DevGroup\AdminUtils\controllers\BaseController;
 use DevGroup\DeferredTasks\actions\ReportQueueItem;
-use DevGroup\DeferredTasks\commands\DeferredController;
 use DevGroup\DeferredTasks\helpers\DeferredHelper;
 use DevGroup\DeferredTasks\helpers\ReportingTask;
-use DevGroup\DeferredTasks\helpers\OnetimeTask;
 use DevGroup\DeferredTasks\models\DeferredGroup;
-use DevGroup\DeferredTasks\models\DeferredQueue;
 use DevGroup\ExtensionsManager\actions\ConfigurationIndex;
 use DevGroup\ExtensionsManager\ExtensionsManager;
+use DevGroup\ExtensionsManager\helpers\ExtensionDataHelper;
 use Packagist\Api\Client;
-use Packagist\Api\Result\Package\Version;
-use yii\base\Event;
 use yii\data\ArrayDataProvider;
 use DevGroup\ExtensionsManager\models\Extension;
 use Yii;
 use yii\helpers\Json;
-use yii\helpers\VarDumper;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\web\ServerErrorHttpException;
-use DevGroup\ExtensionsManager\helpers\ExtensionFileWriter;
 
 class ExtensionsController extends BaseController
 {
+    /** @var  Client packagist.org API client instance */
     private static $packagist;
-    private static $currentVersion;
-    const COMPOSER_INSTALL_DEFERRED_GROUP = 'ext_manager_composer_install';
-    const COMPOSER_UNINSTALL_DEFERRED_GROUP = 'ext_manager_composer_uninstall';
 
-    public function init()
-    {
-        parent::init();
-    }
-
+    /**
+     * @inheritdoc
+     */
     public function actions()
     {
         return [
@@ -49,9 +38,24 @@ class ExtensionsController extends BaseController
         ];
     }
 
+    /**
+     *
+     */
     public function actionIndex()
     {
-
+        $extensions = self::module()->getExtensions();
+        return $this->render(
+            'index',
+            [
+                'dataProvider' => new ArrayDataProvider([
+                    'allModels' => $extensions,
+                    'pagination' => [
+                        'defaultPageSize' => 10,
+                        'pageSize' => self::module()->extensionsPerPage,
+                    ],
+                ]),
+            ]
+        );
     }
 
     /**
@@ -75,7 +79,8 @@ class ExtensionsController extends BaseController
                 'dataProvider' => new ArrayDataProvider([
                     'allModels' => $packages,
                     'pagination' => [
-                        'pageSize' => 10,
+                        'defaultPageSize' => 10,
+                        'pageSize' => self::module()->extensionsPerPage,
                     ],
                 ]),
                 'type' => $type,
@@ -157,138 +162,88 @@ class ExtensionsController extends BaseController
             $gitReadmeUrl = $gitApiUrl . '/repos/' . $repository . '/readme';
             $gitReleasesUrl = $gitApiUrl . '/repos/' . $repository . '/releases';
             $readmeData = self::doRequest($gitReadmeUrl, $headers);
-            $readme = self::humanizeReadme($readmeData);
+            $readme = ExtensionDataHelper::humanizeReadme($readmeData);
             $versionsData = Json::decode(self::doRequest($gitReleasesUrl, $headers));
             if (true === empty($versionsData)) {
                 $gitTagsUrl = $gitApiUrl . '/repos/' . $repository . '/tags';
                 $versionsData = Json::decode(self::doRequest($gitTagsUrl, $headers));
             }
         }
-        $versions = self::getVersions($packagistVersions, array_shift($versionsData));
+        //ExtensionDataHelper::getVersions() must be invoked before other methods who fetches versioned data
+        $versions = ExtensionDataHelper::getVersions($packagistVersions, array_shift($versionsData));
         $jsonUrl = rtrim(self::module()->packagistUrl, '/') . '/packages/' . trim($packageName, '/ ') . '.json';
         $packageJson = self::doRequest($jsonUrl);
         $packageData = Json::decode($packageJson);
-        $description = self::getLocalizedDataField($packageData, 'description');
-        $name = self::getLocalizedDataField($packageData, 'name');
-        $dependencies['require'] = self::getOtherPackageData($packageData, 'require');
-        $dependencies['require-dev'] = self::getOtherPackageData($packageData, 'require-dev');
-        $authors = self::getOtherPackageData($packageData, 'authors');
-        $license = self::getOtherPackageData($packageData, 'license');
+        $type = ExtensionDataHelper::getType($packageData);
 
         return $this->renderResponse(
             '_ext-details',
             [
                 'readme' => $readme,
                 'versions' => $versions,
-                'description' => $description,
-                'name' => $name,
-                'dependencies' => $dependencies,
-                'authors' => $authors,
-                'license' => $license,
+                'description' => ExtensionDataHelper::getLocalizedVersionedDataField($packageData, $type, 'description'),
+                'name' => ExtensionDataHelper::getLocalizedVersionedDataField($packageData, $type, 'name'),
+                'dependencies' => [
+                    'require' => ExtensionDataHelper::getOtherPackageVersionedData($packageData, 'require'),
+                    'require-dev' => ExtensionDataHelper::getOtherPackageVersionedData($packageData, 'require-dev'),
+                ],
+                'authors' => ExtensionDataHelper::getOtherPackageVersionedData($packageData, 'authors'),
+                'license' => ExtensionDataHelper::getOtherPackageVersionedData($packageData, 'license'),
                 'packageName' => $packageName,
                 'installed' => array_key_exists($packageName, self::module()->getExtensions()),
+                'type' => $type,
             ]
         );
     }
 
-    /**
-     * @param $data
-     * @param string $field
-     * @return string
-     */
-    public static function getLocalizedDataField($data, $field)
-    {
-        $string = '';
-        $langId = Yii::$app->language;
-        if (false === empty($data['package']['versions'][self::$currentVersion]['extra']['yii2-extension'][$field . '_' . $langId])) {
-            $string = $data['package']['versions'][self::$currentVersion]['extra']['yii2-extension'][$field . '_' . $langId];
-        } else if (false === empty($data['package']['versions'][self::$currentVersion][$field])) {
-            $string = $data['package']['versions'][self::$currentVersion]['description'];
-        } else if (false === empty($data['package']['description'])) {
-            $string = $data['package']['description'];
-        }
-        return $string;
-    }
-
-    /**
-     * @param $data
-     * @param $key
-     * @return array
-     */
-    public static function getOtherPackageData($data, $key)
-    {
-        $out = [];
-        if (false === empty($data['package']['versions'][self::$currentVersion][$key])) {
-            $out = $data['package']['versions'][self::$currentVersion][$key];
-        }
-        return $out;
-    }
-
-    /**
-     * @param $data
-     * @return string
-     */
-    private static function humanizeReadme($data)
-    {
-        $readme = '';
-        $data = Json::decode($data);
-        if (false === empty($data['content'])) {
-            $content = base64_decode(str_replace('\n', '', $data['content']));
-            $parser = new GithubMarkdown();
-            $readme = $parser->parse($content);
-        }
-        return $readme;
-    }
-
-    /**
-     * @param array $packagistVersions
-     * @param array | null $gitCurrent can be item array of git releases or git tags
-     * for other usages we need tag name not release name. If $gitCurrent item of releases, it must have 'tag_name' key
-     * otherwise 'name' key. Release item has 'name' key too, but this is not the key we are looking for.
-     * @return array
-     */
-    private static function getVersions($packagistVersions, $gitCurrent)
-    {
-        $versions = [];
-        $current = '';
-        if (null !== $gitCurrent) {
-            if (false === empty($gitCurrent['tag_name'])) {
-                $current = $gitCurrent['tag_name'];
-            } else if (false === empty ($gitCurrent['name'])) {
-                $current = $gitCurrent['name'];
-            }
-        }
-        foreach ($packagistVersions as $name => $data) {
-            /** @var Version $data */
-            if ($current == $name) {
-                $versions['current'] = $name;
-            }
-            $versions[$name] = $data->getTime();
-        }
-        if (true === empty($versions['current']) && false === empty($versions)) {
-            reset($versions);
-            $current = key($versions);
-            $versions['current'] = $current;
-        }
-        self::$currentVersion = $current;
-        return $versions;
-    }
 
     /**
      * @return array
      * @throws NotFoundHttpException
      * @throws ServerErrorHttpException
      */
-    public function actionInstall()
+    public function actionRunTask()
     {
         if (false === Yii::$app->request->isAjax) {
             throw new NotFoundHttpException('Page not found');
         }
+        $taskType = Yii::$app->request->post('taskType');
         $packageName = Yii::$app->request->post('packageName');
-        if (null === $group = DeferredGroup::findOne(['name' => self::COMPOSER_INSTALL_DEFERRED_GROUP])) {
+        switch ($taskType) {
+            case ExtensionsManager::INSTALL_TASK :
+                return self::runTask(
+                    [
+                        './composer.phar',
+                        'require',
+                        $packageName
+                    ],
+                    ExtensionsManager::COMPOSER_INSTALL_DEFERRED_GROUP
+                );
+            case ExtensionsManager::UNINSTALL_TASK :
+                return self::runTask(
+                    [
+                        './composer.phar',
+                        'remove',
+                        $packageName,
+                        '--update-with-dependencies',
+                    ],
+                    ExtensionsManager::COMPOSER_INSTALL_DEFERRED_GROUP
+                );
+            case ExtensionsManager::ACTIVATE_TASK :
+                break;
+            case ExtensionsManager::DEACTIVATE_TASK :
+                break;
+            default:
+                // unrecognized task
+        }
+    }
+
+    private static function runTask($command, $groupName)
+    {
+        if (null === $group = DeferredGroup::findOne(['name' => $groupName])) {
             $group = new DeferredGroup();
             $group->loadDefaultValues();
-            $group->name = self::COMPOSER_INSTALL_DEFERRED_GROUP;
+            $group->name = $groupName;
             $group->group_notifications = 0;
             $group->save();
         }
@@ -300,48 +255,7 @@ class ExtensionsController extends BaseController
         }
         $task = new ReportingTask();
         $task->model()->deferred_group_id = $group->id;
-        $task->cliCommand(
-            'php',
-            [
-                './composer.phar',
-                'require',
-                $packageName
-            ]
-        );
-        if ($task->registerTask()) {
-            DeferredHelper::runImmediateTask($task->model()->id);
-            Yii::$app->response->format = Response::FORMAT_JSON;
-            return [
-                'queueItemId' => $task->model()->id,
-            ];
-        } else {
-            throw new ServerErrorHttpException("Unable to start task");
-        }
-    }
-
-    /**
-     * @return array
-     * @throws NotFoundHttpException
-     * @throws ServerErrorHttpException
-     */
-    public function actionUninstall()
-    {
-        if (false === Yii::$app->request->isAjax) {
-            throw new NotFoundHttpException('Page not found');
-        }
-        $packageName = Yii::$app->request->post('packageName');
-
-        $task = new ReportingTask();
-
-        $task->cliCommand(
-            'php',
-            [
-                './composer.phar',
-                'remove',
-                $packageName,
-                '--update-with-dependencies',
-            ]
-        );
+        $task->cliCommand('php', $command);
         if ($task->registerTask()) {
             DeferredHelper::runImmediateTask($task->model()->id);
             Yii::$app->response->format = Response::FORMAT_JSON;

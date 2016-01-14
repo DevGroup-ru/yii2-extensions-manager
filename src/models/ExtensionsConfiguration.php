@@ -15,6 +15,7 @@ class ExtensionsConfiguration extends BaseConfigurationModel
             'githubAccessToken',
             'applicationName',
             'githubApiUrl',
+            'extensionsPerPage'
         ];
 
         parent::__construct($attributes, $config);
@@ -27,6 +28,7 @@ class ExtensionsConfiguration extends BaseConfigurationModel
         $this->githubAccessToken = $module->githubAccessToken;
         $this->githubApiUrl = $module->githubApiUrl;
         $this->applicationName = $module->applicationName;
+        $this->extensionsPerPage = $module->extensionsPerPage;
     }
 
     /**
@@ -42,6 +44,7 @@ class ExtensionsConfiguration extends BaseConfigurationModel
                 'string',
                 'max' => 180
             ],
+            [['extensionsPerPage'], 'integer'],
             [['packagistUrl', 'applicationName'], 'required'],
             [['extensionsStorage', 'packagistUrl', 'githubAccessToken', 'applicationName', 'githubApiUrl'], 'string'],
         ];
@@ -55,6 +58,7 @@ class ExtensionsConfiguration extends BaseConfigurationModel
             'applicationName' => Yii::t('extensions-manager', 'Github application name'),
             'githubApiUrl' => Yii::t('extensions-manager', 'Hithub API URL'),
             'extensionsStorage' => Yii::t('extensions-manager', 'Extensions storage'),
+            'extensionsPerPage' => Yii::t('extensions-manager', 'Extensions per page'),
         ];
     }
 
@@ -110,6 +114,7 @@ class ExtensionsConfiguration extends BaseConfigurationModel
                     'githubAccessToken' => $this->githubAccessToken,
                     'applicationName' => $this->applicationName,
                     'githubApiUrl' => $this->githubApiUrl,
+                    'extensionsPerPage' => $this->extensionsPerPage,
                 ]
             ],
         ];

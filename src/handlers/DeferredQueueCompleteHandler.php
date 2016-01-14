@@ -4,8 +4,8 @@ namespace DevGroup\ExtensionsManager\handlers;
 
 use DevGroup\DeferredTasks\events\DeferredQueueCompleteEvent;
 use DevGroup\DeferredTasks\models\DeferredGroup;
-use DevGroup\ExtensionsManager\controllers\ExtensionsController;
 use DevGroup\ExtensionsManager\helpers\ExtensionFileWriter;
+use DevGroup\ExtensionsManager\ExtensionsManager;
 use yii\base\Object;
 
 class DeferredQueueCompleteHandler extends Object
@@ -24,8 +24,8 @@ class DeferredQueueCompleteHandler extends Object
             return;
         }
         switch ($group->name) {
-            case ExtensionsController::COMPOSER_INSTALL_DEFERRED_GROUP :
-            case ExtensionsController::COMPOSER_UNINSTALL_DEFERRED_GROUP :
+            case ExtensionsManager::COMPOSER_INSTALL_DEFERRED_GROUP :
+            case ExtensionsManager::COMPOSER_UNINSTALL_DEFERRED_GROUP :
                 ExtensionFileWriter::updateConfig();
                 break;
             default :
