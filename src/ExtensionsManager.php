@@ -93,7 +93,7 @@ class ExtensionsManager extends Module implements BootstrapInterface
         ];
 
         Event::on(DeferredController::className(),
-            DeferredController::EVENT_DEFERRED_QUEUE_COMPLETE,
+            'deferred-queue-complete',
             [DeferredQueueCompleteHandler::className(), 'handleEvent']
         );
     }

@@ -26,7 +26,6 @@ class DeferredQueueCompleteHandler extends Object
         switch ($group->name) {
             case ExtensionsController::COMPOSER_INSTALL_DEFERRED_GROUP :
             case ExtensionsController::COMPOSER_UNINSTALL_DEFERRED_GROUP :
-                file_put_contents('/home/pavel/handle.txt', 'got fine event task' . PHP_EOL, FILE_APPEND);
                 ExtensionFileWriter::updateConfig();
                 break;
             default :
