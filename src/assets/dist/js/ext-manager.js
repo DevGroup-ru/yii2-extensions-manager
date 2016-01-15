@@ -1,9 +1,9 @@
 "use strict";
 window.ExtensionsManager = window.ExtensionsManager || {};
 (function ($) {
-    var $extList = $('#ext-search-list'),
+    var $extList = $('#ext-search-list, #extensions-list'),
         $detailsButton = $('[data-action="ext-info"]', $extList),
-        runTaskButtonSelector = '[data-action="run-ext-task"]';
+        runDeferredTaskButtonSelector = '[data-action="run-ext-task"]';
 
     $detailsButton.click(function () {
         var $this = $(this),
@@ -39,7 +39,7 @@ window.ExtensionsManager = window.ExtensionsManager || {};
         return false;
     });
 
-    $extList.on('click', runTaskButtonSelector, function () {
+    $extList.on('click', runDeferredTaskButtonSelector, function () {
         var $this = $(this),
             packageName = $this.data('package-name'),
             taskType = $this.data('ext-task');
@@ -54,4 +54,5 @@ window.ExtensionsManager = window.ExtensionsManager || {};
         );
         return false;
     });
+
 })(jQuery);

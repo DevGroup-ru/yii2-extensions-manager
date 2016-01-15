@@ -2,7 +2,9 @@
 
 namespace DevGroup\ExtensionsManager\models;
 
+use DevGroup\ExtensionsManager\controllers\ExtensionsController;
 use DevGroup\ExtensionsManager\ExtensionsManager;
+use DevGroup\ExtensionsManager\commands\ExtensionController;
 use Yii;
 
 class ExtensionsConfiguration extends BaseConfigurationModel
@@ -83,7 +85,12 @@ class ExtensionsConfiguration extends BaseConfigurationModel
      */
     public function consoleApplicationAttributes()
     {
-        return [];
+        return
+            [
+                'controllerMap' => [
+                    'extension' => ExtensionController::className(),
+                ]
+            ];
     }
 
     /**

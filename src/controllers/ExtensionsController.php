@@ -7,9 +7,11 @@ use DevGroup\DeferredTasks\helpers\DeferredHelper;
 use DevGroup\DeferredTasks\helpers\ReportingTask;
 use DevGroup\DeferredTasks\models\DeferredGroup;
 use DevGroup\ExtensionsManager\actions\ConfigurationIndex;
+use DevGroup\ExtensionsManager\components\ComposerInstalledSet;
 use DevGroup\ExtensionsManager\ExtensionsManager;
 use DevGroup\ExtensionsManager\helpers\ExtensionDataHelper;
 use Packagist\Api\Client;
+use Symfony\Component\Process\ProcessBuilder;
 use yii\data\ArrayDataProvider;
 use DevGroup\ExtensionsManager\models\Extension;
 use Yii;
@@ -210,7 +212,7 @@ class ExtensionsController extends BaseController
         $taskType = Yii::$app->request->post('taskType');
         $packageName = Yii::$app->request->post('packageName');
         switch ($taskType) {
-            case ExtensionsManager::INSTALL_TASK :
+            case ExtensionsManager::INSTALL_DEFERRED_TASK :
                 return self::runTask(
                     [
                         './composer.phar',
@@ -219,7 +221,7 @@ class ExtensionsController extends BaseController
                     ],
                     ExtensionsManager::COMPOSER_INSTALL_DEFERRED_GROUP
                 );
-            case ExtensionsManager::UNINSTALL_TASK :
+            case ExtensionsManager::UNINSTALL_DEFERRED_TASK :
                 return self::runTask(
                     [
                         './composer.phar',
@@ -229,15 +231,67 @@ class ExtensionsController extends BaseController
                     ],
                     ExtensionsManager::COMPOSER_INSTALL_DEFERRED_GROUP
                 );
-            case ExtensionsManager::ACTIVATE_TASK :
-                break;
-            case ExtensionsManager::DEACTIVATE_TASK :
-                break;
+            case ExtensionsManager::ACTIVATE_DEFERRED_TASK :
+                return self::changeState($packageName);
+            case ExtensionsManager::DEACTIVATE_DEFERRED_TASK :
+                return self::changeState($packageName, true);
             default:
                 // unrecognized task
         }
     }
 
+    /**
+     * @param $packageName
+     * @param bool $deactivate
+     * @return array
+     * @throws ServerErrorHttpException
+     */
+    private static function changeState($packageName, $deactivate = false)
+    {
+        $extData = ComposerInstalledSet::get()->getInstalled($packageName);
+        $type = ExtensionDataHelper::getType($extData);
+        $packagePath = '@vendor' . DIRECTORY_SEPARATOR . $packageName . DIRECTORY_SEPARATOR;
+        $taskCommand = [];
+        $statusCode = '"0"';
+        if ($type == Extension::TYPE_DOTPLANT) {
+            $packageMigrations = ExtensionDataHelper::getInstalledExtraData($extData, 'migrationPath', true);
+            foreach ($packageMigrations as $migrationPath) {
+                Yii::$app->params['yii.migrations'][] = $packagePath . $migrationPath;
+            }
+            $taskCommand = [
+                realpath(Yii::getAlias('@app') . '/yii'),
+                'migrate/' . (true === $deactivate ? 'down' : 'up'),
+                '--color=0',
+                '--interactive=0',
+                true === $deactivate ? 65536 : 0,
+                ';',
+            ];
+            $statusCode = '"$?"';
+        }
+        $taskCommand = array_merge($taskCommand,
+            [
+                realpath(Yii::getAlias('@app') . '/yii'),
+                'extension/mark-active',
+                $packageName,
+                $statusCode,
+
+            ]
+        );
+        $group = true === $deactivate
+            ? ExtensionsManager::EXTENSION_DEACTIVATE_DEFERRED_GROUP
+            : ExtensionsManager::EXTENSION_ACTIVATE_DEFERRED_GROUP;
+        return self::runTask(
+            $taskCommand,
+            $group
+        );
+    }
+
+    /**
+     * @param $command
+     * @param $groupName
+     * @return array
+     * @throws ServerErrorHttpException
+     */
     private static function runTask($command, $groupName)
     {
         if (null === $group = DeferredGroup::findOne(['name' => $groupName])) {
@@ -255,7 +309,7 @@ class ExtensionsController extends BaseController
         }
         $task = new ReportingTask();
         $task->model()->deferred_group_id = $group->id;
-        $task->cliCommand('php', $command);
+        $task->cliCommand(PHP_BINDIR . '/php', $command);
         if ($task->registerTask()) {
             DeferredHelper::runImmediateTask($task->model()->id);
             Yii::$app->response->format = Response::FORMAT_JSON;

@@ -12,6 +12,9 @@ use DevGroup\ExtensionsManager\models\Extension;
 use kartik\icons\Icon;
 use yii\helpers\Html;
 
+\DevGroup\ExtensionsManager\assets\AdminBundle::register($this);
+\DevGroup\DeferredTasks\assets\AdminBundle::register($this);
+
 $nameBlockTpl = <<<TPL
 <div class="box box-default collapsed-box">
     <div class="box-header">
@@ -26,7 +29,7 @@ $nameBlockTpl = <<<TPL
 </div>
 <div class="btn-group ext-buttons">%s</div>
 TPL;
-
+$composerSet = ComposerInstalledSet::get();
 ?>
 
 <section>
@@ -41,14 +44,14 @@ TPL;
             'columns' => [
                 [
                     'label' => Yii::t('extensions-manager', 'Name'),
-                    'content' => function ($data) use ($nameBlockTpl) {
+                    'content' => function ($data) use ($nameBlockTpl, $composerSet) {
                         $name = ExtensionDataHelper::getLocalizedDataField(
-                            ComposerInstalledSet::get()->getInstalled($data["composer_name"]),
+                            $composerSet->getInstalled($data["composer_name"]),
                             $data["composer_type"],
                             'name'
                         );
                         $description = ExtensionDataHelper::getLocalizedDataField(
-                            ComposerInstalledSet::get()->getInstalled($data["composer_name"]),
+                            $composerSet->getInstalled($data["composer_name"]),
                             $data["composer_type"],
                             'description'
                         );
@@ -57,28 +60,31 @@ TPL;
                                 [
                                     'class' => 'btn btn-success btn-xs',
                                     'data-action' => 'run-ext-task',
-                                    'data-ext-task' => ExtensionsManager::ACTIVATE_TASK,
+                                    'data-ext-task' => ExtensionsManager::ACTIVATE_DEFERRED_TASK,
                                     'data-package-name' => $data["composer_name"],
                                 ])
                             : Html::button(Yii::t('extensions-manager', 'Deactivate'),
                                 [
                                     'class' => 'btn btn-warning btn-xs',
                                     'data-action' => 'run-ext-task',
-                                    'data-ext-task' => ExtensionsManager::DEACTIVATE_TASK,
+                                    'data-ext-task' => ExtensionsManager::DEACTIVATE_DEFERRED_TASK,
                                     'data-package-name' => $data["composer_name"],
                                 ]);
-                        $buttons = Html::button(Yii::t('extensions-manager', 'Uninstall'),
+                        $removeButton = $data['is_core'] == 0 ?
+                            Html::button(Yii::t('extensions-manager', 'Uninstall'),
                                 [
                                     'class' => 'btn btn-danger btn-xs',
                                     'data-action' => 'run-ext-task',
-                                    'data-ext-task' => ExtensionsManager::UNINSTALL_TASK,
+                                    'data-ext-task' => ExtensionsManager::UNINSTALL_DEFERRED_TASK,
                                     'data-package-name' => $data["composer_name"],
                                 ])
+                            : '';
+                        $buttons = $removeButton
                             . Html::button(Yii::t('extensions-manager', 'Check updates'),
                                 [
-                                    'class' => 'btn btn-info btn-xs',
+                                    'class' => 'btn btn-warning btn-xs',
                                     'data-action' => 'run-ext-task',
-                                    'data-ext-task' => ExtensionsManager::CHECK_UPDATES_TASK,
+                                    'data-ext-task' => ExtensionsManager::CHECK_UPDATES_DEFERRED_TASK,
                                     'data-package-name' => $data["composer_name"],
                                 ])
                             . Html::button(Yii::t('extensions-manager', 'Details') .
@@ -94,9 +100,9 @@ TPL;
                 ],
                 [
                     'label' => Yii::t('extensions-manager', 'Version'),
-                    'content' => function ($data) {
+                    'content' => function ($data) use ($composerSet) {
                         return ExtensionDataHelper::getLocalizedDataField(
-                            ComposerInstalledSet::get()->getInstalled($data["composer_name"]),
+                            $composerSet->getInstalled($data["composer_name"]),
                             $data['composer_type'],
                             'version'
                         );

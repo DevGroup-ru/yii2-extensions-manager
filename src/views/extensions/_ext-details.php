@@ -18,13 +18,13 @@ use DevGroup\ExtensionsManager\ExtensionsManager;
             <div class="col-sm-12">
                 <?php if (false === $installed) : ?>
                     <button class="btn btn-success pull-right" data-action="run-ext-task"
-                            data-ext-task="<?= ExtensionsManager::INSTALL_TASK ?>"
+                            data-ext-task="<?= ExtensionsManager::INSTALL_DEFERRED_TASK ?>"
                             data-package-name="<?= $packageName ?>">
                         <?= Yii::t('extensions-manager', 'Install') ?>
                     </button>
                 <?php else : ?>
                     <button class="btn btn-danger pull-right" data-action="run-ext-task"
-                            data-ext-task="<?= ExtensionsManager::UNINSTALL_TASK ?>"
+                            data-ext-task="<?= ExtensionsManager::UNINSTALL_DEFERRED_TASK ?>"
                             data-package-name="<?= $packageName ?>">
                         <?= Yii::t('extensions-manager', 'Uninstall') ?>
                     </button>

@@ -19,12 +19,14 @@ class ExtensionsManager extends Module implements BootstrapInterface
 {
     const COMPOSER_INSTALL_DEFERRED_GROUP = 'ext_manager_composer_install';
     const COMPOSER_UNINSTALL_DEFERRED_GROUP = 'ext_manager_composer_uninstall';
+    const EXTENSION_ACTIVATE_DEFERRED_GROUP = 'ext_manager_extension_activate';
+    const EXTENSION_DEACTIVATE_DEFERRED_GROUP = 'ext_manager_extension_deactivate';
 
-    const INSTALL_TASK = 'install-task';
-    const UNINSTALL_TASK = 'uninstall-task';
-    const ACTIVATE_TASK = 'activate-task';
-    const DEACTIVATE_TASK = 'deactivate-task';
-    const CHECK_UPDATES_TASK = 'check-updates';
+    const INSTALL_DEFERRED_TASK = 'install-def-task';
+    const UNINSTALL_DEFERRED_TASK = 'uninstall-def-task';
+    const ACTIVATE_DEFERRED_TASK = 'activate-def-task';
+    const DEACTIVATE_DEFERRED_TASK = 'deactivate-def-task';
+    const CHECK_UPDATES_DEFERRED_TASK = 'check-updates-def-task';
 
     /**
      * ConfigurationUpdater component is used for writing application configs.

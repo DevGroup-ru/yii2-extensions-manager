@@ -3,7 +3,6 @@
  * @var \yii\web\View $this
  * @var string $type
  */
-use yii\helpers\Url;
 use yii\helpers\Html;
 use kartik\icons\Icon;
 use yii\grid\GridView;
@@ -13,17 +12,6 @@ use DevGroup\ExtensionsManager\models\Extension;
 \DevGroup\DeferredTasks\assets\AdminBundle::register($this);
 
 $sortBy = [];
-$detailsUrl = Url::to(['/extensions-manager/extensions/details']);
-$runTaskUrl = Url::to(['/extensions-manager/extensions/run-task']);
-$endpointUrl = Url::to(['/extensions-manager/extensions/deferred-report-queue-item']);
-$JS = <<<JS
-    window.ExtensionsManager = window.ExtensionsManager || {};
-    window.ExtensionsManager.detailsUrl = '$detailsUrl';
-    window.ExtensionsManager.runTaskUrl = '$runTaskUrl';
-    window.ExtensionsManager.endpointUrl = '$endpointUrl';
-    window.ExtensionsManager.detailsTemplate = '<tr class="extension-info-tr"><td colspan="4">{details}</td></tr>';
-JS;
-$this->registerJs($JS, \yii\web\View::POS_HEAD);
 ?>
 <section>
     <div class="extensions-controller__search-extensions box">

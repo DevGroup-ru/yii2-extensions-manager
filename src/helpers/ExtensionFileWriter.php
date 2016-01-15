@@ -47,6 +47,7 @@ class ExtensionFileWriter extends Component
                 'composer_name' => $ext['name'],
                 'composer_type' => $ext['type'],
                 'is_active' => 0,
+                //TODO implement core extensions checking
                 'is_core' => 0,
             ];
         }

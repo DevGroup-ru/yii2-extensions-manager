@@ -21,8 +21,29 @@ class ExtensionDataHelper extends Component
         $type = '';
         if (true === isset($data['package']['type'])) {
             $type = $data['package']['type'];
+        } else if (true === isset($data['type'])) {
+            $type = $data['type'];
         }
         return $type;
+    }
+
+    /**
+     * @param array $data
+     * @param bool $asArray
+     * @return array
+     */
+    public static function getInstalledExtraData($data, $key, $asArray = false)
+    {
+        $out = '';
+        if (false === empty($data['extra'][$key])) {
+            $out = $data['extra'][$key];
+        }
+        if (true === $asArray) {
+            $out = is_array($out) ? $out : [$out];
+        } else {
+            $out = is_array($out) ? implode(', ', $out) : $out;
+        }
+        return $out;
     }
 
     /**
