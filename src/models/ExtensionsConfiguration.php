@@ -56,9 +56,9 @@ class ExtensionsConfiguration extends BaseConfigurationModel
     {
         return [
             'packagistUrl' => Yii::t('extensions-manager', 'Packagist URL'),
-            'githubAccessToken' => Yii::t('extensions-manager', 'Hithub API access token'),
+            'githubAccessToken' => Yii::t('extensions-manager', 'Github API access token'),
             'applicationName' => Yii::t('extensions-manager', 'Github application name'),
-            'githubApiUrl' => Yii::t('extensions-manager', 'Hithub API URL'),
+            'githubApiUrl' => Yii::t('extensions-manager', 'Github API URL'),
             'extensionsStorage' => Yii::t('extensions-manager', 'Extensions storage'),
             'extensionsPerPage' => Yii::t('extensions-manager', 'Extensions per page'),
         ];

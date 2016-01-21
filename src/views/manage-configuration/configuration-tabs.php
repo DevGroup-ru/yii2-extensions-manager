@@ -1,11 +1,15 @@
 <?php
-/** @var array $currentConfigurable */
-/** @var \DevGroup\ExtensionsManager\models\BaseConfigurationModel $currentConfigurationModel */
-/** @var string $currentConfigurationView */
-/** @var array $configurables */
-/** @var integer $sectionIndex */
+/**
+ * @var array $currentConfigurable
+ * @var \DevGroup\ExtensionsManager\models\BaseConfigurationModel $currentConfigurationModel
+ * @var string $currentConfigurationView
+ * @var array $configurables
+ * @var integer $sectionIndex
+ */
 use yii\bootstrap\Nav;
-$navItems = [];
+
+$navItems = \DevGroup\ExtensionsManager\ExtensionsManager::navLinks();
+$configItems = [];
 foreach ($configurables as $index => $item) {
     $navItem = [
         'label' => $item['sectionNameTranslated'],
@@ -14,8 +18,10 @@ foreach ($configurables as $index => $item) {
     if ($index === $sectionIndex) {
         $navItem['active'] = true;
     }
-    $navItems[] = $navItem;
-
+    $configItems[] = $navItem;
+}
+if (true === isset($navItems['config'])) {
+    $navItems['config']['items'] = $configItems;
 }
 ?>
 <div class="row">

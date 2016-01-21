@@ -29,6 +29,7 @@ class ExtensionDataHelper extends Component
 
     /**
      * @param array $data
+     * @param $key
      * @param bool $asArray
      * @return array
      */

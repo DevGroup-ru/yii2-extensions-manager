@@ -4,6 +4,7 @@ namespace DevGroup\ExtensionsManager;
 
 use DevGroup\DeferredTasks\commands\DeferredController;
 use DevGroup\ExtensionsManager\handlers\DeferredQueueCompleteHandler;
+use DevGroup\ExtensionsManager\models\Extension;
 use Yii;
 use yii\base\Application;
 use yii\base\BootstrapInterface;
@@ -17,16 +18,33 @@ use yii\base\Module;
  */
 class ExtensionsManager extends Module implements BootstrapInterface
 {
+    /**
+     * Set of constant listed below describes DeferredGroup. Using them we can define what kind of activity was performed.
+     * COMPOSER_INSTALL_DEFERRED_GROUP and COMPOSER_UNINSTALL_DEFERRED_GROUP are used in
+     * DeferredQueueCompleteHandler as identifiers to rewrite self::$extensionsStorage file after
+     * extension install or uninstall process.
+     */
     const COMPOSER_INSTALL_DEFERRED_GROUP = 'ext_manager_composer_install';
     const COMPOSER_UNINSTALL_DEFERRED_GROUP = 'ext_manager_composer_uninstall';
     const EXTENSION_ACTIVATE_DEFERRED_GROUP = 'ext_manager_extension_activate';
     const EXTENSION_DEACTIVATE_DEFERRED_GROUP = 'ext_manager_extension_deactivate';
+    const EXTENSION_DUMMY_DEFERRED_GROUP = 'ext_manager_dummy_report';
 
+    /**
+     * Next set of constants describes tasks what can be performed from front-end. All of this used as a data attributes
+     * in buttons markup and then in the ExtensionsController to define what task we need to do.
+     */
     const INSTALL_DEFERRED_TASK = 'install-def-task';
     const UNINSTALL_DEFERRED_TASK = 'uninstall-def-task';
     const ACTIVATE_DEFERRED_TASK = 'activate-def-task';
     const DEACTIVATE_DEFERRED_TASK = 'deactivate-def-task';
     const CHECK_UPDATES_DEFERRED_TASK = 'check-updates-def-task';
+
+    /**
+     * Migration directions used in the ExtensionsController
+     */
+    const MIGRATE_TYPE_DOWN = 'down';
+    const MIGRATE_TYPE_UP = 'up';
 
     /**
      * ConfigurationUpdater component is used for writing application configs.
@@ -103,24 +121,50 @@ class ExtensionsManager extends Module implements BootstrapInterface
             'class' => 'yii\i18n\PhpMessageSource',
             'basePath' => __DIR__ . DIRECTORY_SEPARATOR . 'messages',
         ];
-        //TODO rewrite event names to constants
         Event::on(DeferredController::className(),
-            'deferred-queue-complete',
+            DeferredController::EVENT_DEFERRED_QUEUE_COMPLETE,
             [DeferredQueueCompleteHandler::className(), 'handleEvent']
         );
     }
 
     /**
-     * @return array Returns array of extensions
+     * Returns Extension[] or one Extension array by package name found in self::$extensionsStorage.
+     *
+     * @param string $packageName
+     * @return Extension[] | Extension
      */
-    public function getExtensions()
+    public function getExtensions($packageName = '')
     {
         if (count($this->extensions) === 0) {
             $fileName = Yii::getAlias($this->extensionsStorage);
-            if (true === file_exists($fileName) && is_readable($fileName)) {
+            if (true === file_exists($fileName) && true === is_readable($fileName)) {
                 $this->extensions = include $fileName;
             }
         }
+        if (false === empty($packageName) && true === isset($this->extensions[$packageName])) {
+            return $this->extensions[$packageName];
+        }
         return $this->extensions;
+    }
+
+    /**
+     * @return array
+     */
+    public static function navLinks()
+    {
+        return $navItems = [
+            'index' => [
+                'label' => Yii::t('extensions-manager', 'Extensions'),
+                'url' => ['/extensions-manager/extensions/index'],
+            ],
+            'search' => [
+                'label' => Yii::t('extensions-manager', 'Search'),
+                'url' => ['/extensions-manager/extensions/search'],
+            ],
+            'config' => [
+                'label' => Yii::t('extensions-manager', 'Configuration'),
+                'url' => ['config', 'sectionIndex' => 0],
+            ],
+        ];
     }
 }

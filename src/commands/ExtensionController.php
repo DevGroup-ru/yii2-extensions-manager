@@ -3,7 +3,9 @@ namespace DevGroup\ExtensionsManager\commands;
 
 use DevGroup\ExtensionsManager\ExtensionsManager;
 use DevGroup\ExtensionsManager\helpers\ApplicationConfigWriter;
+use DevGroup\ExtensionsManager\helpers\ConfigurationUpdater;
 use yii\console\Controller;
+use Symfony\Component\Process\ProcessBuilder;
 use Yii;
 
 class ExtensionController extends Controller
@@ -24,47 +26,64 @@ class ExtensionController extends Controller
     }
 
     /**
-     * Activates Extension
-     * @param $packageName
-     * @param $statusCode
+     * Starts extension activation process
+     *
+     * @param string $packageName
      * @return bool|int
      */
-    public function actionMarkActive($packageName, $statusCode)
+    public function actionActivate($packageName)
     {
-        if (0 == $statusCode) {
-            if (true === isset($this->extensions[$packageName]['is_active'])) {
-                $this->extensions[$packageName]['is_active'] = 1;
-                $this->writeConfig();
-            } else {
-                return $this->stdout(Yii::t('extensions-manager', 'You trying to activate not existing extension!') . PHP_EOL);
-            }
-        } else {
-            return $this->stdout(
-                Yii::t('extensions-manager', 'If you see this, migrations fails and extension could not be activated.') . PHP_EOL
-            );
-        }
+        return self::process($packageName, 1);
     }
 
     /**
-     * Deactivates Extension
-     * @param $packageName
-     * @param $statusCode
+     * Starts extension deactivation process
+     *
+     * @param string $packageName
      * @return bool|int
      */
-    public function actionMarkInactive($packageName, $statusCode)
+    public function actionDeactivate($packageName)
     {
-        if (0 == $statusCode) {
-            if (true === isset($this->extensions[$packageName]['is_active'])) {
-                $this->extensions[$packageName]['is_active'] = 0;
-                $this->writeConfig();
+        return self::process($packageName, 0);
+    }
+
+    /**
+     * Shows given message in reporting window
+     *
+     * @param string $message
+     */
+    public function actionDummy($message)
+    {
+        $this->stdout($message . PHP_EOL);
+        return;
+    }
+
+    /**
+     * Activates/Deactivates Extension
+     *
+     * @param $packageName
+     * @param integer $state
+     * @return bool
+     */
+    private function process($packageName, $state = 1)
+    {
+        if (true === isset($this->extensions[$packageName]['is_active'])) {
+            $actionText = 0 == $state
+                ? Yii::t('extensions-manager', 'deactivated')
+                : Yii::t('extensions-manager', 'activated');
+            $this->extensions[$packageName]['is_active'] = $state;
+            if (true === $this->writeConfig()) {
+                $this->stdout(Yii::t('extensions-manager', 'Extension successfully {actionText}.', [
+                        'actionText' => $actionText,
+                    ]) . PHP_EOL);
+                return true;
             } else {
-                return $this->stdout(Yii::t('extensions-manager', 'You trying to deactivate not existing extension!') . PHP_EOL);
+                $this->stdout(Yii::t('extensions-manager', 'Unable to write config file.') . PHP_EOL);
             }
         } else {
-            return $this->stdout(
-                Yii::t('extensions-manager', 'If you see this, migrations fails and extension could not be activated.') . PHP_EOL
-            );
+            $this->stdout(Yii::t('extensions-manager', 'You trying to activate not existing extension!') . PHP_EOL);
         }
+        return false;
     }
 
     /**
@@ -77,6 +96,12 @@ class ExtensionController extends Controller
             'filename' => $fileName,
         ]);
         $writer->addValues($this->extensions);
-        $writer->commit();
+        if (true === (new ConfigurationUpdater())->updateConfiguration(false)) {
+            $this->stdout(Yii::t('extensions-manager', 'Application configuration successfully updated.') . PHP_EOL);
+            return $writer->commit();
+        } else {
+            $this->stdout(Yii::t('extensions-manager', 'Application configuration update error.') . PHP_EOL);
+        }
+        return false;
     }
 }

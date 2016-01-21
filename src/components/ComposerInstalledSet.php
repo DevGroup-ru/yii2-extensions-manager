@@ -12,7 +12,7 @@ class ComposerInstalledSet
     private static $instance;
 
     /**
-     *
+     * @inheritdoc
      */
     private function __construct()
     {
@@ -47,8 +47,8 @@ class ComposerInstalledSet
      * @return array
      */
     public function getInstalled($name = ''){
-        if (false === empty($name) && true === isset($this->set[$name])) {
-            return $this->set[$name];
+        if (false === empty($name)) {
+            return true === isset($this->set[$name]) ? $this->set[$name] : [];
         }
         return $this->set;
     }
