@@ -14,35 +14,49 @@ use DevGroup\ExtensionsManager\models\Extension;
 \DevGroup\DeferredTasks\assets\AdminBundle::register($this);
 
 $sortBy = [];
+$gridTpl = <<<TPL
+<div class="panel-body">
+    {items}
+</div>
+<div class="panel-footer">
+    <div class="row ext-bottom">
+        <div class="col-sm-5">
+            {summary}
+        </div>
+        <div class="col-sm-7">
+            {pager}
+        </div>
+    </div>
+</div>
+TPL;
 ?>
 <div class="row">
     <div class="col-md-3">
-        <div class="box box-solid configuration-navigation">
-            <div class="box-header with-border">
-                <h3 class="box-title">
+        <div class="panel panel-default configuration-navigation">
+            <div class="panel-heading">
+                <h3 class="panel-title">
                     <i class="fa fa-list-alt"></i>
                     <?= Yii::t('extensions-manager', 'Extensions manager') ?>
                 </h3>
             </div>
-            <div class="box-body no-padding">
+            <div class="panel-body">
                 <?=
                 \yii\bootstrap\Nav::widget([
                     'items' => ExtensionsManager::navLinks(),
                     'options' => [
                         'class' => 'nav-pills nav-stacked',
                     ],
-                ])
-                ?>
+                ]) ?>
             </div>
         </div>
     </div>
-    <div class="col-md-9"
-    <section>
-        <div class="extensions-controller__search-extensions box">
-            <div class="box-header">
-                <h3 class="box-title"><?= Yii::t('extensions-manager', 'Extensions search') ?></h3>
-
-                <div class="box-tools">
+    <div class="col-md-9">
+        <div class="extensions-controller__search-extensions panel panel-default">
+            <div class="panel-heading clearfix">
+                <h3 class="panel-title pull-left">
+                    <?= Yii::t('extensions-manager', 'Extensions search') ?>
+                </h3>
+                <div class="pull-right">
                     <?= Html::beginForm(['/extensions-manager/extensions/search'], 'GET', ['class' => 'form-inline']) ?>
                     <div class="form-group">
                         <?= Html::dropDownList('sort', Yii::$app->request->get('sort'), $sortBy,
@@ -71,9 +85,14 @@ $sortBy = [];
             <?= GridView::widget([
                 'id' => 'ext-search-list',
                 'dataProvider' => $dataProvider,
-                'layout' => "{items}\n{summary}\n{pager}",
+                'layout' => $gridTpl,
                 'tableOptions' => [
-                    'class' => 'table table-bordered table-hover dataTable',
+                    'class' => 'table table-bordered table-hover table-responsive',
+                ],
+                'pager' => [
+                    'options' => [
+                        'class' => 'pagination pull-right',
+                    ]
                 ],
                 'columns' => [
                     [
@@ -116,6 +135,5 @@ $sortBy = [];
                 ],
             ]) ?>
         </div>
-    </section>
-</div>
+    </div>
 </div>

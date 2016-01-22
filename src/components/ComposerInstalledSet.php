@@ -6,6 +6,12 @@ use DevGroup\ExtensionsManager\models\Extension;
 use Yii;
 use yii\helpers\Json;
 
+/**
+ * Gets and returns array of compatible extensions from composer/installed.json
+ *
+ * Class ComposerInstalledSet
+ * @package DevGroup\ExtensionsManager\components
+ */
 class ComposerInstalledSet
 {
     private $set = [];

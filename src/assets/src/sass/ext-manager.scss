@@ -1,0 +1,28 @@
+.panel-heading {
+  &.ext-list-description {
+    a {
+      &:after {
+        font-family: 'Glyphicons Halflings';
+        content: "\e114";
+        float: right;
+      }
+      &.collapsed {
+        &:after {
+          content: "\e080";
+        }
+      }
+    }
+  }
+}
+.ext-bottom{
+  .summary{
+    margin: 10px 0 0 0;
+  }
+  .pagination{
+    margin: 0;
+  }
+}
+.ext-limited{
+  max-height: 250px;
+  overflow-y: scroll;
+}

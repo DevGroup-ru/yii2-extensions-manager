@@ -14,7 +14,7 @@ class AdminBundle extends AssetBundle
     ];
 
     public $css = [
-        'styles/ext-manager.css',
+        'css/ext-manager.css',
     ];
 
     public static function register($view)

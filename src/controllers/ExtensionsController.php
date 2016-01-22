@@ -53,6 +53,9 @@ class ExtensionsController extends BaseController
             [
                 'dataProvider' => new ArrayDataProvider([
                     'allModels' => $extensions,
+                    'sort' => [
+                        'attributes' => ['composer_name', 'composer_type', 'is_active'],
+                    ],
                     'pagination' => [
                         'defaultPageSize' => 10,
                         'pageSize' => self::module()->extensionsPerPage,
@@ -77,6 +80,7 @@ class ExtensionsController extends BaseController
     public function actionSearch($sort = '', $type = Extension::TYPE_DOTPLANT, $query = '')
     {
         $packagist = self::getPackagist();
+        $type = empty($type) ? Extension::TYPE_DOTPLANT : $type;
         $filters = ['type' => $type];
         if (1 === preg_match('{([\\\\/])}', $query, $m)) {
             $queryArray = explode($m[0], $query);
@@ -422,19 +426,24 @@ class ExtensionsController extends BaseController
      */
     private static function buildTask($command, $groupName)
     {
+        $groupConfig = [
+            'email_notification' => 0,
+            'allow_parallel_run' => 0,
+            'group_notifications' => 0,
+            'run_last_command_only' => 0,
+        ];
         if (null === $group = DeferredGroup::findOne(['name' => $groupName])) {
             $group = new DeferredGroup();
             $group->loadDefaultValues();
+            $group->setAttributes($groupConfig);
             $group->name = $groupName;
-            $group->email_notification = 0;
-            $group->group_notifications = 0;
             $group->save();
         }
         if (intval($group->group_notifications) != 0) {
             // otherwise DeferredController 'deferred-queue-complete' event will not trigger
             // and we'll unable to write config
-            $group->group_notifications = 0;
-            $group->save(['group_notifications']);
+            $group->setAttributes($groupConfig);
+            $group->save(array_keys($groupConfig));
         }
         $task = new ReportingTask();
         $task->model()->deferred_group_id = $group->id;

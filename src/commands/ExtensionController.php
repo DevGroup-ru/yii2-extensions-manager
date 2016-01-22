@@ -51,11 +51,12 @@ class ExtensionController extends Controller
      * Shows given message in reporting window
      *
      * @param string $message
+     * @return int
      */
     public function actionDummy($message)
     {
         $this->stdout($message . PHP_EOL);
-        return;
+        return 0;
     }
 
     /**
@@ -76,14 +77,15 @@ class ExtensionController extends Controller
                 $this->stdout(Yii::t('extensions-manager', 'Extension successfully {actionText}.', [
                         'actionText' => $actionText,
                     ]) . PHP_EOL);
-                return true;
+                //this means successfully termination. Because process starts in command line shell
+                return 0;
             } else {
                 $this->stdout(Yii::t('extensions-manager', 'Unable to write config file.') . PHP_EOL);
             }
         } else {
             $this->stdout(Yii::t('extensions-manager', 'You trying to activate not existing extension!') . PHP_EOL);
         }
-        return false;
+        return 1;
     }
 
     /**
@@ -98,7 +100,8 @@ class ExtensionController extends Controller
         $writer->addValues($this->extensions);
         if (true === (new ConfigurationUpdater())->updateConfiguration(false)) {
             $this->stdout(Yii::t('extensions-manager', 'Application configuration successfully updated.') . PHP_EOL);
-            return $writer->commit();
+            $writer->commit();
+            return true;
         } else {
             $this->stdout(Yii::t('extensions-manager', 'Application configuration update error.') . PHP_EOL);
         }

@@ -85,8 +85,8 @@ class ConfigurationIndex extends TabbedFormCombinedAction
 
     public function sectionLinks()
     {
-        $navItems = [];
-
+        $navItems = ExtensionsManager::navLinks();
+        $configItems = [];
         foreach ($this->configurables as $index => $item) {
             $navItem = [
                 'label' => $item['sectionNameTranslated'],
@@ -95,8 +95,11 @@ class ConfigurationIndex extends TabbedFormCombinedAction
             if ($index === $this->sectionIndex) {
                 $navItem['active'] = true;
             }
-            $navItems[] = $navItem;
+            $configItems[] = $navItem;
 
+        }
+        if (true === isset($navItems['config'])) {
+            $navItems['config']['items'] = $configItems;
         }
         return $navItems;
     }

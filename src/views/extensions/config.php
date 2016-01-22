@@ -7,7 +7,6 @@
  * @var integer $sectionIndex
  */
 use yii\bootstrap\Nav;
-
 $navItems = \DevGroup\ExtensionsManager\ExtensionsManager::navLinks();
 $configItems = [];
 foreach ($configurables as $index => $item) {
@@ -20,9 +19,7 @@ foreach ($configurables as $index => $item) {
     }
     $configItems[] = $navItem;
 }
-if (true === isset($navItems['config'])) {
-    $navItems['config']['items'] = $configItems;
-}
+
 ?>
 <div class="row">
     <div class="col-md-3">

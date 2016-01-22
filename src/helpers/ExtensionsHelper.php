@@ -2,17 +2,15 @@
 
 namespace DevGroup\ExtensionsManager\helpers;
 
+use DevGroup\ExtensionsManager\components\ComposerInstalledSet;
 use Yii;
 use yii\helpers\ArrayHelper;
-use yii\helpers\Json;
 
 class ExtensionsHelper
 {
     public static function getConfigurables()
     {
-        $vendorsInstalledFile = Yii::getAlias('@vendor/composer/installed.json');
-        $installed = Json::decode(file_get_contents($vendorsInstalledFile));
-
+        $installed = ComposerInstalledSet::get()->getInstalled();
         $configurables = [];
         foreach ($installed as $package) {
             $packageConfigurablesFile = ArrayHelper::getValue($package, 'extra.configurables', null);

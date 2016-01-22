@@ -2,7 +2,7 @@ const gulp = require('gulp');
 const sass = require('gulp-sass');
 
 gulp.task('styles', function() {
-    return gulp.src('css/ext-manager.css')
+    return gulp.src('sass/ext-manager.scss')
       .pipe(sass().on('error', sass.logError))
       .pipe(gulp.dest('../dist/css'))
 });
