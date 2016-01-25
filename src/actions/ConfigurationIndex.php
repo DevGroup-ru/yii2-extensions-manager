@@ -9,6 +9,7 @@ use DevGroup\ExtensionsManager\models\BaseConfigurationModel;
 use Yii;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
+use yii\helpers\VarDumper;
 
 class ConfigurationIndex extends TabbedFormCombinedAction
 {
@@ -37,18 +38,20 @@ class ConfigurationIndex extends TabbedFormCombinedAction
     {
         parent::beforeActionRun();
 
-        $this->configurables = ExtensionsHelper::getConfigurables();
-
+        $this->configurables = ExtensionsHelper::getConfigurables(true);
         $this->sectionIndex = Yii::$app->request->get('sectionIndex', 0);
         if (isset($this->configurables[$this->sectionIndex]) === false) {
             $this->sectionIndex = 0;
         }
         $this->sectionIndex = intval($this->sectionIndex);
 
-        $this->currentConfigurable = $this->configurables[$this->sectionIndex];
-
-        $this->currentConfigurationModel = ArrayHelper::getValue($this->currentConfigurable, 'configurationModel');
-        $this->currentConfigurationView = ArrayHelper::getValue($this->currentConfigurable, 'configurationView');
+        $this->currentConfigurable = isset($this->configurables[$this->sectionIndex])
+            ? $this->configurables[$this->sectionIndex]
+            : null;
+        if (null !== $this->currentConfigurable) {
+            $this->currentConfigurationModel = ArrayHelper::getValue($this->currentConfigurable, 'configurationModel');
+            $this->currentConfigurationView = ArrayHelper::getValue($this->currentConfigurable, 'configurationView');
+        }
         if ($this->currentConfigurationView !== null && $this->currentConfigurationModel !== null) {
             $this->isValidSection = true;
             $this->currentConfigurationView = '@vendor/'
@@ -59,6 +62,8 @@ class ConfigurationIndex extends TabbedFormCombinedAction
             $module = Yii::$app->getModule('extensions-manager');
             $configurablesStatePath = $module->configurationUpdater->configurablesStatePath;
             $this->model->loadState($configurablesStatePath);
+        } else {
+            $this->currentConfigurationView = '_default_configuraton.php';
         }
     }
 
@@ -76,7 +81,9 @@ class ConfigurationIndex extends TabbedFormCombinedAction
             ],
             'renderSectionForm' => [
                 'function' => 'renderSectionForm',
-                'title' => $this->currentConfigurable['sectionNameTranslated'],
+                'title' => empty($this->currentConfigurable['sectionNameTranslated'])
+                    ? Yii::t('extensions-manager', 'Nothing to configure')
+                    : $this->currentConfigurable['sectionNameTranslated'],
                 'icon' => 'fa fa-cogs',
                 'footer' => $this->getFooter(),
             ],
@@ -134,15 +141,13 @@ class ConfigurationIndex extends TabbedFormCombinedAction
 
     public function getFooter()
     {
-        return Html::submitButton(
-            '<i class="fa fa-floppy-o"></i>&nbsp;' .
-            (
-            Yii::t('app', 'Save')
-            ),
-            [
-                'class' => 'btn btn-primary pull-right',
-            ]
-        );
+        return (null === $this->currentConfigurable)
+            ? ''
+            : Html::submitButton(
+                '<i class="fa fa-floppy-o"></i>&nbsp;' .
+                (Yii::t('app', 'Save')),
+                ['class' => 'btn btn-primary pull-right']
+            );
     }
 
     public function breadcrumbs()

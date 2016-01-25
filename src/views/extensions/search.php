@@ -29,6 +29,8 @@ $gridTpl = <<<TPL
     </div>
 </div>
 TPL;
+$this->title = Yii::t('extensions-manager', 'Extensions search');
+$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="row">
     <div class="col-md-3">
@@ -96,7 +98,7 @@ TPL;
                 ],
                 'columns' => [
                     [
-                        'label' => Yii::t('extensions-manager', 'Packet name'),
+                        'label' => Yii::t('extensions-manager', 'Package name'),
                         'content' => function ($data) {
                             return $data->getName();
                         },

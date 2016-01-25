@@ -41,11 +41,8 @@
         "yii2-extension": {
             "name": "Extensions manager",
             "name_ru": "Менеджер расширений",
-            "description_ru": "Управляйте и устанавливайте свои расширения для yii2 прямо в браузере!"
+            "description_ru": "Управляйте расширениями для Yii2 и DotPlant прямо в браузере!"
         },
-        "migrationPath": [
-            "src/migrations"
-        ],
         "configurables": "src/configurables.php",
         "translationCategory": "extensions-manager",
         "bootstrap": "DevGroup\\ExtensionsManager\\Bootstrap"

@@ -3,7 +3,6 @@ namespace DevGroup\ExtensionsManager\commands;
 
 use DevGroup\ExtensionsManager\ExtensionsManager;
 use DevGroup\ExtensionsManager\helpers\ApplicationConfigWriter;
-use DevGroup\ExtensionsManager\helpers\ConfigurationUpdater;
 use yii\console\Controller;
 use Symfony\Component\Process\ProcessBuilder;
 use Yii;
@@ -79,8 +78,6 @@ class ExtensionController extends Controller
                     ]) . PHP_EOL);
                 //this means successfully termination. Because process starts in command line shell
                 return 0;
-            } else {
-                $this->stdout(Yii::t('extensions-manager', 'Unable to write config file.') . PHP_EOL);
             }
         } else {
             $this->stdout(Yii::t('extensions-manager', 'You trying to activate not existing extension!') . PHP_EOL);
@@ -98,12 +95,19 @@ class ExtensionController extends Controller
             'filename' => $fileName,
         ]);
         $writer->addValues($this->extensions);
-        if (true === (new ConfigurationUpdater())->updateConfiguration(false)) {
-            $this->stdout(Yii::t('extensions-manager', 'Application configuration successfully updated.') . PHP_EOL);
-            $writer->commit();
-            return true;
+
+        if (true === $writer->commit()) {
+            $this->module->getExtensions();
+            $this->stdout(Yii::t('extensions-manager', 'Extensions configuration successfully updated.') . PHP_EOL);
+            if (true === $this->module->configurationUpdater->updateConfiguration(false, false)) {
+                $this->stdout(Yii::t('extensions-manager', 'Application configuration successfully updated.') . PHP_EOL);
+                return true;
+            } else {
+                $this->stdout(Yii::t('extensions-manager', 'Application configuration update error.') . PHP_EOL);
+                return false;
+            }
         } else {
-            $this->stdout(Yii::t('extensions-manager', 'Application configuration update error.') . PHP_EOL);
+            $this->stdout(Yii::t('extensions-manager', 'There was an error while updating extensions configuration file.') . PHP_EOL);
         }
         return false;
     }

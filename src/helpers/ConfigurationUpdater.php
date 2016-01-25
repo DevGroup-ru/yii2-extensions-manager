@@ -3,6 +3,7 @@
 namespace DevGroup\ExtensionsManager\helpers;
 
 use DevGroup\ExtensionsManager\components\ConfigurationSaveEvent;
+use DevGroup\ExtensionsManager\ExtensionsManager;
 use DevGroup\ExtensionsManager\models\BaseConfigurationModel;
 use Yii;
 use yii\base\Component;
@@ -59,10 +60,11 @@ class ConfigurationUpdater extends Component
     /**
      * Returns configurables sections.
      * Loads them from files if not loaded.
+     * @param bool $ignoreCache
      */
-    protected function getConfigurables()
+    protected function getConfigurables($ignoreCache = false)
     {
-        if (count($this->configurables) === 0) {
+        if (count($this->configurables) === 0 || true === $ignoreCache) {
             $this->configurables = ExtensionsHelper::getConfigurables();
         }
     }
@@ -71,19 +73,25 @@ class ConfigurationUpdater extends Component
      * Updates all application configurations
      *
      * @param bool $usePostData Should we populate all configurationModels with user-data
+     * @param bool $loadCurrent if true current states will be loaded and merged with newly created model
+     * otherwise configs will be just overwritten with data loaded from post if $usePostData === true
      * @return bool true if all is ok
+     * @throws \yii\base\InvalidConfigException
      */
-    public function updateConfiguration($usePostData = true)
+    public function updateConfiguration($usePostData = true, $loadCurrent = true)
     {
         /** @var ApplicationConfigWriter[] $configWriters */
         $configWriters = [];
         foreach ($this->configs as $filename => $functionName) {
+            $file = $this->generatedConfigsPath . $filename . '.php';
             $configWriters[$filename] = new ApplicationConfigWriter([
-                'filename' => $this->generatedConfigsPath . $filename . '.php',
+                'filename' => $file,
             ]);
+            if (true === $loadCurrent) {
+                $configWriters[$filename]->addValues(self::loadCurrentConfig($file));
+            }
         }
-        $this->getConfigurables();
-
+        $this->getConfigurables(true);
         $isValid = true;
         $errorSection = '';
 
@@ -93,7 +101,14 @@ class ConfigurationUpdater extends Component
             }
             /** @var BaseConfigurationModel $configurationModel */
             $configurationModel = new $configurable['configurationModel'];
-            $configurationModel->loadState($this->configurablesStatePath);
+            /** @var ExtensionsManager $manager */
+            $manager = Yii::$app->getModule('extensions-manager');
+            if (false === $manager->extensionIsActive($configurable['package'])) {
+                $configurationModel->deleteFromState($this->configurablesStatePath);
+                continue;
+            } else {
+                $configurationModel->loadState($this->configurablesStatePath);
+            }
             $dataOk = true;
             if ($usePostData === true) {
                 $dataOk = $configurationModel->load(Yii::$app->request->post());
@@ -168,4 +183,21 @@ class ConfigurationUpdater extends Component
         }
         return $isValid;
     }
+
+    /**
+     * Loads and returns current config state
+     * @param string $filename
+     * @return array
+     */
+    public static function loadCurrentConfig($filename)
+    {
+        $filename = Yii::getAlias($filename);
+        $currentConfig = [];
+        if (true === file_exists($filename) && true === is_readable($filename)) {
+            $currentConfig = include $filename;
+        }
+        return $currentConfig;
+    }
+
+
 }

@@ -312,7 +312,9 @@ class ExtensionsController extends BaseController
                 [
                     realpath(Yii::getAlias('@app') . '/yii'),
                     'extension/dummy',
-                    Yii::t('extensions-manager', 'Extension already deactivated!')
+                    Yii::t('extensions-manager', 'Extension already {actionName}!',
+                        ['actionName' => Yii::t('extensions-manager', 'deactivated')]
+                    )
                 ],
                 ExtensionsManager::EXTENSION_DUMMY_DEFERRED_GROUP
             );
@@ -335,7 +337,7 @@ class ExtensionsController extends BaseController
                 ExtensionsManager::MIGRATE_TYPE_UP,
                 ExtensionsManager::EXTENSION_ACTIVATE_DEFERRED_GROUP
             );
-            $deactivationTask = self::buildTask(
+            $activationTask = self::buildTask(
                 [
                     realpath(Yii::getAlias('@app') . '/yii'),
                     'extension/activate',
@@ -343,13 +345,15 @@ class ExtensionsController extends BaseController
                 ],
                 ExtensionsManager::EXTENSION_ACTIVATE_DEFERRED_GROUP
             );
-            $chain->addTask($deactivationTask);
+            $chain->addTask($activationTask);
         } else {
             $dummyTask = self::buildTask(
                 [
                     realpath(Yii::getAlias('@app') . '/yii'),
                     'extension/dummy',
-                    Yii::t('extensions-manager', 'Extension already activated!')
+                    Yii::t('extensions-manager', 'Extension already {actionName}!',
+                        ['actionName' => Yii::t('extensions-manager', 'activated')]
+                    )
                 ],
                 ExtensionsManager::EXTENSION_DUMMY_DEFERRED_GROUP
             );
@@ -365,18 +369,30 @@ class ExtensionsController extends BaseController
      */
     private static function uninstall($extension, ReportingChain $chain)
     {
-        self::deactivate($extension, $chain);
+        if (true === self::module()->extensionIsCore($extension['composer_name'])) {
+            $dummyTask = self::buildTask(
+                [
+                    realpath(Yii::getAlias('@app') . '/yii'),
+                    'extension/dummy',
+                    Yii::t('extensions-manager', 'You are unable to uninstall core extensions!')
+                ],
+                ExtensionsManager::EXTENSION_DUMMY_DEFERRED_GROUP
+            );
+            $chain->addTask($dummyTask);
+        } else {
+            self::deactivate($extension, $chain);
 
-        $uninstallTask = self::buildTask(
-            [
-                './composer.phar',
-                'remove',
-                $extension['composer_name'],
-                '--update-with-dependencies',
-            ],
-            ExtensionsManager::COMPOSER_UNINSTALL_DEFERRED_GROUP
-        );
-        $chain->addTask($uninstallTask);
+            $uninstallTask = self::buildTask(
+                [
+                    './composer.phar',
+                    'remove',
+                    $extension['composer_name'],
+                    '--update-with-dependencies',
+                ],
+                ExtensionsManager::COMPOSER_UNINSTALL_DEFERRED_GROUP
+            );
+            $chain->addTask($uninstallTask);
+        }
     }
 
     /**

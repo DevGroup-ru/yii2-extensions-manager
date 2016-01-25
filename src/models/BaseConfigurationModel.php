@@ -91,6 +91,14 @@ abstract class BaseConfigurationModel extends DynamicModel
         }
     }
 
+    public function deleteFromState($statePath)
+    {
+        $filename = Yii::getAlias($statePath . $this->stateFilename() . '.php');
+        if (true === is_readable($filename)) {
+            return unlink($filename);
+        }
+        return false;
+    }
     /**
      * Saves state to file
      * @param string $statePath Path where model state files are stored.

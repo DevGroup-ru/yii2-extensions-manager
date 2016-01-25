@@ -45,6 +45,8 @@ $gridTpl = <<<TPL
 TPL;
 
 $composerSet = ComposerInstalledSet::get();
+$this->title = Yii::t('extensions-manager', 'Installed extensions');
+$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="row">
     <div class="col-md-3">
@@ -68,13 +70,16 @@ $composerSet = ComposerInstalledSet::get();
         </div>
     </div>
     <div class="col-md-9">
+        <div class="extensions-controller__list-extensions panel panel-default">
+            <div class="panel-heading clearfix">
+                <h3 class="panel-title pull-left">
+                    <?= Yii::t('extensions-manager', 'Installed extensions') ?>
+                </h3>
+            </div>
         <?= GridView::widget([
             'id' => 'extensions-list',
             'dataProvider' => $dataProvider,
             'layout' => $gridTpl,
-            'options' => [
-                'class' => 'extensions-controller__list-extensions panel panel-default',
-            ],
             'tableOptions' => [
                 'class' => 'table table-bordered table-hover table-responsive',
             ],
@@ -180,5 +185,6 @@ $composerSet = ComposerInstalledSet::get();
                 ]
             ],
         ]) ?>
+        </div>
     </div>
 </div>

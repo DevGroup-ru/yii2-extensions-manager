@@ -131,11 +131,12 @@ class ExtensionsManager extends Module implements BootstrapInterface
      * Returns Extension[] or one Extension array by package name found in self::$extensionsStorage.
      *
      * @param string $packageName
-     * @return Extension[] | Extension
+     * @param bool $ignoreCache
+     * @return Extension|models\Extension[]
      */
-    public function getExtensions($packageName = '')
+    public function getExtensions($packageName = '', $ignoreCache = false)
     {
-        if (count($this->extensions) === 0) {
+        if (count($this->extensions) === 0 || true === $ignoreCache) {
             $fileName = Yii::getAlias($this->extensionsStorage);
             if (true === file_exists($fileName) && true === is_readable($fileName)) {
                 $this->extensions = include $fileName;
@@ -145,6 +146,32 @@ class ExtensionsManager extends Module implements BootstrapInterface
             return $this->extensions[$packageName];
         }
         return $this->extensions;
+    }
+
+    /**
+     * @param string $packageName
+     * @return bool
+     */
+    public function extensionIsActive($packageName)
+    {
+        $ext = $this->getExtensions($packageName, true);
+        if (true === isset($ext['is_active'])) {
+            return 1 == $ext['is_active'];
+        }
+        return false;
+    }
+
+    /**
+     * @param string $packageName
+     * @return bool
+     */
+    public function extensionIsCore($packageName)
+    {
+        $ext = $this->getExtensions($packageName);
+        if (true === isset($ext['is_core'])) {
+            return 1 == $ext['is_core'];
+        }
+        return false;
     }
 
     /**
