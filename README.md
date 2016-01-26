@@ -1,9 +1,37 @@
-# yii2-extensions-manager
+yii2-extensions-manager
+==========================
+Extension that allows you to install, uninstall, activate and deactivate Yii2 or DotPlant extensions right through your web browser.
 
-Manage and install your yii2 extensions in browser!
+## Installation
 
-**WARNING** This package is in development stage - do NOT use it in production.
+The preferred way to install this extension is through [composer](http://getcomposer.org/download/).
 
-## Documentation
+Either run
 
-[Specification](docs/Specification_RU.md) - :ru: specification for this package.
+```
+php composer.phar require --prefer-dist devgroup/yii2-extensions-manager "*"
+```
+
+or add
+
+```
+"devgroup/yii2-extensions-manager": "*"
+```
+## Module
+The extension has been created as a module. To enable access to all features you should configure the module with a name of `extensions-manager` as shown below:
+```php
+'modules' => [
+   'extensions-manager' => [
+            'class' => 'DevGroup\ExtensionsManager\ExtensionsManager',
+        ],
+],
+```
+**WARNING**
+> Extension is now on the development stage. 
+> You can use it at your own risk.
+## Requirements
+TBD
+## Usage
+TBD
+## License
+TBD
