@@ -29,6 +29,7 @@ The extension has been created as a module. To enable access to all features you
 **WARNING**
 > Extension is now on the development stage. 
 > You can use it at your own risk.
+
 ## Requirements
 TBD
 ## Usage

@@ -67,10 +67,10 @@ class ExtensionController extends Controller
      */
     private function process($packageName, $state = 1)
     {
+        $actionText = 0 == $state
+            ? 'deactivated'
+            : 'activated';
         if (true === isset($this->extensions[$packageName]['is_active'])) {
-            $actionText = 0 == $state
-                ? 'deactivated'
-                : 'activated';
             $this->extensions[$packageName]['is_active'] = $state;
             if (true === $this->writeConfig()) {
                 $this->stdout(str_replace('{actionText}', $actionText, 'Extension successfully {actionText}.') . PHP_EOL);
@@ -78,7 +78,7 @@ class ExtensionController extends Controller
                 return 0;
             }
         } else {
-            $this->stdout('You trying to activate not existing extension!' . PHP_EOL);
+            $this->stdout(str_replace('{actionText}', $actionText, 'You trying to {actionText} not existing extension!') . PHP_EOL);
         }
         return 1;
     }
@@ -95,7 +95,6 @@ class ExtensionController extends Controller
         $writer->addValues($this->extensions);
 
         if (true === $writer->commit()) {
-            $this->module->getExtensions();
             $this->stdout('Extensions configuration successfully updated.' . PHP_EOL);
             if (true === $this->module->configurationUpdater->updateConfiguration(false, false)) {
                 $this->stdout('Application configuration successfully updated.' . PHP_EOL);
