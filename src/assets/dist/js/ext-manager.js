@@ -1,7 +1,8 @@
 "use strict";
 window.ExtensionsManager = window.ExtensionsManager || {};
 (function ($) {
-    var $extList = $('#ext-search-list, #extensions-list'),
+    var $root = $('html, body'),
+        $extList = $('#ext-search-list, #extensions-list'),
         $detailsButton = $('[data-action="ext-info"]', $extList),
         runDeferredTaskButtonSelector = '[data-action="run-ext-task"]';
 
@@ -50,8 +51,23 @@ window.ExtensionsManager = window.ExtensionsManager || {};
                 "taskType" : taskType
             },
             'POST',
-            {'endpoint':  window.ExtensionsManager.endpointUrl}
+            {
+                'endpoint':  window.ExtensionsManager.endpointUrl,
+                'afterCallback' : function (element, status) {
+                    if (4 == status) {
+                        var button = '<div class="modal-footer"><button data-action="ext-done-refresh" class="btn btn-success pull-right">'
+                            + window.ExtensionsManager.buttonText
+                            + '</button></div>';
+                        element.parents('.modal-body').after(button);
+                    }
+                }
+            }
         );
+        return false;
+    });
+
+    $root.on('click', '[data-action="ext-done-refresh"]', function() {
+        window.location = window.location.href;
         return false;
     });
 

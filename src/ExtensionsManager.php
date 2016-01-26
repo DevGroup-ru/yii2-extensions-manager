@@ -2,13 +2,8 @@
 
 namespace DevGroup\ExtensionsManager;
 
-use DevGroup\DeferredTasks\commands\DeferredController;
-use DevGroup\ExtensionsManager\handlers\DeferredQueueCompleteHandler;
 use DevGroup\ExtensionsManager\models\Extension;
 use Yii;
-use yii\base\Application;
-use yii\base\BootstrapInterface;
-use yii\base\Event;
 use yii\base\Module;
 
 /**
@@ -16,7 +11,7 @@ use yii\base\Module;
  *
  * @package DevGroup\ExtensionsManager
  */
-class ExtensionsManager extends Module implements BootstrapInterface
+class ExtensionsManager extends Module
 {
     /**
      * Set of constant listed below describes DeferredGroup. Using them we can define what kind of activity was performed.
@@ -108,23 +103,6 @@ class ExtensionsManager extends Module implements BootstrapInterface
     {
         parent::init();
         $this->configurationUpdater = Yii::createObject($this->configurationUpdater);
-    }
-
-    /**
-     * Bootstrap method to be called during application bootstrap stage.
-     *
-     * @param Application $app the application currently running
-     */
-    public function bootstrap($app)
-    {
-        $app->i18n->translations['extensions-manager'] = [
-            'class' => 'yii\i18n\PhpMessageSource',
-            'basePath' => __DIR__ . DIRECTORY_SEPARATOR . 'messages',
-        ];
-        Event::on(DeferredController::className(),
-            DeferredController::EVENT_DEFERRED_QUEUE_COMPLETE,
-            [DeferredQueueCompleteHandler::className(), 'handleEvent']
-        );
     }
 
     /**

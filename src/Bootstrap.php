@@ -2,11 +2,13 @@
 
 namespace DevGroup\ExtensionsManager;
 
+use DevGroup\DeferredTasks\events\DeferredQueueEvent;
 use Yii;
 use yii\base\Application;
 use yii\base\BootstrapInterface;
-use yii\helpers\ArrayHelper;
-use yii\helpers\Json;
+use DevGroup\DeferredTasks\commands\DeferredController;
+use DevGroup\ExtensionsManager\commands\ExtensionController;
+use DevGroup\ExtensionsManager\handlers\DeferredQueueCompleteHandler;
 
 class Bootstrap implements BootstrapInterface
 {
@@ -17,22 +19,16 @@ class Bootstrap implements BootstrapInterface
      */
     public function bootstrap($app)
     {
+        $app->i18n->translations['extensions-manager'] = [
+            'class' => 'yii\i18n\PhpMessageSource',
+            'basePath' => __DIR__ . DIRECTORY_SEPARATOR . 'messages',
+        ];
+        DeferredQueueEvent::on(DeferredController::className(),
+            DeferredController::EVENT_DEFERRED_QUEUE_COMPLETE,
+            [DeferredQueueCompleteHandler::className(), 'handleEvent']
+        );
         if ($app instanceof \yii\console\Application) {
-
-            if (isset($app->params['yii.migrations'])) {
-                $vendorsInstalledFile = Yii::getAlias('@vendor/composer/installed.json');
-                $installed = Json::decode(file_get_contents($vendorsInstalledFile));
-
-                foreach ($installed as $package) {
-                    $packagePath = '@vendor' . DIRECTORY_SEPARATOR . $package['name'] . DIRECTORY_SEPARATOR;
-                    $packageMigrations = (array) ArrayHelper::getValue($package, 'extra.migrationPath', []);
-                    foreach ($packageMigrations as $migrationPath) {
-                        $app->params['yii.migrations'][] = $packagePath . $migrationPath;
-                    }
-
-                }
-            }
-
+            $app->controllerMap['extension'] = ExtensionController::className();
         }
     }
 }

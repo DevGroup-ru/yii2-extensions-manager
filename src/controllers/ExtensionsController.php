@@ -236,7 +236,7 @@ class ExtensionsController extends BaseController
                 [
                     realpath(Yii::getAlias('@app') . '/yii'),
                     'extension/dummy',
-                    Yii::t('extensions-manager', 'Undefined extension!')
+                    'Undefined extension!',
                 ],
                 ExtensionsManager::EXTENSION_DUMMY_DEFERRED_GROUP
             );
@@ -267,7 +267,7 @@ class ExtensionsController extends BaseController
                     [
                         realpath(Yii::getAlias('@app') . '/yii'),
                         'extension/dummy',
-                        Yii::t('extensions-manager', 'Unrecognized task!')
+                        'Unrecognized task!',
                     ],
                     ExtensionsManager::EXTENSION_DUMMY_DEFERRED_GROUP
                 );
@@ -312,9 +312,7 @@ class ExtensionsController extends BaseController
                 [
                     realpath(Yii::getAlias('@app') . '/yii'),
                     'extension/dummy',
-                    Yii::t('extensions-manager', 'Extension already {actionName}!',
-                        ['actionName' => Yii::t('extensions-manager', 'deactivated')]
-                    )
+                    'Extension already deactivated!',
                 ],
                 ExtensionsManager::EXTENSION_DUMMY_DEFERRED_GROUP
             );
@@ -351,9 +349,7 @@ class ExtensionsController extends BaseController
                 [
                     realpath(Yii::getAlias('@app') . '/yii'),
                     'extension/dummy',
-                    Yii::t('extensions-manager', 'Extension already {actionName}!',
-                        ['actionName' => Yii::t('extensions-manager', 'activated')]
-                    )
+                    'Extension already activated!',
                 ],
                 ExtensionsManager::EXTENSION_DUMMY_DEFERRED_GROUP
             );
@@ -374,7 +370,7 @@ class ExtensionsController extends BaseController
                 [
                     realpath(Yii::getAlias('@app') . '/yii'),
                     'extension/dummy',
-                    Yii::t('extensions-manager', 'You are unable to uninstall core extensions!')
+                    'You are unable to uninstall core extensions!',
                 ],
                 ExtensionsManager::EXTENSION_DUMMY_DEFERRED_GROUP
             );
