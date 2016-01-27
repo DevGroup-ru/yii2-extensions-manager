@@ -64,6 +64,7 @@ class ExtensionFileWriter extends Component
         if (true === isset($a['composer_name'], $b['composer_name'])) {
             return strcmp($a['composer_name'], $b['composer_name']);
         }
+        //TODO implement checking of broken extension array and extension repair method
         return 0;
     }
 }

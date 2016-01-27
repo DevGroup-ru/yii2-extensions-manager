@@ -120,8 +120,8 @@ class ExtensionsManager extends Module
                 $this->extensions = include $fileName;
             }
         }
-        if (false === empty($packageName) && true === isset($this->extensions[$packageName])) {
-            return $this->extensions[$packageName];
+        if (false === empty($packageName)) {
+            return isset($this->extensions[$packageName]) ? $this->extensions[$packageName] : [];
         }
         return $this->extensions;
     }

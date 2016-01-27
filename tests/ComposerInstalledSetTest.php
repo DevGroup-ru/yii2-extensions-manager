@@ -12,6 +12,7 @@ class ComposerInstalledSetTest extends \PHPUnit_Framework_TestCase
         $config = include 'config/testapp.php';
         $app = new Application($config);
         Yii::$app->cache->flush();
+        Yii::setAlias('@vendor', __DIR__ . '/testapp/vendor');
         parent::setUp();
     }
 

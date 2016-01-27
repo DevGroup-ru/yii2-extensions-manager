@@ -1,10 +1,11 @@
 <?php
 namespace DevGroup\ExtensionsManager\tests;
 
-use yii\console\Application;
+use DevGroup\ExtensionsManager\helpers\ExtensionsHelper;
 use Yii;
+use yii\web\Application;
 
-class ExtensionControllerTest extends \PHPUnit_Framework_TestCase
+class ExtensionsHelperTest extends \PHPUnit_Framework_TestCase
 {
     public static function setUpBeforeClass()
     {
@@ -43,24 +44,13 @@ class ExtensionControllerTest extends \PHPUnit_Framework_TestCase
         Yii::$app = null;
     }
 
-    public function testActionActivateNonExistingExtension()
+    public function testGetAllConfigurables()
     {
-        $this->assertEquals(1, Yii::$app->runAction('extension/activate', ['package/extension1']));
+        $this->assertEquals(4, count(ExtensionsHelper::getConfigurables()));
     }
 
-    public function testActionDeactivateNonExistingExtension()
+    public function testGetOnlyActive()
     {
-        $this->assertEquals(1, Yii::$app->runAction('extension/deactivate', ['package/extension1']));
+        $this->assertEquals(1, count(ExtensionsHelper::getConfigurables(true)));
     }
-
-    public function testActionActivate()
-    {
-        $this->assertEquals(0, Yii::$app->runAction('extension/activate', ['fakedev/yii2-fake-ext']));
-    }
-
-    public function testActionDummy()
-    {
-        $this->assertEquals(0, Yii::$app->runAction('extension/dummy', ['message']));
-    }
-
 }
