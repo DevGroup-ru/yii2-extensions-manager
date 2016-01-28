@@ -2,6 +2,7 @@
 namespace DevGroup\ExtensionsManager\tests;
 
 use DevGroup\ExtensionsManager\helpers\ApplicationConfigWriter;
+use testsHelper\TestConfigCleaner;
 use Yii;
 use yii\web\Application;
 
@@ -33,4 +34,10 @@ class ApplicationConfigWriterTest  extends \PHPUnit_Framework_TestCase
             'filename' => null,
         ]);
     }
+
+    public static function tearDownAfterClass()
+    {
+        TestConfigCleaner::cleanTestConfigs();
+    }
+
 }

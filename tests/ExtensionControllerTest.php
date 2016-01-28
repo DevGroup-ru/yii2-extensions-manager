@@ -1,6 +1,7 @@
 <?php
 namespace DevGroup\ExtensionsManager\tests;
 
+use testsHelper\TestConfigCleaner;
 use yii\console\Application;
 use Yii;
 
@@ -14,6 +15,7 @@ class ExtensionControllerTest extends \PHPUnit_Framework_TestCase
     public static function tearDownAfterClass()
     {
         self::writeExtFile();
+        TestConfigCleaner::cleanTestConfigs();
     }
 
     protected static function writeExtFile()

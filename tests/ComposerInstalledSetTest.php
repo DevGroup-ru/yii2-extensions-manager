@@ -2,6 +2,7 @@
 namespace DevGroup\ExtensionsManager\tests;
 
 use DevGroup\ExtensionsManager\components\ComposerInstalledSet;
+use testsHelper\TestConfigCleaner;
 use yii\web\Application;
 use Yii;
 
@@ -65,4 +66,8 @@ class ComposerInstalledSetTest extends \PHPUnit_Framework_TestCase
         $this->assertNotEmpty(ComposerInstalledSet::get()->getInstalled($name));
     }
 
+    public static function tearDownAfterClass()
+    {
+        TestConfigCleaner::cleanTestConfigs();
+    }
 }

@@ -1,0 +1,41 @@
+[
+  {
+    "url": "https://api.github.com/repos/kartik-v/yii2-mpdf/releases/692668",
+    "assets_url": "https://api.github.com/repos/kartik-v/yii2-mpdf/releases/692668/assets",
+    "upload_url": "https://uploads.github.com/repos/kartik-v/yii2-mpdf/releases/692668/assets{?name,label}",
+    "html_url": "https://github.com/kartik-v/yii2-mpdf/releases/tag/v1.0.0",
+    "id": 692668,
+    "tag_name": "v1.0.0",
+    "target_commitish": "v1.0.0",
+    "name": "Version 1.0.0",
+    "draft": false,
+    "author": {
+      "login": "kartik-v",
+      "id": 3592619,
+      "avatar_url": "https://avatars.githubusercontent.com/u/3592619?v=3",
+      "gravatar_id": "",
+      "url": "https://api.github.com/users/kartik-v",
+      "html_url": "https://github.com/kartik-v",
+      "followers_url": "https://api.github.com/users/kartik-v/followers",
+      "following_url": "https://api.github.com/users/kartik-v/following{/other_user}",
+      "gists_url": "https://api.github.com/users/kartik-v/gists{/gist_id}",
+      "starred_url": "https://api.github.com/users/kartik-v/starred{/owner}{/repo}",
+      "subscriptions_url": "https://api.github.com/users/kartik-v/subscriptions",
+      "organizations_url": "https://api.github.com/users/kartik-v/orgs",
+      "repos_url": "https://api.github.com/users/kartik-v/repos",
+      "events_url": "https://api.github.com/users/kartik-v/events{/privacy}",
+      "received_events_url": "https://api.github.com/users/kartik-v/received_events",
+      "type": "User",
+      "site_admin": false
+    },
+    "prerelease": false,
+    "created_at": "2014-11-10T18:09:37Z",
+    "published_at": "2014-11-10T18:11:46Z",
+    "assets": [
+
+    ],
+    "tarball_url": "https://api.github.com/repos/kartik-v/yii2-mpdf/tarball/v1.0.0",
+    "zipball_url": "https://api.github.com/repos/kartik-v/yii2-mpdf/zipball/v1.0.0",
+    "body": "**Date:** 03-Nov-2014\r\n\r\n- Initial release.\r\n- Set release to stable."
+  }
+]

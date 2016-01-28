@@ -2,6 +2,7 @@
 namespace DevGroup\ExtensionsManager\tests;
 
 use DevGroup\ExtensionsManager\helpers\ExtensionFileWriter;
+use testsHelper\TestConfigCleaner;
 use Yii;
 use yii\console\Application;
 
@@ -10,16 +11,9 @@ class ExtensionFileWriterTest extends \PHPUnit_Framework_TestCase
 
     public static function tearDownAfterClass()
     {
-        self::removeExtFile();
+        TestConfigCleaner::removeExtFile();
         copy(__DIR__ . '/data/extensions.php', __DIR__ . '/config/extensions.php');
-    }
-
-    protected static function removeExtFile()
-    {
-        $fn = __DIR__ . '/config/extensions.php';
-        if (true === file_exists($fn)) {
-            unlink($fn);
-        }
+        TestConfigCleaner::cleanTestConfigs();
     }
 
     public function setUp()
@@ -62,7 +56,7 @@ class ExtensionFileWriterTest extends \PHPUnit_Framework_TestCase
 
     public function testUpdateWithAddition()
     {
-        self::removeExtFile();
+        TestConfigCleaner::removeExtFile();
         copy(__DIR__ . '/data/less-extensions.php', __DIR__ . '/config/extensions.php');
         ExtensionFileWriter::updateConfig();
         $a = $this->checkFile();
@@ -71,7 +65,7 @@ class ExtensionFileWriterTest extends \PHPUnit_Framework_TestCase
 
     public function testUpdateWithDeletion()
     {
-        self::removeExtFile();
+        TestConfigCleaner::removeExtFile();
         copy(__DIR__ . '/data/more-extensions.php', __DIR__ . '/config/extensions.php');
         ExtensionFileWriter::updateConfig();
         $a = $this->checkFile();

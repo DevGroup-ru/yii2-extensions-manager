@@ -1,0 +1,236 @@
+[
+  {
+    "name": "fakedev2/yii2-fake-ext2",
+    "version": "dev-master",
+    "version_normalized": "9999999-dev",
+    "source": {
+      "type": "git",
+      "url": "",
+      "reference": ""
+    },
+    "dist": {
+      "type": "zip",
+      "url": "",
+      "reference": "",
+      "shasum": ""
+    },
+    "require": {
+    },
+    "require-dev": {
+    },
+    "time": "2016-01-26 08:42:12",
+    "type": "yii2-extension",
+    "extra": {
+      "yii2-extension": {
+        "name": "Second fake extension",
+        "name_ru": "Второе тестовое расширение",
+        "description_ru": "Тестовое расширение для тестирования"
+      },
+      "configurables": "src/configurables.php",
+      "translationCategory": "fake-two"
+    },
+    "installation-source": "dist",
+    "autoload": {
+      "psr-4": {
+        "fakedev2\\FakeTwo\\FakeTwoModule": "src/"
+      }
+    },
+    "notification-url": "https://packagist.org/downloads/",
+    "license": [
+      "MIT"
+    ],
+    "authors": [
+      {
+        "name": "",
+        "email": ""
+      }
+    ],
+    "description": "Fake ext",
+    "keywords": []
+  },
+  {
+    "name": "fakedev/yii2-fake-ext",
+    "version": "dev-master",
+    "version_normalized": "9999999-dev",
+    "source": {
+      "type": "git",
+      "url": "",
+      "reference": ""
+    },
+    "dist": {
+      "type": "zip",
+      "url": "",
+      "reference": "",
+      "shasum": ""
+    },
+    "require": {
+    },
+    "require-dev": {
+    },
+    "time": "2016-01-26 08:42:12",
+    "type": "yii2-extension",
+    "extra": {
+      "yii2-extension": {
+        "name": "First fake extension",
+        "name_ru": "Первое тестовое расширение",
+        "description_ru": "Тестовое расширение для тестирования"
+      },
+      "configurables": "src/configurables.php",
+      "translationCategory": "fake-one"
+    },
+    "installation-source": "dist",
+    "autoload": {
+      "psr-4": {
+        "fakedev\\FakeOne\\FakeOneModule": "src/"
+      }
+    },
+    "notification-url": "https://packagist.org/downloads/",
+    "license": [
+      "MIT"
+    ],
+    "authors": [
+      {
+        "name": "",
+        "email": ""
+      }
+    ],
+    "description": "Fake ext",
+    "keywords": []
+  },
+  {
+    "name": "fakedev/yii2-fake-ext3",
+    "version": "dev-master",
+    "version_normalized": "9999999-dev",
+    "source": {
+      "type": "git",
+      "url": "",
+      "reference": ""
+    },
+    "dist": {
+      "type": "zip",
+      "url": "",
+      "reference": "",
+      "shasum": ""
+    },
+    "require": {
+    },
+    "require-dev": {
+    },
+    "time": "2016-01-26 08:42:12",
+    "type": "yii2-extension",
+    "extra": {
+      "yii2-extension": {
+        "name": "Third fake extension",
+        "name_ru": "Третье тестовое расширение",
+        "description_ru": "Тестовое расширение для тестирования"
+      },
+      "configurables": "src/configurables.php",
+      "translationCategory": "fake-three"
+    },
+    "installation-source": "dist",
+    "autoload": {
+      "psr-4": {
+        "fakedev\\FakeThree\\FakeThreeModule": "src/"
+      }
+    },
+    "notification-url": "https://packagist.org/downloads/",
+    "license": [
+      "MIT"
+    ],
+    "authors": [
+      {
+        "name": "",
+        "email": ""
+      }
+    ],
+    "description": "Fake ext",
+    "keywords": []
+  },
+  {
+    "name": "fakedev2/yii2-fake-ext4",
+    "version": "dev-master",
+    "version_normalized": "9999999-dev",
+    "source": {
+      "type": "git",
+      "url": "",
+      "reference": ""
+    },
+    "dist": {
+      "type": "zip",
+      "url": "",
+      "reference": "",
+      "shasum": ""
+    },
+    "require": {
+    },
+    "require-dev": {
+    },
+    "time": "2016-01-26 08:42:12",
+    "type": "dotplant-extension",
+    "extra": {
+      "yii2-extension": {
+        "name": "Fourth fake extension",
+        "name_ru": "Четвертое тестовое расширение",
+        "description_ru": "Тестовое расширение для тестирования"
+      },
+      "configurables": "src/configurables.php",
+      "translationCategory": "fake-four",
+      "migrationPath": [
+        "src/migrations"
+      ]
+    },
+    "installation-source": "dist",
+    "autoload": {
+      "psr-4": {
+        "fakedev\\FakeFour\\FakeFourModule": "src/"
+      }
+    },
+    "notification-url": "https://packagist.org/downloads/",
+    "license": [
+      "MIT"
+    ],
+    "authors": [
+      {
+        "name": "",
+        "email": ""
+      }
+    ],
+    "description": "Fake ext",
+    "keywords": []
+  },
+  {
+    "name": "fakeyii/library",
+    "version": "2.0.0",
+    "version_normalized": "2.0.0",
+    "source": {
+      "type": "git",
+      "url": "",
+      "reference": ""
+    },
+    "dist": {
+      "type": "zip",
+      "url": "",
+      "reference": "",
+      "shasum": ""
+    },
+    "require": {
+    },
+    "require-dev": {
+    },
+    "time": "2016-01-26 08:42:12",
+    "type": "library",
+    "installation-source": "dist",
+    "notification-url": "https://packagist.org/downloads/",
+    "license": [
+      "MIT"
+    ],
+    "authors": [
+      {
+        "name": "",
+        "email": ""
+      }
+    ],
+    "description": "Fake ext",
+    "keywords": []
+  }
+]

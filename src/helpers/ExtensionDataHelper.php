@@ -96,13 +96,19 @@ class ExtensionDataHelper extends Component
      * Fetching data from defined field according to package current version
      * @param $data
      * @param $key
+     * @param bool $asArray
      * @return array
      */
-    public static function getOtherPackageVersionedData($data, $key)
+    public static function getOtherPackageVersionedData($data, $key, $asArray = true)
     {
         $out = [];
         if (false === empty($data['package']['versions'][self::$currentVersion][$key])) {
             $out = $data['package']['versions'][self::$currentVersion][$key];
+        }
+        if (true === $asArray) {
+            $out = is_array($out) ? $out : [$out];
+        } else {
+            $out = is_array($out) ? implode(', ', $out) : $out;
         }
         return $out;
     }
