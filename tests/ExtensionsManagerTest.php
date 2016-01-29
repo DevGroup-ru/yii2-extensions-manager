@@ -2,6 +2,7 @@
 namespace DevGroup\ExtensionsManager\tests;
 
 use DevGroup\ExtensionsManager\ExtensionsManager;
+use testsHelper\TestConfigCleaner;
 use Yii;
 use yii\console\Application;
 
@@ -23,6 +24,11 @@ class ExtensionsManagerTest extends \PHPUnit_Framework_TestCase
             Yii::$app->session->close();
         }
         Yii::$app = null;
+    }
+
+    public static function tearDownAfterClass()
+    {
+        TestConfigCleaner::cleanExtensions();
     }
 
     public function testGetModule()
@@ -103,10 +109,7 @@ class ExtensionsManagerTest extends \PHPUnit_Framework_TestCase
      */
     public function testBrokenExtension(ExtensionsManager $module)
     {
-        $fn = __DIR__ . '/config/extensions.php';
-        if (true === file_exists($fn)) {
-            unlink($fn);
-        }
+        TestConfigCleaner::removeExtFile();
         copy(__DIR__ . '/data/broken-extensions.php', __DIR__ . '/config/extensions.php');
         $a = $module->getExtensions('broken/extension1', true);
         $this->assertNotEmpty($a);

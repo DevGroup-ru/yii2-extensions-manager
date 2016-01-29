@@ -10,22 +10,13 @@ class ExtensionsHelperTest extends \PHPUnit_Framework_TestCase
 {
     public static function setUpBeforeClass()
     {
-        self::writeExtFile();
+        TestConfigCleaner::cleanExtensions();
     }
 
     public static function tearDownAfterClass()
     {
-        self::writeExtFile();
+        TestConfigCleaner::cleanExtensions();
         TestConfigCleaner::cleanTestConfigs();
-    }
-
-    protected static function writeExtFile()
-    {
-        $fn = __DIR__ . '/config/extensions.php';
-        if (true === file_exists($fn)) {
-            unlink($fn);
-        }
-        copy(__DIR__ . '/data/extensions.php', __DIR__ . '/config/extensions.php');
     }
 
     public function setUp()

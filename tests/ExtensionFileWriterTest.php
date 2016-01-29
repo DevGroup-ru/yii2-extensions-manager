@@ -11,8 +11,7 @@ class ExtensionFileWriterTest extends \PHPUnit_Framework_TestCase
 
     public static function tearDownAfterClass()
     {
-        TestConfigCleaner::removeExtFile();
-        copy(__DIR__ . '/data/extensions.php', __DIR__ . '/config/extensions.php');
+        TestConfigCleaner::cleanExtensions();
         TestConfigCleaner::cleanTestConfigs();
     }
 

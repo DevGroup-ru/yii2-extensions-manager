@@ -27,6 +27,11 @@ class TestConfigCleaner
 
     public static function cleanExtensions()
     {
+        self::removeExtFile();
+        copy(
+            dirname(__DIR__) . '/data/extensions.php',
+            dirname(__DIR__) . '/config/extensions.php'
+        );
 
     }
 

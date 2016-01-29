@@ -5,6 +5,7 @@ use DevGroup\ExtensionsManager\components\ComposerInstalledSet;
 use DevGroup\ExtensionsManager\ExtensionsManager;
 use DevGroup\ExtensionsManager\helpers\ExtensionDataHelper;
 use DevGroup\ExtensionsManager\models\Extension;
+use testsHelper\CustomClient;
 use testsHelper\TestConfigCleaner;
 use Yii;
 use yii\helpers\Json;
@@ -278,7 +279,6 @@ class ExtensionDataHelperTest extends \PHPUnit_Framework_TestCase
 
     protected function prepareAll($package, $releases, $tags)
     {
-        Yii::$classMap['DevGroup\ExtensionsManager\tests\CustomClient'] = __DIR__ . '/CustomClient.php';
         /** @var ExtensionsManager $module */
         self::$module = Yii::$app->getModule('extensions-manager');
         $packagist = new CustomClient();

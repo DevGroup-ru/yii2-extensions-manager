@@ -21,7 +21,8 @@
         "phpunit/dbunit": "~1.0",
         "yiisoft/yii2-debug": "^2.0.5",
         "yiisoft/yii2-bootstrap": "^2.0.5",
-        "devgroup/yii2-admin-utils": "dev-master"
+        "devgroup/yii2-admin-utils": "dev-master",
+        "yiisoft/yii2-faker": "*"
     },
     "autoload": {
         "psr-4": {

@@ -1,0 +1,16 @@
+actor: Tester
+paths:
+    tests: tests/codeception
+    log: tests/codeception/_output
+    data: tests/codeception/_data
+    helpers: tests/codeception/_support
+settings:
+    bootstrap: _bootstrap.php
+    suite_class: \PHPUnit_Framework_TestSuite
+    memory_limit: 1024M
+    log: true
+    colors: true
+config:
+    # the entry script URL (with host info) for functional and acceptance tests
+    # PLEASE ADJUST IT TO THE ACTUAL ENTRY SCRIPT URL
+    test_entry_url: http://dp3.loc/index-test.php

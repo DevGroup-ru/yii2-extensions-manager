@@ -1,6 +1,6 @@
 <?php
 
-namespace DevGroup\ExtensionsManager\tests;
+namespace testsHelper;
 
 class CustomClient extends \Packagist\Api\Client
 {
@@ -13,6 +13,4 @@ class CustomClient extends \Packagist\Api\Client
     {
         return file_get_contents($filename);
     }
-
-
 }

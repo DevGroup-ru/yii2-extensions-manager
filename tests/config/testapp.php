@@ -3,7 +3,6 @@ return [
     'id' => 'testapp',
     'basePath' => dirname(__DIR__),
     'vendorPath' => realpath('../../../vendor'),
-    'defaultRoute' => 'extensions-manager',
     'bootstrap' => [
         'fake-one',
         'fake-two',
@@ -20,7 +19,7 @@ return [
             'class' => yii\db\Connection::className(),
             'dsn' => 'mysql:host=localhost;dbname=yii2_extensions_manager',
             'username' => 'root',
-            'password' => 'winston',
+            'password' => '',
         ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
