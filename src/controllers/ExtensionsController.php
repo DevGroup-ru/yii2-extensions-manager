@@ -12,7 +12,6 @@ use DevGroup\ExtensionsManager\components\ComposerInstalledSet;
 use DevGroup\ExtensionsManager\ExtensionsManager;
 use DevGroup\ExtensionsManager\helpers\ExtensionDataHelper;
 use Packagist\Api\Client;
-use Symfony\Component\Process\ProcessBuilder;
 use yii\base\InvalidParamException;
 use yii\data\ArrayDataProvider;
 use DevGroup\ExtensionsManager\models\Extension;
@@ -200,7 +199,11 @@ class ExtensionsController extends BaseController
             [
                 'readme' => $readme,
                 'versions' => $versions,
-                'description' => ExtensionDataHelper::getLocalizedVersionedDataField($packageData, $type, 'description'),
+                'description' => ExtensionDataHelper::getLocalizedVersionedDataField(
+                    $packageData,
+                    $type,
+                    'description'
+                ),
                 'name' => ExtensionDataHelper::getLocalizedVersionedDataField($packageData, $type, 'name'),
                 'dependencies' => [
                     'require' => ExtensionDataHelper::getOtherPackageVersionedData($packageData, 'require'),
@@ -231,16 +234,16 @@ class ExtensionsController extends BaseController
         }
         $packageName = Yii::$app->request->post('packageName');
         $extension = self::module()->getExtensions($packageName);
-        if (true === empty($extension)) {
-            return self::runTask(
-                [
-                    realpath(Yii::getAlias('@app') . '/yii'),
-                    'extension/dummy',
-                    'Undefined extension!',
-                ],
-                ExtensionsManager::EXTENSION_DUMMY_DEFERRED_GROUP
-            );
-        }
+//        if (true === empty($extension)) {
+//            return self::runTask(
+//                [
+//                    realpath(Yii::getAlias('@app') . '/yii'),
+//                    'extension/dummy',
+//                    'Undefined extension: ' . $packageName,
+//                ],
+//                ExtensionsManager::EXTENSION_DUMMY_DEFERRED_GROUP
+//            );
+//        }
         $taskType = Yii::$app->request->post('taskType');
         $chain = new ReportingChain();
         switch ($taskType) {

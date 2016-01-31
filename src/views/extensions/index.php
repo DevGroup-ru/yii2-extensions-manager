@@ -16,9 +16,9 @@ use yii\helpers\Html;
 \DevGroup\DeferredTasks\assets\AdminBundle::register($this);
 
 $nameBlockTpl = <<<TPL
-<div class="panel panel-default">
-    <div class="panel-heading ext-list-description">
-        <h3 class="panel-title">
+<div class="panel panel-default box box-solid">
+    <div class="panel-heading ext-list-description box-header with-border">
+        <h3 class="panel-title box-title">
             <a data-toggle="collapse" data-target="#%4\$s" class="collapsed" >%s</a>
         </h3>
     </div>
@@ -29,10 +29,10 @@ $nameBlockTpl = <<<TPL
 </div>
 TPL;
 $gridTpl = <<<TPL
-<div class="panel-body">
+<div class="box-body no-padding">
     {items}
 </div>
-<div class="panel-footer">
+<div class="box-footer">
     <div class="row ext-bottom">
         <div class="col-sm-5">
             {summary}
@@ -50,14 +50,14 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="row">
     <div class="col-md-3">
-        <div class="panel panel-default configuration-navigation">
-            <div class="panel-heading">
-                <h3 class="panel-title">
+        <div class="configuration-navigation box box-solid">
+            <div class="box-header with-border">
+                <h3 class="box-title">
                     <i class="fa fa-list-alt"></i>
                     <?= Yii::t('extensions-manager', 'Extensions manager') ?>
                 </h3>
             </div>
-            <div class="panel-body">
+            <div class="box-body">
                 <?=
                 \yii\bootstrap\Nav::widget([
                     'items' => ExtensionsManager::navLinks(),
@@ -70,9 +70,9 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
     <div class="col-md-9">
-        <div class="extensions-controller__list-extensions panel panel-default">
-            <div class="panel-heading clearfix">
-                <h3 class="panel-title pull-left">
+        <div class="extensions-controller__list-extensions box box-solid">
+            <div class="box-header clearfix">
+                <h3 class="box-title pull-left">
                     <?= Yii::t('extensions-manager', 'Installed extensions') ?>
                 </h3>
             </div>

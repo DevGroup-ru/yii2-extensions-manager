@@ -15,10 +15,10 @@ use DevGroup\ExtensionsManager\models\Extension;
 
 $sortBy = [];
 $gridTpl = <<<TPL
-<div class="panel-body">
+<div class="box-body">
     {items}
 </div>
-<div class="panel-footer">
+<div class="box-footer">
     <div class="row ext-bottom">
         <div class="col-sm-5">
             {summary}
@@ -34,14 +34,14 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="row">
     <div class="col-md-3">
-        <div class="panel panel-default configuration-navigation">
-            <div class="panel-heading">
-                <h3 class="panel-title">
+        <div class="box box-solid configuration-navigation">
+            <div class="box-header">
+                <h3 class="box-title">
                     <i class="fa fa-list-alt"></i>
                     <?= Yii::t('extensions-manager', 'Extensions manager') ?>
                 </h3>
             </div>
-            <div class="panel-body">
+            <div class="box-body">
                 <?=
                 \yii\bootstrap\Nav::widget([
                     'items' => ExtensionsManager::navLinks(),
@@ -53,9 +53,9 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
     </div>
     <div class="col-md-9">
-        <div class="extensions-controller__search-extensions panel panel-default">
-            <div class="panel-heading clearfix">
-                <h3 class="panel-title pull-left">
+        <div class="extensions-controller__search-extensions box box-solid">
+            <div class="box-header clearfix">
+                <h3 class="box-title pull-left">
                     <?= Yii::t('extensions-manager', 'Extensions search') ?>
                 </h3>
                 <div class="pull-right">
