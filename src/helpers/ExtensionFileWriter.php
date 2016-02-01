@@ -15,7 +15,7 @@ class ExtensionFileWriter extends Component
     public static function updateConfig()
     {
         /** @var ExtensionsManager $module */
-        $module = Yii::$app->getModule('extensions-manager');
+        $module = self::module();
         $extensions = $module->getExtensions();
         $installed = ComposerInstalledSet::get()->getInstalled();
         $fileName = Yii::getAlias($module->extensionsStorage);
@@ -32,9 +32,25 @@ class ExtensionFileWriter extends Component
             $config = array_merge($extensions, $toAdd);
         }
         $writer->addValues($config);
-        $writer->commit();
+        return $writer->commit();
     }
 
+    public static function generateConfig()
+    {
+        /** @var ExtensionsManager $module */
+        $module = self::module();
+        $installed = ComposerInstalledSet::get()->getInstalled();
+        $fileName = Yii::getAlias($module->extensionsStorage);
+        $writer = new ApplicationConfigWriter(['filename' => $fileName]);
+        $config = self::rebuldConfig($installed);
+        $writer->addValues($config);
+        return $writer->commit();
+    }
+
+    private static function module()
+    {
+        return Yii::$app->getModule('extensions-manager');
+    }
     /**
      * @param $config
      * @return array

@@ -116,4 +116,18 @@ class ExtensionsManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($module->extensionIsCore('broken/extension1'));
         $this->assertFalse($module->extensionIsActive('broken/extension1'));
     }
+
+    /**
+     * This test runs last, because it overrides extensions.php file from installed.json
+     * and we have no activated and core extensions there
+     *
+     * @depends testGetModule
+     * @param ExtensionsManager $module
+     */
+    public function testGetExtensionsNoFile(ExtensionsManager $module){
+        TestConfigCleaner::removeExtFile();
+        $a = $module->getExtensions('', true);
+        $this->assertTrue(TestConfigCleaner::checkExtFile());
+        $this->assertEquals(4, count($a));
+    }
 }

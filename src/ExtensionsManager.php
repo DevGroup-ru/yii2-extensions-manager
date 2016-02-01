@@ -2,6 +2,7 @@
 
 namespace DevGroup\ExtensionsManager;
 
+use DevGroup\ExtensionsManager\helpers\ExtensionFileWriter;
 use DevGroup\ExtensionsManager\models\Extension;
 use Yii;
 use yii\base\Module;
@@ -116,8 +117,16 @@ class ExtensionsManager extends Module
     {
         if (count($this->extensions) === 0 || true === $ignoreCache) {
             $fileName = Yii::getAlias($this->extensionsStorage);
+            $canLoad = false;
             if (true === file_exists($fileName) && true === is_readable($fileName)) {
+                $canLoad = true;
+            } else {
+                $canLoad = ExtensionFileWriter::generateConfig();
+            }
+            if (true === $canLoad) {
                 $this->extensions = include $fileName;
+            } else {
+                Yii::$app->session->setFlash('error', Yii::t('extensions-manager', 'Unable to create extensions file'));
             }
         }
         if (false === empty($packageName)) {
