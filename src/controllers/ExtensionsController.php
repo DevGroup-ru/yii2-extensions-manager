@@ -201,10 +201,10 @@ class ExtensionsController extends BaseController
                 'versions' => $versions,
                 'description' => ExtensionDataHelper::getLocalizedVersionedDataField(
                     $packageData,
-                    $type,
+                    Extension::TYPE_YII,
                     'description'
                 ),
-                'name' => ExtensionDataHelper::getLocalizedVersionedDataField($packageData, $type, 'name'),
+                'name' => ExtensionDataHelper::getLocalizedVersionedDataField($packageData, Extension::TYPE_YII, 'name'),
                 'dependencies' => [
                     'require' => ExtensionDataHelper::getOtherPackageVersionedData($packageData, 'require'),
                     'require-dev' => ExtensionDataHelper::getOtherPackageVersionedData($packageData, 'require-dev'),
@@ -234,17 +234,17 @@ class ExtensionsController extends BaseController
         }
         $packageName = Yii::$app->request->post('packageName');
         $extension = self::module()->getExtensions($packageName);
-//        if (true === empty($extension)) {
-//            return self::runTask(
-//                [
-//                    realpath(Yii::getAlias('@app') . '/yii'),
-//                    'extension/dummy',
-//                    'Undefined extension: ' . $packageName,
-//                ],
-//                ExtensionsManager::EXTENSION_DUMMY_DEFERRED_GROUP
-//            );
-//        }
         $taskType = Yii::$app->request->post('taskType');
+        if (true === empty($extension) && $taskType != ExtensionsManager::INSTALL_DEFERRED_TASK) {
+            return self::runTask(
+                [
+                    realpath(Yii::getAlias('@app') . '/yii'),
+                    'extension/dummy',
+                    'Undefined extension: ' . $packageName,
+                ],
+                ExtensionsManager::EXTENSION_DUMMY_DEFERRED_GROUP
+            );
+        }
         $chain = new ReportingChain();
         switch ($taskType) {
             case ExtensionsManager::INSTALL_DEFERRED_TASK :

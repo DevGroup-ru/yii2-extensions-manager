@@ -40,7 +40,7 @@ class ExtensionDataHelper extends Component
             $out = $data['extra'][$key];
         }
         if (true === $asArray) {
-            $out = is_array($out) ? $out : [$out];
+            $out = is_array($out) ? $out : (empty($out) ? [] : [$out]);
         } else {
             $out = is_array($out) ? implode(', ', $out) : $out;
         }

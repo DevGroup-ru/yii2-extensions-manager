@@ -95,12 +95,12 @@ $this->params['breadcrumbs'][] = $this->title;
                     'content' => function ($data) use ($nameBlockTpl, $composerSet) {
                         $name = ExtensionDataHelper::getLocalizedDataField(
                             $composerSet->getInstalled($data["composer_name"]),
-                            $data["composer_type"],
+                            Extension::TYPE_YII,
                             'name'
                         );
                         $description = ExtensionDataHelper::getLocalizedDataField(
                             $composerSet->getInstalled($data["composer_name"]),
-                            $data["composer_type"],
+                            Extension::TYPE_YII,
                             'description'
                         );
                         $activateButton = (0 == $data['is_active']) ?
@@ -151,7 +151,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     'content' => function ($data) use ($composerSet) {
                         return ExtensionDataHelper::getLocalizedDataField(
                             $composerSet->getInstalled($data["composer_name"]),
-                            $data['composer_type'],
+                            Extension::TYPE_YII,
                             'version'
                         );
                     },

@@ -138,7 +138,7 @@ class ExtensionDataHelperTest extends \PHPUnit_Framework_TestCase
     {
         $name = ExtensionDataHelper::getLocalizedDataField(
             $data,
-            'yii2-extension',
+            Extension::TYPE_YII,
             'name'
         );
         $this->assertEquals('Четвертое тестовое расширение', $name);
@@ -153,7 +153,7 @@ class ExtensionDataHelperTest extends \PHPUnit_Framework_TestCase
         Yii::$app->language = 'zn';
         $name = ExtensionDataHelper::getLocalizedDataField(
             $data,
-            'yii2-extension',
+            Extension::TYPE_YII,
             'name'
         );
         $this->assertEquals('Fourth fake extension', $name);
@@ -163,76 +163,56 @@ class ExtensionDataHelperTest extends \PHPUnit_Framework_TestCase
     {
         $name = ExtensionDataHelper::getLocalizedDataField(
             Json::decode(file_get_contents(__DIR__ . '/data/installed-no-extra.json')),
-            'yii2-extension',
+            Extension::TYPE_YII,
             'name'
         );
         $this->assertEquals('devgroup/yii2-extensions-manager', $name);
     }
 
-    /**
-     * @depends testGetType
-     * @param $type
-     */
-    public function testGetLocalizedVersionedDataFieldNoExtra($type)
+    public function testGetLocalizedVersionedDataFieldNoExtra()
     {
-        $description = ExtensionDataHelper::getLocalizedVersionedDataField(self::$packageData, $type, 'description');
+        $description = ExtensionDataHelper::getLocalizedVersionedDataField(self::$packageData, Extension::TYPE_YII, 'description');
         $this->assertNotEmpty($description);
     }
 
-    /**
-     * @depends testGetType
-     * @param $type
-     */
-    public function testGetLocalizedVersionedDataFieldExtra($type)
+    public function testGetLocalizedVersionedDataFieldExtra()
     {
         $description = ExtensionDataHelper::getLocalizedVersionedDataField(
             Json::decode(file_get_contents(__DIR__ . '/data/extra-package.json')),
-            $type,
+            Extension::TYPE_YII,
             'description');
         $expected = 'type.version.extra.description_ru';
         $this->assertEquals($expected, $description);
     }
 
-    /**
-     * @depends testGetType
-     * @param $type
-     */
-    public function testGetLocalizedVersionedDataFieldExtraWrongLang($type)
+    public function testGetLocalizedVersionedDataFieldExtraWrongLang()
     {
         Yii::$app->language = 'zn';
         $description = ExtensionDataHelper::getLocalizedVersionedDataField(
             Json::decode(file_get_contents(__DIR__ . '/data/extra-package.json')),
-            $type,
+            Extension::TYPE_YII,
             'description');
         $expected = 'type.version.extra.description';
         $this->assertEquals($expected, $description);
     }
 
-    /**
-     * @depends testGetType
-     * @param $type
-     */
-    public function testGetLocalizedVersionedDataFieldExtraVersionField($type)
+    public function testGetLocalizedVersionedDataFieldExtraVersionField()
     {
         Yii::$app->language = 'zn';
         $description = ExtensionDataHelper::getLocalizedVersionedDataField(
             Json::decode(file_get_contents(__DIR__ . '/data/no-extra-package.json')),
-            $type,
+            Extension::TYPE_YII,
             'description');
         $expected = 'type.version.description';
         $this->assertEquals($expected, $description);
     }
 
-    /**
-     * @depends testGetType
-     * @param $type
-     */
-    public function testGetLocalizedVersionedDataFieldExtraPackageField($type)
+    public function testGetLocalizedVersionedDataFieldExtraPackageField()
     {
         Yii::$app->language = 'zn';
         $description = ExtensionDataHelper::getLocalizedVersionedDataField(
             Json::decode(file_get_contents(__DIR__ . '/data/no-version-package.json')),
-            $type,
+            Extension::TYPE_YII,
             'description');
         $expected = 'description';
         $this->assertEquals($expected, $description);
