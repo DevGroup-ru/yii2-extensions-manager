@@ -4,6 +4,7 @@ namespace DevGroup\ExtensionsManager\helpers;
 
 use DevGroup\ExtensionsManager\components\ComposerInstalledSet;
 use DevGroup\ExtensionsManager\ExtensionsManager;
+use DevGroup\ExtensionsManager\models\Extension;
 use Yii;
 use yii\helpers\ArrayHelper;
 
@@ -36,8 +37,7 @@ class ExtensionsHelper
                 $packageConfigurables = include($fn);
                 array_walk($packageConfigurables, function (&$item) use ($package) {
                     $item['package'] = $package['name'];
-                    $translationCategory = ArrayHelper::getValue($package, 'extra.translationCategory', 'app');
-                    $item['sectionNameTranslated'] = Yii::t($translationCategory, $item['sectionName']);
+                    $item['sectionNameTranslated'] = ExtensionDataHelper::getLocalizedDataField($package, Extension::TYPE_YII, 'name');
                 });
                 $configurables = ArrayHelper::merge($configurables, $packageConfigurables);
             }
