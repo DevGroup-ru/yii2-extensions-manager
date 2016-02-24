@@ -30,6 +30,11 @@ The extension has been created as a module. To enable access to all features you
 > Extension is now on the development stage. 
 > You can use it at your own risk.
 
+**IMPORTANT**
+> You have to have correct version of the [migrate controller](https://github.com/dmstr/yii2-migrate-command)
+> equal or above 0.3.1. And double check  ```MigrateController::getMigrationHistory()``` method supports 
+> ```MigrateController::$disableLookup``` property
+
 ## Requirements
 TBD
 ## Usage
