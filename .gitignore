@@ -4,4 +4,6 @@ tests/runtime
 tests/config/configurables-state
 tests/config/generated
 coverage.xml
+vendor
+.idea
 .vagrant

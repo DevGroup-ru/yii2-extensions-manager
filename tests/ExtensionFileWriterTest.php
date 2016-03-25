@@ -17,7 +17,7 @@ class ExtensionFileWriterTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $config = include 'config/testapp.php';
+        $config = include __DIR__ . '/testapp/config/web.php';
         new Application($config);
         Yii::$app->cache->flush();
         Yii::setAlias('@vendor', __DIR__ . '/testapp/vendor');
@@ -36,7 +36,7 @@ class ExtensionFileWriterTest extends \PHPUnit_Framework_TestCase
     public function checkFile()
     {
         $a = [];
-        $fn = __DIR__ . '/config/extensions.php';
+        $fn = __DIR__ . '/testapp/config/extensions.php';
         if (false === file_exists($fn)) {
             $this->markTestSkipped();
         } else {
@@ -56,7 +56,7 @@ class ExtensionFileWriterTest extends \PHPUnit_Framework_TestCase
     public function testUpdateWithAddition()
     {
         TestConfigCleaner::removeExtFile();
-        copy(__DIR__ . '/data/less-extensions.php', __DIR__ . '/config/extensions.php');
+        copy(__DIR__ . '/data/less-extensions.php', __DIR__ . '/testapp/config/extensions.php');
         ExtensionFileWriter::updateConfig();
         $a = $this->checkFile();
         $this->assertEquals(4, count($a));
@@ -65,7 +65,7 @@ class ExtensionFileWriterTest extends \PHPUnit_Framework_TestCase
     public function testUpdateWithDeletion()
     {
         TestConfigCleaner::removeExtFile();
-        copy(__DIR__ . '/data/more-extensions.php', __DIR__ . '/config/extensions.php');
+        copy(__DIR__ . '/data/more-extensions.php', __DIR__ . '/testapp/config/extensions.php');
         ExtensionFileWriter::updateConfig();
         $a = $this->checkFile();
         $this->assertEquals(4, count($a));

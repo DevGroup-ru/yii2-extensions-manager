@@ -8,7 +8,14 @@ use yii\web\AssetBundle;
 
 class AdminBundle extends AssetBundle
 {
-    public $sourcePath = '@vendor/devgroup/yii2-extensions-manager/src/assets/dist';
+    /**
+     * @inheritdoc
+     */
+    public function init()
+    {
+        $this->sourcePath = __DIR__ . '/dist';
+        parent::init();
+    }
 
     public $js = [
         'js/ext-manager.js',

@@ -6,11 +6,11 @@ use testsHelper\TestConfigCleaner;
 use Yii;
 use yii\web\Application;
 
-class ApplicationConfigWriterTest  extends \PHPUnit_Framework_TestCase
+class ApplicationConfigWriterTest extends \PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        $config = include 'config/testapp.php';
+        $config = include __DIR__ . '/testapp/config/web.php';
         $app = new Application($config);
         Yii::$app->cache->flush();
         parent::setUp();

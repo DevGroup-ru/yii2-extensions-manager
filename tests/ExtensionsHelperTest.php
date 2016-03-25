@@ -21,7 +21,7 @@ class ExtensionsHelperTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $config = include 'config/testapp.php';
+        $config = include __DIR__ . '/testapp/config/web.php';
         new Application($config);
         Yii::$app->cache->flush();
         Yii::setAlias('@vendor', __DIR__ . '/testapp/vendor');

@@ -20,16 +20,16 @@ class ExtensionControllerTest extends \PHPUnit_Framework_TestCase
 
     protected static function writeExtFile()
     {
-        $fn = __DIR__ . '/config/extensions.php';
+        $fn = __DIR__ . '/testapp/config/extensions.php';
         if (true === file_exists($fn)) {
             unlink($fn);
         }
-        copy(__DIR__ . '/data/extensions.php', __DIR__ . '/config/extensions.php');
+        copy(__DIR__ . '/data/extensions.php', $fn);
     }
 
     public function setUp()
     {
-        $config = include 'config/testapp.php';
+        $config = include __DIR__ . '/testapp/config/web.php';
         new Application($config);
         Yii::$app->cache->flush();
         Yii::setAlias('@vendor', __DIR__ . '/testapp/vendor');

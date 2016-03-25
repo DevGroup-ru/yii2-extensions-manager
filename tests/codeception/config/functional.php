@@ -5,8 +5,7 @@ $_SERVER['SCRIPT_NAME'] = YII_TEST_ENTRY_URL;
  * Application configuration for functional tests
  */
 $config = yii\helpers\ArrayHelper::merge(
-    require(__DIR__ . '/../../../../../../config/web.php'),
-    require(__DIR__ . '/config.php'),
+    require(__DIR__ . '/../../testapp/config/web.php'),
     [
         'components' => [
             'request' => [

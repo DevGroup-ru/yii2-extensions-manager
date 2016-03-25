@@ -10,7 +10,7 @@ class ComposerInstalledSetTest extends \PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        $config = include 'config/testapp.php';
+        $config = include __DIR__ . '/testapp/config/web.php';
         $app = new Application($config);
         Yii::$app->cache->flush();
         Yii::setAlias('@vendor', __DIR__ . '/testapp/vendor');
@@ -62,7 +62,8 @@ class ComposerInstalledSetTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetByName(array $installedArray)
     {
-        $name = array_pop(array_keys($installedArray));
+        $keys = array_keys($installedArray);
+        $name = array_pop($keys);
         $this->assertNotEmpty(ComposerInstalledSet::get()->getInstalled($name));
     }
 

@@ -10,7 +10,7 @@ class ExtensionsManagerTest extends \PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        $config = include 'config/testapp.php';
+        $config = include __DIR__ . '/testapp/config/web.php';
         new Application($config);
         Yii::$app->cache->flush();
         Yii::setAlias('@vendor', __DIR__ . '/testapp/vendor');
@@ -110,7 +110,7 @@ class ExtensionsManagerTest extends \PHPUnit_Framework_TestCase
     public function testBrokenExtension(ExtensionsManager $module)
     {
         TestConfigCleaner::removeExtFile();
-        copy(__DIR__ . '/data/broken-extensions.php', __DIR__ . '/config/extensions.php');
+        copy(__DIR__ . '/data/broken-extensions.php', __DIR__ . '/testapp/config/extensions.php');
         $a = $module->getExtensions('broken/extension1', true);
         $this->assertNotEmpty($a);
         $this->assertFalse($module->extensionIsCore('broken/extension1'));

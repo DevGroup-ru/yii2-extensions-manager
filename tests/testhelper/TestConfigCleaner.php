@@ -13,7 +13,7 @@ class TestConfigCleaner
 
     public static function removeExtFile()
     {
-        $fn = realpath(dirname(__DIR__) . '/config/extensions.php');
+        $fn = realpath(dirname(__DIR__) . '/testapp/config/extensions.php');
         if (true === file_exists($fn)) {
             unlink($fn);
         }
@@ -21,7 +21,7 @@ class TestConfigCleaner
 
     public static function checkExtFile()
     {
-        $fn = realpath(dirname(__DIR__) . '/config/extensions.php');
+        $fn = realpath(dirname(__DIR__) . '/testapp/config/extensions.php');
         return file_exists($fn);
     }
 
@@ -30,7 +30,7 @@ class TestConfigCleaner
         self::removeExtFile();
         copy(
             dirname(__DIR__) . '/data/extensions.php',
-            dirname(__DIR__) . '/config/extensions.php'
+            dirname(__DIR__) . '/testapp/config/extensions.php'
         );
 
     }
@@ -42,8 +42,8 @@ class TestConfigCleaner
 
     private static function prepare()
     {
-        $pathStates = realpath(dirname(__DIR__) . '/config/configurables-state/');
-        $pathGenerated = realpath(dirname(__DIR__) . '/config/generated/');
+        $pathStates = realpath(dirname(__DIR__) . '/testapp/config/configurables-state/');
+        $pathGenerated = realpath(dirname(__DIR__) . '/testapp/config/generated/');
         $statesFiles = glob($pathStates . "/*.php");
         $generatedFiles = glob($pathGenerated . "/*.php");
         $files = array_merge($statesFiles, $generatedFiles);
