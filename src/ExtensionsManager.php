@@ -6,6 +6,7 @@ use DevGroup\ExtensionsManager\helpers\ExtensionFileWriter;
 use DevGroup\ExtensionsManager\models\Extension;
 use Yii;
 use yii\base\Module;
+use yii\helpers\FileHelper;
 
 /**
  * Class ExtensionsManager is the main module in extensions-manager package.
@@ -92,6 +93,31 @@ class ExtensionsManager extends Module
     /** @var int number of Extension shown on Extension Search and Extension Index pages */
     public $extensionsPerPage = 10;
 
+    /** @var string path to composer file */
+    public $composerPath = '/usr/local/bin/composer';
+
+    /** @var int Show detailed output for composer commands */
+    public $verbose = 0;
+
+    /** @var string path to store ignored from git local composer.json file */
+    private $localExtensionsPath = '@app/extensions';
+
+    /** @var array default contents of local ignored composer.json */
+    private $composerArray = [
+        "name" => "devgroup/ext-meta-package",
+        "description" => "File to store extensions",
+        "minimum-stability" => "dev",
+        "require" => [
+
+        ],
+        'config' => [
+            'vendor-dir' => '../vendor',
+            'process-timeout' => 1800,
+            'preferred-install' => 'dist',
+            'store-auths' => true
+        ]
+    ];
+
     /**
      * @var array Array of extensions descriptions
      */
@@ -102,6 +128,10 @@ class ExtensionsManager extends Module
      */
     public function init()
     {
+        ExtensionFileWriter::checkLocalStorage(
+            Yii::getAlias($this->localExtensionsPath),
+            $this->composerArray
+        );
         parent::init();
         $this->configurationUpdater = Yii::createObject($this->configurationUpdater);
     }
@@ -180,5 +210,24 @@ class ExtensionsManager extends Module
                 'url' => ['config', 'sectionIndex' => 0],
             ],
         ];
+    }
+
+    /**
+     * @return bool|string
+     */
+    public function getLocalExtensionsPath()
+    {
+        return Yii::getAlias($this->localExtensionsPath);
+    }
+
+    /**
+     * @return ExtensionsManager|null
+     */
+    public static function module()
+    {
+        if (null === $module = Yii::$app->getModule('extensions-manager')) {
+            $module = new self('extensions-manager');
+        }
+        return $module;
     }
 }

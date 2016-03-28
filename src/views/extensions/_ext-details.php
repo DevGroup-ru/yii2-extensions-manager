@@ -9,6 +9,7 @@
  * @var array $license
  * @var string $packageName
  * @var bool $installed
+ * @codeCoverageIgnore
  */
 use DevGroup\ExtensionsManager\ExtensionsManager;
 

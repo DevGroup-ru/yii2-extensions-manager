@@ -2,6 +2,7 @@
 /**
  * @var \yii\web\View $this
  * @var string $type
+ * @codeCoverageIgnore
  */
 use yii\helpers\Html;
 use kartik\icons\Icon;

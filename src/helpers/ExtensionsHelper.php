@@ -19,12 +19,10 @@ class ExtensionsHelper
         $installed = ComposerInstalledSet::get()->getInstalled();
         $configurables = [];
         foreach ($installed as $package) {
-            /** @var ExtensionsManager $manager */
-            $manager = Yii::$app->getModule('extensions-manager');
             $packageConfigurablesFile = ArrayHelper::getValue($package, 'extra.configurables', null);
             if ($packageConfigurablesFile === null
-                || (true === $onlyActive && false === $manager->extensionIsActive($package['name'])))
-            {
+                || (true === $onlyActive && false === ExtensionsManager::module()->extensionIsActive($package['name']))
+            ) {
                 continue;
             }
             $fn = Yii::getAlias('@vendor')

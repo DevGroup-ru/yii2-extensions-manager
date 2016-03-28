@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * @codeCoverageIgnore
+ */
 return [
     [
         'sectionName' => 'Extensions manager',

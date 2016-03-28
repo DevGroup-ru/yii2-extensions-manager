@@ -7,6 +7,12 @@ use DevGroup\ExtensionsManager\ExtensionsManager;
 use DevGroup\ExtensionsManager\commands\ExtensionController;
 use Yii;
 
+/**
+ * Class ExtensionsConfiguration
+ *
+ * @package DevGroup\ExtensionsManager\models
+ * @codeCoverageIgnore
+ */
 class ExtensionsConfiguration extends BaseConfigurationModel
 {
     public function __construct($config = [])
@@ -17,20 +23,21 @@ class ExtensionsConfiguration extends BaseConfigurationModel
             'githubAccessToken',
             'applicationName',
             'githubApiUrl',
-            'extensionsPerPage'
+            'extensionsPerPage',
+            'composerPath',
+            'verbose',
         ];
 
         parent::__construct($attributes, $config);
-        $module = Yii::$app->getModule('extensions-manager');
-        if ($module === null) {
-            $module = new ExtensionsManager('extensions-manager');
-        }
+        $module = ExtensionsManager::module();
         $this->extensionsStorage = $module->extensionsStorage;
         $this->packagistUrl = $module->packagistUrl;
         $this->githubAccessToken = $module->githubAccessToken;
         $this->githubApiUrl = $module->githubApiUrl;
         $this->applicationName = $module->applicationName;
         $this->extensionsPerPage = $module->extensionsPerPage;
+        $this->composerPath = $module->composerPath;
+        $this->verbose = $module->verbose;
     }
 
     /**
@@ -42,16 +49,26 @@ class ExtensionsConfiguration extends BaseConfigurationModel
     {
         return [
             [
-                ['extensionsStorage', 'packagistUrl', 'githubAccessToken', 'applicationName', 'githubApiUrl'],
+                [
+                    'extensionsStorage',
+                    'packagistUrl',
+                    'githubAccessToken',
+                    'applicationName',
+                    'githubApiUrl',
+                    'composerPath'
+                ],
                 'string',
                 'max' => 180
             ],
-            [['extensionsPerPage'], 'integer'],
+            [['extensionsPerPage', 'verbose'], 'integer'],
             [['packagistUrl', 'applicationName'], 'required'],
             [['extensionsStorage', 'packagistUrl', 'githubAccessToken', 'applicationName', 'githubApiUrl'], 'string'],
         ];
     }
 
+    /**
+     * @inheritdoc
+     */
     public function attributeLabels()
     {
         return [
@@ -61,6 +78,8 @@ class ExtensionsConfiguration extends BaseConfigurationModel
             'githubApiUrl' => Yii::t('extensions-manager', 'Github API URL'),
             'extensionsStorage' => Yii::t('extensions-manager', 'Extensions storage'),
             'extensionsPerPage' => Yii::t('extensions-manager', 'Extensions per page'),
+            'composerPath' => Yii::t('extensions-manager', 'Path to Composer'),
+            'verbose' => Yii::t('extensions-manager', 'Verbose output'),
         ];
     }
 
@@ -88,7 +107,7 @@ class ExtensionsConfiguration extends BaseConfigurationModel
         return
             [
                 'controllerMap' => [
-                    'extension' => ExtensionController::className(),
+                    'extension' => ExtensionController::class,
                 ]
             ];
     }
@@ -108,20 +127,22 @@ class ExtensionsConfiguration extends BaseConfigurationModel
                     'translations' => [
                         'extensions-manager' => [
                             'class' => 'yii\i18n\PhpMessageSource',
-                            'basePath' => '@vendor/devgroup/yii2-extensions-manager/src/messages',
+                            'basePath' => __DIR__ . '/messages',
                         ]
                     ]
                 ],
             ],
             'modules' => [
                 'extensions-manager' => [
-                    'class' => ExtensionsManager::className(),
+                    'class' => ExtensionsManager::class,
                     'extensionsStorage' => $this->extensionsStorage,
                     'packagistUrl' => $this->packagistUrl,
                     'githubAccessToken' => $this->githubAccessToken,
                     'applicationName' => $this->applicationName,
                     'githubApiUrl' => $this->githubApiUrl,
                     'extensionsPerPage' => $this->extensionsPerPage,
+                    'composerPath' => $this->composerPath,
+                    'verbose' => $this->verbose,
                 ]
             ],
         ];

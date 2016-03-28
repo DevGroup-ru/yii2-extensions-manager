@@ -2,6 +2,7 @@
 /**
  * @var \yii\web\View $this
  * @var \yii\data\ArrayDataProvider $dataProvider
+ * @codeCoverageIgnore
  */
 
 use yii\grid\GridView;

@@ -20,7 +20,7 @@ class ExtensionController extends Controller
     public function init()
     {
         parent::init();
-        $this->module = Yii::$app->getModule('extensions-manager');
+        $this->module = ExtensionsManager::module();
         $this->extensions = $this->module->getExtensions();
     }
 

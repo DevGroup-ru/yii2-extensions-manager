@@ -5,6 +5,8 @@ use DevGroup\ExtensionsManager\ExtensionsManager;
 use DevGroup\ExtensionsManager\components\ComposerInstalledSet;
 use yii\base\Component;
 use Yii;
+use yii\helpers\FileHelper;
+use yii\helpers\Json;
 
 class ExtensionFileWriter extends Component
 {
@@ -15,7 +17,7 @@ class ExtensionFileWriter extends Component
     public static function updateConfig()
     {
         /** @var ExtensionsManager $module */
-        $module = self::module();
+        $module = ExtensionsManager::module();
         $extensions = $module->getExtensions();
         $installed = ComposerInstalledSet::get()->getInstalled();
         $fileName = Yii::getAlias($module->extensionsStorage);
@@ -35,22 +37,19 @@ class ExtensionFileWriter extends Component
         return $writer->commit();
     }
 
+    /**
+     * @return bool
+     */
     public static function generateConfig()
     {
-        /** @var ExtensionsManager $module */
-        $module = self::module();
         $installed = ComposerInstalledSet::get()->getInstalled();
-        $fileName = Yii::getAlias($module->extensionsStorage);
+        $fileName = Yii::getAlias(ExtensionsManager::module()->extensionsStorage);
         $writer = new ApplicationConfigWriter(['filename' => $fileName]);
         $config = self::rebuldConfig($installed);
         $writer->addValues($config);
         return $writer->commit();
     }
 
-    private static function module()
-    {
-        return Yii::$app->getModule('extensions-manager');
-    }
     /**
      * @param $config
      * @return array
@@ -82,5 +81,38 @@ class ExtensionFileWriter extends Component
         }
         //TODO implement checking of broken extension array and extension repair method
         return 0;
+    }
+
+    /**
+     * Checks and creates if necessary and possible folder to store and local composer.json
+     *
+     * @param string $dir
+     * @param array $data
+     * @return bool|int
+     * @throws \yii\base\Exception
+     */
+    public static function checkLocalStorage($dir, $data)
+    {
+        $fn = $dir . '/composer.json';
+        $created = true;
+        if (true === FileHelper::createDirectory($dir)) {
+            if (false === file_exists($fn)) {
+                $created = file_put_contents(
+                    $fn,
+                    Json::encode($data, JSON_FORCE_OBJECT | 320)
+                );
+            }
+            if (false === $created) {
+                Yii::$app->session->setFlash('error',
+                    Yii::t('extensions-manager', 'Unable to create local composer.json file')
+                );
+            }
+        } else {
+            Yii::$app->session->setFlash('error',
+                Yii::t('extensions-manager', 'Unable to create folder to store local composer.json file')
+            );
+            $created = false;
+        }
+        return $created;
     }
 }

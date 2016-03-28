@@ -101,9 +101,7 @@ class ConfigurationUpdater extends Component
             }
             /** @var BaseConfigurationModel $configurationModel */
             $configurationModel = new $configurable['configurationModel'];
-            /** @var ExtensionsManager $manager */
-            $manager = Yii::$app->getModule('extensions-manager');
-            if (false === $manager->extensionIsActive($configurable['package'])) {
+            if (false === ExtensionsManager::module()->extensionIsActive($configurable['package'])) {
                 $configurationModel->deleteFromState($this->configurablesStatePath);
                 continue;
             } else {
@@ -164,7 +162,7 @@ class ConfigurationUpdater extends Component
                 Yii::$app->session->setFlash(
                     'success',
                     Yii::t(
-                        'app',
+                        'extensions-manager',
                         'Configuration saved'
                     )
                 );
@@ -172,7 +170,7 @@ class ConfigurationUpdater extends Component
                 Yii::$app->session->setFlash(
                     'error',
                     Yii::t(
-                        'app',
+                        'extensions-manager',
                         'Error saving configuration for module {module}',
                         [
                             'module' => $errorSection,

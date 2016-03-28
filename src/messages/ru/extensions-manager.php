@@ -56,4 +56,10 @@ return [
     'activated' => 'активировано',
     'deactivated' => 'деактивировано',
     '{extName} detailed information' => 'Подробная информация о {extName}',
+    'Unable to create extensions file' => '',
+    'Save' => 'Сохранить',
+    'Unable to create local composer.json file' => 'Невозможно создать локальный composer.json файл',
+    'Unable to create folder to store local composer.json file' => 'Невозможно создать папку для хранения локального composer.json файла',
+    'Path to Composer' => 'Путь до composer',
+    'Verbose output' => 'Подробный вывод',
 ];

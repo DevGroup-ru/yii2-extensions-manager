@@ -37,7 +37,7 @@ class ApplicationConfigWriter extends Component
         if ($this->filename === null) {
             throw new InvalidConfigException(
                 Yii::t(
-                    'app',
+                    'extensions-manager',
                     'Filename should be set for ApplicationConfigWriter'
                 )
             );

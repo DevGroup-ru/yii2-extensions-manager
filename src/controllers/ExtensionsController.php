@@ -46,7 +46,7 @@ class ExtensionsController extends BaseController
      */
     public function actionIndex()
     {
-        $extensions = self::module()->getExtensions();
+        $extensions = ExtensionsManager::module()->getExtensions();
         return $this->render(
             'index',
             [
@@ -57,7 +57,7 @@ class ExtensionsController extends BaseController
                     ],
                     'pagination' => [
                         'defaultPageSize' => 10,
-                        'pageSize' => self::module()->extensionsPerPage,
+                        'pageSize' => ExtensionsManager::module()->extensionsPerPage,
                     ],
                 ]),
             ]
@@ -93,7 +93,7 @@ class ExtensionsController extends BaseController
                     'allModels' => $packages,
                     'pagination' => [
                         'defaultPageSize' => 10,
-                        'pageSize' => self::module()->extensionsPerPage,
+                        'pageSize' => ExtensionsManager::module()->extensionsPerPage,
                     ],
                 ]),
                 'type' => $type,
@@ -132,7 +132,7 @@ class ExtensionsController extends BaseController
     {
         if (true === empty(self::$packagist) || false === self::$packagist instanceof Client) {
             $packagist = new Client();
-            $packagist->setPackagistUrl(static::module()->packagistUrl);
+            $packagist->setPackagistUrl(ExtensionsManager::module()->packagistUrl);
             self::$packagist = $packagist;
         }
         return self::$packagist;
@@ -159,6 +159,7 @@ class ExtensionsController extends BaseController
         if (false === Yii::$app->request->isAjax) {
             throw new NotFoundHttpException("Page not found");
         }
+        $module = ExtensionsManager::module();
         $packageName = Yii::$app->request->post('packageName');
         $packagist = self::getPackagist();
         $package = $packagist->get($packageName);
@@ -168,9 +169,9 @@ class ExtensionsController extends BaseController
         $versionsData = $dependencies = [];
         if (true === self::isGit($repository)) {
             $repository = preg_replace(['%^.*github.com\/%', '%\.git$%'], '', $repository);
-            $gitAccessToken = self::module()->githubAccessToken;
-            $gitApiUrl = rtrim(self::module()->githubApiUrl, '/');
-            $applicationName = self::module()->applicationName;
+            $gitAccessToken = $module->githubAccessToken;
+            $gitApiUrl = rtrim($module->githubApiUrl, '/');
+            $applicationName = $module->applicationName;
             $headers = [
                 'User-Agent: ' . $applicationName,
             ];
@@ -189,7 +190,7 @@ class ExtensionsController extends BaseController
         }
         //ExtensionDataHelper::getVersions() must be invoked before other methods who fetches versioned data
         $versions = ExtensionDataHelper::getVersions($packagistVersions, array_shift($versionsData));
-        $jsonUrl = rtrim(self::module()->packagistUrl, '/') . '/packages/' . trim($packageName, '/ ') . '.json';
+        $jsonUrl = rtrim($module->packagistUrl, '/') . '/packages/' . trim($packageName, '/ ') . '.json';
         $packageJson = self::doRequest($jsonUrl);
         $packageData = Json::decode($packageJson);
         $type = ExtensionDataHelper::getType($packageData);
@@ -212,7 +213,7 @@ class ExtensionsController extends BaseController
                 'authors' => ExtensionDataHelper::getOtherPackageVersionedData($packageData, 'authors'),
                 'license' => ExtensionDataHelper::getOtherPackageVersionedData($packageData, 'license'),
                 'packageName' => $packageName,
-                'installed' => array_key_exists($packageName, self::module()->getExtensions()),
+                'installed' => array_key_exists($packageName, $module->getExtensions()),
                 'type' => $type,
             ]
         );
@@ -232,8 +233,9 @@ class ExtensionsController extends BaseController
         if (false === Yii::$app->request->isAjax) {
             throw new NotFoundHttpException('Page not found');
         }
+        $module = ExtensionsManager::module();
         $packageName = Yii::$app->request->post('packageName');
-        $extension = self::module()->getExtensions($packageName);
+        $extension = $module->getExtensions($packageName);
         $taskType = Yii::$app->request->post('taskType');
         if (true === empty($extension) && $taskType != ExtensionsManager::INSTALL_DEFERRED_TASK) {
             return self::runTask(
@@ -250,9 +252,13 @@ class ExtensionsController extends BaseController
             case ExtensionsManager::INSTALL_DEFERRED_TASK :
                 return self::runTask(
                     [
-                        './composer.phar',
+                        $module->composerPath,
                         'require',
-                        $packageName
+                        $packageName,
+                        "--working-dir={$module->getLocalExtensionsPath()}",
+                        '--prefer-dist',
+                        '-o',
+                        $module->verbose == 1 ? '-vvv' : '',
                     ],
                     ExtensionsManager::COMPOSER_INSTALL_DEFERRED_GROUP
                 );
@@ -368,7 +374,8 @@ class ExtensionsController extends BaseController
      */
     private static function uninstall($extension, ReportingChain $chain)
     {
-        if (true === self::module()->extensionIsCore($extension['composer_name'])) {
+        $module = ExtensionsManager::module();
+        if (true === $module->extensionIsCore($extension['composer_name'])) {
             $dummyTask = self::buildTask(
                 [
                     realpath(Yii::getAlias('@app') . '/yii'),
@@ -380,13 +387,13 @@ class ExtensionsController extends BaseController
             $chain->addTask($dummyTask);
         } else {
             self::deactivate($extension, $chain);
-
             $uninstallTask = self::buildTask(
                 [
-                    './composer.phar',
+                    $module->composerPath,
                     'remove',
                     $extension['composer_name'],
-                    '--update-with-dependencies',
+                    "--working-dir={$module->getLocalExtensionsPath()}",
+                    $module->verbose == 1 ? '-vvv' : '',
                 ],
                 ExtensionsManager::COMPOSER_UNINSTALL_DEFERRED_GROUP
             );
@@ -486,13 +493,5 @@ class ExtensionsController extends BaseController
         } else {
             throw new ServerErrorHttpException("Unable to start task");
         }
-    }
-
-    /**
-     * @return null| ExtensionsManager
-     */
-    public static function module()
-    {
-        return Yii::$app->getModule('extensions-manager');
     }
 }

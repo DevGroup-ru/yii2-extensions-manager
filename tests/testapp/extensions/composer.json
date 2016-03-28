@@ -1,0 +1,1 @@
+{"name":"devgroup/ext-meta-package","description":"File to store extensions","minimum-stability":"dev","require":{},"config":{"vendor-dir":"../vendor","process-timeout":1800,"preferred-install":"dist","store-auths":true}}

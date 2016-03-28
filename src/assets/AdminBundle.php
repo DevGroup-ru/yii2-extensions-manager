@@ -6,6 +6,12 @@ use Yii;
 use yii\helpers\Url;
 use yii\web\AssetBundle;
 
+/**
+ * Class AdminBundle
+ *
+ * @package DevGroup\ExtensionsManager\assets
+ * @codeCoverageIgnore
+ */
 class AdminBundle extends AssetBundle
 {
     /**

@@ -11,6 +11,11 @@ use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\VarDumper;
 
+/**
+ * Class ConfigurationIndex
+ *
+ * @package DevGroup\ExtensionsManager\actions
+ */
 class ConfigurationIndex extends TabbedFormCombinedAction
 {
     /** @var BaseConfigurationModel */
@@ -34,6 +39,9 @@ class ConfigurationIndex extends TabbedFormCombinedAction
     /** @var bool If current selected section is valid */
     public $isValidSection = false;
 
+    /**
+     * @inheritdoc
+     */
     public function beforeActionRun()
     {
         parent::beforeActionRun();
@@ -58,15 +66,16 @@ class ConfigurationIndex extends TabbedFormCombinedAction
                 . $this->currentConfigurable['package']
                 . '/' . $this->currentConfigurationView;
             $this->model = new $this->currentConfigurationModel;
-            /** @var ExtensionsManager $module */
-            $module = Yii::$app->getModule('extensions-manager');
-            $configurablesStatePath = $module->configurationUpdater->configurablesStatePath;
+            $configurablesStatePath = ExtensionsManager::module()->configurationUpdater->configurablesStatePath;
             $this->model->loadState($configurablesStatePath);
         } else {
             $this->currentConfigurationView = '_default_configuraton.php';
         }
     }
 
+    /**
+     * @inheritdoc
+     */
     public function defineParts()
     {
         return [
@@ -90,6 +99,9 @@ class ConfigurationIndex extends TabbedFormCombinedAction
         ];
     }
 
+    /**
+     * @return array
+     */
     public function sectionLinks()
     {
         $navItems = ExtensionsManager::navLinks();
@@ -111,22 +123,25 @@ class ConfigurationIndex extends TabbedFormCombinedAction
         return $navItems;
     }
 
+    /**
+     * @return string|\yii\web\Response
+     */
     public function saveData()
     {
-        if (isset($this->model) === false) {
+        if (false === isset($this->model)) {
             return '';
         }
-
         if ($this->model->load(Yii::$app->request->post()) && $this->model->validate()) {
-            /** @var ExtensionsManager $extensionsManager */
-            $extensionsManager = Yii::$app->getModule('extensions-manager');
-            if ($extensionsManager->configurationUpdater->updateConfiguration(true)) {
+            if (ExtensionsManager::module()->configurationUpdater->updateConfiguration(true)) {
                 return $this->controller->redirect([$this->id, 'sectionIndex' => $this->sectionIndex]);
             }
         }
         return '';
     }
 
+    /**
+     * @return string
+     */
     public function renderSectionForm()
     {
         return $this->render(
@@ -139,22 +154,31 @@ class ConfigurationIndex extends TabbedFormCombinedAction
         );
     }
 
+    /**
+     * @inheritdoc
+     */
     public function getFooter()
     {
         return (null === $this->currentConfigurable)
             ? ''
             : Html::submitButton(
                 '<i class="fa fa-floppy-o"></i>&nbsp;' .
-                (Yii::t('app', 'Save')),
+                (Yii::t('extensions-manager', 'Save')),
                 ['class' => 'btn btn-primary pull-right']
             );
     }
 
+    /**
+     * @inheritdoc
+     */
     public function breadcrumbs()
     {
         return [];
     }
 
+    /**
+     * @inheritdoc
+     */
     public function title()
     {
         return Yii::t('extensions-manager', 'Configuration');
