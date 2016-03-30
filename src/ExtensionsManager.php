@@ -94,7 +94,7 @@ class ExtensionsManager extends Module
     public $extensionsPerPage = 10;
 
     /** @var string path to composer file */
-    public $composerPath = '/usr/local/bin/composer';
+    public $composerPath = './composer.php';
 
     /** @var int Show detailed output for composer commands */
     public $verbose = 0;
@@ -105,7 +105,7 @@ class ExtensionsManager extends Module
     /** @var array default contents of local ignored composer.json */
     private $composerArray = [
         "name" => "devgroup/ext-meta-package",
-        "description" => "File to store extensions",
+        "description" => "File to store local extensions",
         "minimum-stability" => "dev",
         "require" => [
 
@@ -115,6 +115,12 @@ class ExtensionsManager extends Module
             'process-timeout' => 1800,
             'preferred-install' => 'dist',
             'store-auths' => true
+        ],
+        'extra' => [
+            'asset-installer-paths' => [
+                'npm-asset-library' => '../vendor/npm',
+                'bower-asset-library' => '../vendor/bower'
+            ]
         ]
     ];
 
