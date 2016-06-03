@@ -73,6 +73,15 @@ PHP;
         $data .= VarDumper::export($this->configuration);
         $data .= ";\n\n";
 
-        return file_put_contents($this->filename, $data, LOCK_EX) !== false;
+        $result = file_put_contents($this->filename, $data, LOCK_EX) !== false;
+        if ($result) {
+            if (function_exists('opcache_invalidate')) {
+                opcache_invalidate($this->filename, true);
+            }
+            if (function_exists('apc_delete_file')) {
+                @apc_delete_file($this->filename);
+            }
+        }
+        return $result;
     }
 }

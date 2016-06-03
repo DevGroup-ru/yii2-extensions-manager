@@ -112,13 +112,6 @@ abstract class BaseConfigurationModel extends DynamicModel
         ]);
         $writer->configuration = $this->getAttributesForStateSaving();
         $result =  $writer->commit();
-        if (ini_get('opcache.enable')) {
-            // invalidate opcache of this files!
-            opcache_invalidate(
-                Yii::getAlias($filename),
-                true
-            );
-        }
         return $result;
     }
 

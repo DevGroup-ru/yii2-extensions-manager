@@ -145,12 +145,6 @@ class ConfigurationUpdater extends Component
             $isValid = true;
             foreach ($configWriters as $writer) {
                 $isValid = $isValid && $writer->commit();
-                if (ini_get('opcache.enable')) {
-                    opcache_invalidate(
-                        Yii::getAlias($writer->filename),
-                        true
-                    );
-                }
             }
         }
 
