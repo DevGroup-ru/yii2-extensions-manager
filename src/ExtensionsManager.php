@@ -94,7 +94,7 @@ class ExtensionsManager extends Module
     public $extensionsPerPage = 10;
 
     /** @var string path to composer file */
-    public $composerPath = './composer.php';
+    public $composerPath = './composer.phar';
 
     /** @var int Show detailed output for composer commands */
     public $verbose = 0;
