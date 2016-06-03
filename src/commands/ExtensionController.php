@@ -1,4 +1,5 @@
 <?php
+
 namespace DevGroup\ExtensionsManager\commands;
 
 use DevGroup\ExtensionsManager\ExtensionsManager;
@@ -96,7 +97,7 @@ class ExtensionController extends Controller
 
         if (true === $writer->commit()) {
             $this->stdout('Extensions configuration successfully updated.' . PHP_EOL);
-            if (true === $this->module->configurationUpdater->updateConfiguration(false, false)) {
+            if (true === $this->module->configurationUpdater->updateConfiguration(false)) {
                 $this->stdout('Application configuration successfully updated.' . PHP_EOL);
                 return true;
             } else {

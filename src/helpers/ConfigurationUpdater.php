@@ -78,7 +78,7 @@ class ConfigurationUpdater extends Component
      * @return bool true if all is ok
      * @throws \yii\base\InvalidConfigException
      */
-    public function updateConfiguration($usePostData = true, $loadCurrent = true)
+    public function updateConfiguration($usePostData = true)
     {
         /** @var ApplicationConfigWriter[] $configWriters */
         $configWriters = [];
@@ -87,9 +87,6 @@ class ConfigurationUpdater extends Component
             $configWriters[$filename] = new ApplicationConfigWriter([
                 'filename' => $file,
             ]);
-            if (true === $loadCurrent) {
-                $configWriters[$filename]->addValues(self::loadCurrentConfig($file));
-            }
         }
         $this->getConfigurables(true);
         $isValid = true;
@@ -118,10 +115,6 @@ class ConfigurationUpdater extends Component
                 $configurationModel->trigger($configurationModel->configurationSaveEvent(), $event);
                 if ($event->isValid === true) {
                     if ($configurationModel->validate() === true) {
-                        foreach ($configWriters as $filename => $writer) {
-                            $callbackFunction = $this->configs[$filename];
-                            $writer->addValues(call_user_func([$configurationModel, $callbackFunction]));
-                        }
                         $configurationModel->saveState($this->configurablesStatePath);
                     } else {
                         if (Yii::$app->get('session', false)) {
@@ -141,6 +134,10 @@ class ConfigurationUpdater extends Component
                     break;
                 }
             } // model load from user input
+            foreach ($configWriters as $filename => $writer) {
+                $callbackFunction = $this->configs[$filename];
+                $writer->addValues(call_user_func([$configurationModel, $callbackFunction]));
+            }
         }  // /foreach
 
         if ($isValid === true) {
@@ -181,21 +178,4 @@ class ConfigurationUpdater extends Component
         }
         return $isValid;
     }
-
-    /**
-     * Loads and returns current config state
-     * @param string $filename
-     * @return array
-     */
-    public static function loadCurrentConfig($filename)
-    {
-        $filename = Yii::getAlias($filename);
-        $currentConfig = [];
-        if (true === file_exists($filename) && true === is_readable($filename)) {
-            $currentConfig = include $filename;
-        }
-        return $currentConfig;
-    }
-
-
 }
