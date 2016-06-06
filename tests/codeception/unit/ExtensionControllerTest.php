@@ -1,4 +1,5 @@
 <?php
+
 namespace DevGroup\ExtensionsManager\tests;
 
 use testsHelper\TestConfigCleaner;
@@ -7,32 +8,22 @@ use Yii;
 
 class ExtensionControllerTest extends \PHPUnit_Framework_TestCase
 {
-    public static function setUpBeforeClass()
-    {
-        self::writeExtFile();
-    }
-
-    public static function tearDownAfterClass()
-    {
-        self::writeExtFile();
-        TestConfigCleaner::cleanTestConfigs();
-    }
-
     protected static function writeExtFile()
     {
-        $fn = __DIR__ . '/testapp/config/extensions.php';
+        $fn = __DIR__ . '/../../testapp/config/extensions.php';
         if (true === file_exists($fn)) {
             unlink($fn);
         }
-        copy(__DIR__ . '/data/extensions.php', $fn);
+        copy(__DIR__ . '/../../data/extensions.php', $fn);
     }
 
     public function setUp()
     {
-        $config = include __DIR__ . '/testapp/config/web.php';
+        self::writeExtFile();
+        $config = include __DIR__ . '/../../testapp/config/console.php';
         new Application($config);
         Yii::$app->cache->flush();
-        Yii::setAlias('@vendor', __DIR__ . '/testapp/vendor');
+        Yii::setAlias('@vendor', __DIR__ . '/../../testapp/vendor');
         parent::setUp();
     }
 
@@ -43,6 +34,8 @@ class ExtensionControllerTest extends \PHPUnit_Framework_TestCase
             Yii::$app->session->close();
         }
         Yii::$app = null;
+        self::writeExtFile();
+        TestConfigCleaner::cleanTestConfigs();
     }
 
     public function testActionActivateNonExistingExtension()
@@ -64,5 +57,4 @@ class ExtensionControllerTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertEquals(0, Yii::$app->runAction('extension/dummy', ['message']));
     }
-
 }

@@ -38,11 +38,12 @@ class ComposerInstalledSet
     }
 
     /**
+     * @param bool $force whether getting new instance.
      * @return ComposerInstalledSet
      */
-    public static function get()
+    public static function get($force = false)
     {
-        if (false === self::$instance instanceof self) {
+        if (false === self::$instance instanceof self || $force === true) {
             self::$instance = new self;
         }
         return self::$instance;

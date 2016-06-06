@@ -8,19 +8,12 @@ use yii\console\Application;
 
 class ExtensionFileWriterTest extends \PHPUnit_Framework_TestCase
 {
-
-    public static function tearDownAfterClass()
-    {
-        TestConfigCleaner::cleanExtensions();
-        TestConfigCleaner::cleanTestConfigs();
-    }
-
     public function setUp()
     {
-        $config = include __DIR__ . '/testapp/config/web.php';
+        $config = include __DIR__ . '/../../testapp/config/console.php';
         new Application($config);
         Yii::$app->cache->flush();
-        Yii::setAlias('@vendor', __DIR__ . '/testapp/vendor');
+        Yii::setAlias('@vendor', __DIR__ . '/../../testapp/vendor');
         parent::setUp();
     }
 
@@ -31,12 +24,14 @@ class ExtensionFileWriterTest extends \PHPUnit_Framework_TestCase
             Yii::$app->session->close();
         }
         Yii::$app = null;
+        TestConfigCleaner::cleanExtensions();
+        TestConfigCleaner::cleanTestConfigs();
     }
 
     public function checkFile()
     {
         $a = [];
-        $fn = __DIR__ . '/testapp/config/extensions.php';
+        $fn = __DIR__ . '/../../testapp/config/extensions.php';
         if (false === file_exists($fn)) {
             $this->markTestSkipped();
         } else {
@@ -56,7 +51,7 @@ class ExtensionFileWriterTest extends \PHPUnit_Framework_TestCase
     public function testUpdateWithAddition()
     {
         TestConfigCleaner::removeExtFile();
-        copy(__DIR__ . '/data/less-extensions.php', __DIR__ . '/testapp/config/extensions.php');
+        copy(__DIR__ . '/../../data/less-extensions.php', __DIR__ . '/../../testapp/config/extensions.php');
         ExtensionFileWriter::updateConfig();
         $a = $this->checkFile();
         $this->assertEquals(4, count($a));
@@ -65,7 +60,7 @@ class ExtensionFileWriterTest extends \PHPUnit_Framework_TestCase
     public function testUpdateWithDeletion()
     {
         TestConfigCleaner::removeExtFile();
-        copy(__DIR__ . '/data/more-extensions.php', __DIR__ . '/testapp/config/extensions.php');
+        copy(__DIR__ . '/../../data/more-extensions.php', __DIR__ . '/../../testapp/config/extensions.php');
         ExtensionFileWriter::updateConfig();
         $a = $this->checkFile();
         $this->assertEquals(4, count($a));

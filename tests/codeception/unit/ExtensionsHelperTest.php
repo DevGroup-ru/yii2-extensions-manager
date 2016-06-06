@@ -1,4 +1,5 @@
 <?php
+
 namespace DevGroup\ExtensionsManager\tests;
 
 use DevGroup\ExtensionsManager\helpers\ExtensionsHelper;
@@ -8,23 +9,13 @@ use yii\web\Application;
 
 class ExtensionsHelperTest extends \PHPUnit_Framework_TestCase
 {
-    public static function setUpBeforeClass()
-    {
-        TestConfigCleaner::cleanExtensions();
-    }
-
-    public static function tearDownAfterClass()
-    {
-        TestConfigCleaner::cleanExtensions();
-        TestConfigCleaner::cleanTestConfigs();
-    }
-
     public function setUp()
     {
-        $config = include __DIR__ . '/testapp/config/web.php';
+        TestConfigCleaner::cleanExtensions();
+        $config = include __DIR__ . '/../../testapp/config/console.php';
         new Application($config);
         Yii::$app->cache->flush();
-        Yii::setAlias('@vendor', __DIR__ . '/testapp/vendor');
+        Yii::setAlias('@vendor', __DIR__ . '/../../testapp/vendor');
         parent::setUp();
     }
 
@@ -35,6 +26,8 @@ class ExtensionsHelperTest extends \PHPUnit_Framework_TestCase
             Yii::$app->session->close();
         }
         Yii::$app = null;
+        TestConfigCleaner::cleanExtensions();
+        TestConfigCleaner::cleanTestConfigs();
     }
 
     public function testGetAllConfigurables()

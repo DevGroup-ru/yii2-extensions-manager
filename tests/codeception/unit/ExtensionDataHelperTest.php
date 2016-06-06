@@ -1,4 +1,5 @@
 <?php
+
 namespace DevGroup\ExtensionsManager\tests;
 
 use DevGroup\ExtensionsManager\components\ComposerInstalledSet;
@@ -20,10 +21,10 @@ class ExtensionDataHelperTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $config = include __DIR__ . '/testapp/config/web.php';
+        $config = include __DIR__ . '/../../testapp/config/web.php';
         new Application($config);
         Yii::$app->cache->flush();
-        Yii::setAlias('@vendor', __DIR__ . '/testapp/vendor');
+        Yii::setAlias('@vendor', __DIR__ . '/../../testapp/vendor');
         Yii::$app->language = 'ru';
         parent::setUp();
     }
@@ -35,14 +36,16 @@ class ExtensionDataHelperTest extends \PHPUnit_Framework_TestCase
             Yii::$app->session->close();
         }
         Yii::$app = null;
+        TestConfigCleaner::cleanExtensions();
+        TestConfigCleaner::cleanTestConfigs();
     }
 
     public function testNotEmptyVersionsTagsAndReleases()
     {
         self::prepareAll(
-            __DIR__ . '/data/mpdf.json',
-            __DIR__ . '/data/mpdf-releases.json',
-            __DIR__ . '/data/mpdf-tags.json'
+            __DIR__ . '/../../data/mpdf.json',
+            __DIR__ . '/../../data/mpdf-releases.json',
+            __DIR__ . '/../../data/mpdf-tags.json'
         );
         $versions = ExtensionDataHelper::getVersions(self::$packagistVersions, array_shift(self::$versionsData));
         $this->assertNotEmpty($versions);
@@ -52,9 +55,9 @@ class ExtensionDataHelperTest extends \PHPUnit_Framework_TestCase
     public function testNotEmptyVersionsTags()
     {
         self::prepareAll(
-            __DIR__ . '/data/mpdf.json',
-            __DIR__ . '/data/releases.json',
-            __DIR__ . '/data/mpdf-tags.json'
+            __DIR__ . '/../../data/mpdf.json',
+            __DIR__ . '/../../data/releases.json',
+            __DIR__ . '/../../data/mpdf-tags.json'
         );
         $versions = ExtensionDataHelper::getVersions(self::$packagistVersions, array_shift(self::$versionsData));
         $this->assertNotEmpty($versions);
@@ -64,9 +67,9 @@ class ExtensionDataHelperTest extends \PHPUnit_Framework_TestCase
     public function testNotEmptyVersionsReleases()
     {
         self::prepareAll(
-            __DIR__ . '/data/mpdf.json',
-            __DIR__ . '/data/mpdf-releases.json',
-            __DIR__ . '/data/tags.json'
+            __DIR__ . '/../../data/mpdf.json',
+            __DIR__ . '/../../data/mpdf-releases.json',
+            __DIR__ . '/../../data/tags.json'
         );
         $versions = ExtensionDataHelper::getVersions(self::$packagistVersions, array_shift(self::$versionsData));
         $this->assertNotEmpty($versions);
@@ -76,9 +79,9 @@ class ExtensionDataHelperTest extends \PHPUnit_Framework_TestCase
     public function testGetVersionsNoReleasesNoTags()
     {
         self::prepareAll(
-            __DIR__ . '/data/extra-package.json',
-            __DIR__ . '/data/releases.json',
-            __DIR__ . '/data/tags.json'
+            __DIR__ . '/../../data/extra-package.json',
+            __DIR__ . '/../../data/releases.json',
+            __DIR__ . '/../../data/tags.json'
         );
         $versions = ExtensionDataHelper::getVersions(self::$packagistVersions, array_shift(self::$versionsData));
         $this->assertNotEmpty($versions);
@@ -90,13 +93,13 @@ class ExtensionDataHelperTest extends \PHPUnit_Framework_TestCase
      */
     public function testHumanizeReadme()
     {
-        $readme = ExtensionDataHelper::humanizeReadme(file_get_contents(__DIR__ . '/data/readme.json'));
+        $readme = ExtensionDataHelper::humanizeReadme(file_get_contents(__DIR__ . '/../../data/readme.json'));
         $this->assertNotEmpty($readme);
     }
 
     public function testGetType()
     {
-        self::$packageData = Json::decode(file_get_contents(__DIR__ . '/data/package.json'));
+        self::$packageData = Json::decode(file_get_contents(__DIR__ . '/../../data/package.json'));
         $type = ExtensionDataHelper::getType(self::$packageData);
         $this->assertTrue(isset(Extension::getTypes()[$type]));
         return $type;
@@ -106,6 +109,8 @@ class ExtensionDataHelperTest extends \PHPUnit_Framework_TestCase
     {
         $data = ComposerInstalledSet::get()->getInstalled('fakedev2/yii2-fake-ext4');
         $type = ExtensionDataHelper::getType($data);
+        $this->assertSame(4, count(ComposerInstalledSet::get()->getInstalled()));
+        $this->assertSame('dotplant-extension', $type);
         $this->assertTrue(isset(Extension::getTypes()[$type]));
         return $data;
     }
@@ -162,7 +167,7 @@ class ExtensionDataHelperTest extends \PHPUnit_Framework_TestCase
     public function testGetLocalizedDataFieldNoExtra()
     {
         $name = ExtensionDataHelper::getLocalizedDataField(
-            Json::decode(file_get_contents(__DIR__ . '/data/installed-no-extra.json')),
+            Json::decode(file_get_contents(__DIR__ . '/../../data/installed-no-extra.json')),
             Extension::TYPE_YII,
             'name'
         );
@@ -178,7 +183,7 @@ class ExtensionDataHelperTest extends \PHPUnit_Framework_TestCase
     public function testGetLocalizedVersionedDataFieldExtra()
     {
         $description = ExtensionDataHelper::getLocalizedVersionedDataField(
-            Json::decode(file_get_contents(__DIR__ . '/data/extra-package.json')),
+            Json::decode(file_get_contents(__DIR__ . '/../../data/extra-package.json')),
             Extension::TYPE_YII,
             'description');
         $expected = 'type.version.extra.description_ru';
@@ -189,7 +194,7 @@ class ExtensionDataHelperTest extends \PHPUnit_Framework_TestCase
     {
         Yii::$app->language = 'zn';
         $description = ExtensionDataHelper::getLocalizedVersionedDataField(
-            Json::decode(file_get_contents(__DIR__ . '/data/extra-package.json')),
+            Json::decode(file_get_contents(__DIR__ . '/../../data/extra-package.json')),
             Extension::TYPE_YII,
             'description');
         $expected = 'type.version.extra.description';
@@ -200,7 +205,7 @@ class ExtensionDataHelperTest extends \PHPUnit_Framework_TestCase
     {
         Yii::$app->language = 'zn';
         $description = ExtensionDataHelper::getLocalizedVersionedDataField(
-            Json::decode(file_get_contents(__DIR__ . '/data/no-extra-package.json')),
+            Json::decode(file_get_contents(__DIR__ . '/../../data/no-extra-package.json')),
             Extension::TYPE_YII,
             'description');
         $expected = 'type.version.description';
@@ -211,7 +216,7 @@ class ExtensionDataHelperTest extends \PHPUnit_Framework_TestCase
     {
         Yii::$app->language = 'zn';
         $description = ExtensionDataHelper::getLocalizedVersionedDataField(
-            Json::decode(file_get_contents(__DIR__ . '/data/no-version-package.json')),
+            Json::decode(file_get_contents(__DIR__ . '/../../data/no-version-package.json')),
             Extension::TYPE_YII,
             'description');
         $expected = 'description';
@@ -221,7 +226,7 @@ class ExtensionDataHelperTest extends \PHPUnit_Framework_TestCase
     public function testGetOtherPackageVersionedDataString()
     {
         $description = ExtensionDataHelper::getOtherPackageVersionedData(
-            Json::decode(file_get_contents(__DIR__ . '/data/extra-package.json')),
+            Json::decode(file_get_contents(__DIR__ . '/../../data/extra-package.json')),
             'description',
             false
         );
@@ -232,7 +237,7 @@ class ExtensionDataHelperTest extends \PHPUnit_Framework_TestCase
     public function testGetOtherPackageVersionedDataAsArray()
     {
         $description = ExtensionDataHelper::getOtherPackageVersionedData(
-            Json::decode(file_get_contents(__DIR__ . '/data/extra-package.json')),
+            Json::decode(file_get_contents(__DIR__ . '/../../data/extra-package.json')),
             'description'
         );
         $this->assertTrue(in_array('type.version.description', $description));
@@ -241,7 +246,7 @@ class ExtensionDataHelperTest extends \PHPUnit_Framework_TestCase
     public function testGetOtherPackageDataString()
     {
         $name = ExtensionDataHelper::getOtherPackageData(
-            Json::decode(file_get_contents(__DIR__ . '/data/installed-no-extra.json')),
+            Json::decode(file_get_contents(__DIR__ . '/../../data/installed-no-extra.json')),
             'name'
         );
         $this->assertEquals('devgroup/yii2-extensions-manager', $name);
@@ -250,7 +255,7 @@ class ExtensionDataHelperTest extends \PHPUnit_Framework_TestCase
     public function testGetOtherPackageDataStringAsArray()
     {
         $name = ExtensionDataHelper::getOtherPackageData(
-            Json::decode(file_get_contents(__DIR__ . '/data/installed-no-extra.json')),
+            Json::decode(file_get_contents(__DIR__ . '/../../data/installed-no-extra.json')),
             'name',
             true
         );

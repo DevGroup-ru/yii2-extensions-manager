@@ -1,4 +1,5 @@
 <?php
+
 namespace DevGroup\ExtensionsManager\tests;
 
 use DevGroup\ExtensionsManager\components\ComposerInstalledSet;
@@ -10,10 +11,10 @@ class ComposerInstalledSetTest extends \PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        $config = include __DIR__ . '/testapp/config/web.php';
+        $config = include __DIR__ . '/../../testapp/config/web.php';
         $app = new Application($config);
         Yii::$app->cache->flush();
-        Yii::setAlias('@vendor', __DIR__ . '/testapp/vendor');
+        Yii::setAlias('@vendor', __DIR__ . '/../../testapp/vendor');
         parent::setUp();
     }
 
@@ -24,6 +25,7 @@ class ComposerInstalledSetTest extends \PHPUnit_Framework_TestCase
             \Yii::$app->session->close();
         }
         \Yii::$app = null;
+        TestConfigCleaner::cleanTestConfigs();
     }
 
     public function testCannotInstantiateExternally()
@@ -39,7 +41,7 @@ class ComposerInstalledSetTest extends \PHPUnit_Framework_TestCase
         if (false === file_exists($fn)) {
             $this->markTestSkipped('In this case we cant perform tests below.' . PHP_EOL);
         }
-        $instance = ComposerInstalledSet::get();
+        $instance = ComposerInstalledSet::get(true);
         $this->assertInstanceOf(ComposerInstalledSet::class, $instance);
         return $instance;
     }
@@ -65,10 +67,5 @@ class ComposerInstalledSetTest extends \PHPUnit_Framework_TestCase
         $keys = array_keys($installedArray);
         $name = array_pop($keys);
         $this->assertNotEmpty(ComposerInstalledSet::get()->getInstalled($name));
-    }
-
-    public static function tearDownAfterClass()
-    {
-        TestConfigCleaner::cleanTestConfigs();
     }
 }

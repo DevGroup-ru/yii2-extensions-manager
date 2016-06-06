@@ -14,13 +14,15 @@ matrix:
 install:
   - travis_retry composer self-update && composer --version
   - travis_retry composer global require fxp/composer-asset-plugin:~1.1
+  - travis_retry composer global require --dev codeception/codeception:2.0.16 && ~/.composer/vendor/bin/codecept --version
   - travis_retry composer install --prefer-dist --no-interaction --dev
 
 before_script:
   - mysql -e 'create database yii2_extmanager;'
 
 script:
-  - vendor/bin/phpunit --coverage-clover=coverage.xml --verbose $PHPUNIT_FLAGS
+  - ~/.composer/vendor/bin/codecept build
+  - ~/.composer/vendor/bin/codecept run --coverage --coverage-xml --verbose $PHPUNIT_FLAGS
 
 after_script:
   - |

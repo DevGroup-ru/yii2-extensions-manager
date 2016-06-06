@@ -1,4 +1,5 @@
 <?php
+
 namespace DevGroup\ExtensionsManager\tests;
 
 use DevGroup\ExtensionsManager\ExtensionsManager;
@@ -10,10 +11,10 @@ class ExtensionsManagerTest extends \PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        $config = include __DIR__ . '/testapp/config/web.php';
+        $config = include __DIR__ . '/../../testapp/config/console.php';
         new Application($config);
         Yii::$app->cache->flush();
-        Yii::setAlias('@vendor', __DIR__ . '/testapp/vendor');
+        Yii::setAlias('@vendor', __DIR__ . '/../../testapp/vendor');
         parent::setUp();
     }
 
@@ -24,10 +25,6 @@ class ExtensionsManagerTest extends \PHPUnit_Framework_TestCase
             Yii::$app->session->close();
         }
         Yii::$app = null;
-    }
-
-    public static function tearDownAfterClass()
-    {
         TestConfigCleaner::cleanExtensions();
     }
 
@@ -110,7 +107,7 @@ class ExtensionsManagerTest extends \PHPUnit_Framework_TestCase
     public function testBrokenExtension(ExtensionsManager $module)
     {
         TestConfigCleaner::removeExtFile();
-        copy(__DIR__ . '/data/broken-extensions.php', __DIR__ . '/testapp/config/extensions.php');
+        copy(__DIR__ . '/../../data/broken-extensions.php', __DIR__ . '/../../testapp/config/extensions.php');
         $a = $module->getExtensions('broken/extension1', true);
         $this->assertNotEmpty($a);
         $this->assertFalse($module->extensionIsCore('broken/extension1'));

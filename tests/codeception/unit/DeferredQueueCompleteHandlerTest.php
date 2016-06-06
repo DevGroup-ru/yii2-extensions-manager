@@ -15,9 +15,9 @@ class DeferredQueueCompleteHandlerTest extends \PHPUnit_Framework_TestCase
 {
     protected static $migrationPath;
 
-    public static function setUpBeforeClass()
+    public function setUp()
     {
-        $config = include __DIR__ . '/testapp/config/web.php';
+        $config = include __DIR__ . '/../../testapp/config/console.php';
         new Application($config);
         Yii::$app->cache->flush();
         self::$migrationPath = Yii::getAlias('@vendor') . '/devgroup/yii2-deferred-tasks/src/migrations';
@@ -25,7 +25,7 @@ class DeferredQueueCompleteHandlerTest extends \PHPUnit_Framework_TestCase
         Yii::$app->runAction('migrate/up', ['interactive' => 0, 'migrationPath' => self::$migrationPath]);
     }
 
-    public static function tearDownAfterClass()
+    public function tearDown()
     {
         Yii::$app->runAction('migrate/down', [99999, 'interactive' => 0, 'migrationPath' => self::$migrationPath]);
         if (Yii::$app && Yii::$app->has('session', true)) {
@@ -38,7 +38,7 @@ class DeferredQueueCompleteHandlerTest extends \PHPUnit_Framework_TestCase
     {
         TestConfigCleaner::removeExtFile();
         $this->assertFalse(TestConfigCleaner::checkExtFile());
-        Yii::setAlias('@vendor', realpath(__DIR__ . '/testapp/vendor'));
+        Yii::setAlias('@vendor', realpath(__DIR__ . '/../../testapp/vendor'));
         $group = new DeferredGroup();
         $group->loadDefaultValues();
         $group->name = ExtensionsManager::COMPOSER_INSTALL_DEFERRED_GROUP;
@@ -58,7 +58,7 @@ class DeferredQueueCompleteHandlerTest extends \PHPUnit_Framework_TestCase
     {
         TestConfigCleaner::removeExtFile();
         $this->assertFalse(TestConfigCleaner::checkExtFile());
-        Yii::setAlias('@vendor', realpath(__DIR__ . '/testapp/vendor'));
+        Yii::setAlias('@vendor', realpath(__DIR__ . '/../../testapp/vendor'));
         $group = new DeferredGroup();
         $group->loadDefaultValues();
         $group->name = ExtensionsManager::ACTIVATE_DEFERRED_TASK;
@@ -78,7 +78,7 @@ class DeferredQueueCompleteHandlerTest extends \PHPUnit_Framework_TestCase
     {
         TestConfigCleaner::removeExtFile();
         $this->assertFalse(TestConfigCleaner::checkExtFile());
-        Yii::setAlias('@vendor', realpath(__DIR__ . '/testapp/vendor'));
+        Yii::setAlias('@vendor', realpath(__DIR__ . '/../../testapp/vendor'));
         $queue = new DeferredQueue([]);
         $queue->deferred_group_id = 42;
         $process = new Process('pwd > /dev/null');
@@ -93,7 +93,7 @@ class DeferredQueueCompleteHandlerTest extends \PHPUnit_Framework_TestCase
     {
         TestConfigCleaner::removeExtFile();
         $this->assertFalse(TestConfigCleaner::checkExtFile());
-        Yii::setAlias('@vendor', realpath(__DIR__ . '/testapp/vendor'));
+        Yii::setAlias('@vendor', realpath(__DIR__ . '/../../testapp/vendor'));
         $group = new DeferredGroup();
         $group->loadDefaultValues();
         $group->name = ExtensionsManager::ACTIVATE_DEFERRED_TASK;

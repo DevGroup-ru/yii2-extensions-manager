@@ -1,4 +1,5 @@
 <?php
+
 namespace DevGroup\ExtensionsManager\tests;
 
 use DevGroup\ExtensionsManager\helpers\ApplicationConfigWriter;
@@ -10,7 +11,7 @@ class ApplicationConfigWriterTest extends \PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        $config = include __DIR__ . '/testapp/config/web.php';
+        $config = include __DIR__ . '/../../testapp/config/web.php';
         $app = new Application($config);
         Yii::$app->cache->flush();
         parent::setUp();

@@ -1,5 +1,6 @@
 composer.phar
 coverage
+tests/codeception/_output
 tests/runtime
 tests/config/configurables-state
 tests/config/generated
