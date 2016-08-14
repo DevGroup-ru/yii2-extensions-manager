@@ -12,7 +12,8 @@ class ExtensionFileWriter extends Component
 {
     /**
      * Calculates differences between @vengor/composer/installed.json and ExtensionsManager::$extensionsStorage
-     * and writing new ExtensionsManager::$extensionsStorage
+     * and writes new ExtensionsManager::$extensionsStorage
+     * @return bool Result, true if success
      */
     public static function updateConfig()
     {

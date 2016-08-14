@@ -54,29 +54,58 @@ in your composer ```required``` section, and at least
  }
 ```
 to the ```composer.json``` ```extra``` section. For more information, please see previous link.
-Next, it gives you ability to store all of your local extensions out from applications root ```composer.json``` file.
-All newly installed extensions will be stored in ```@app/extensions/composer.json``` file which is ignored from git.
-All other stuff, such as autoloading, etc. will work as usual.
-And your applications root ```composer.json``` and ```composer.loc``` will be clean and ready for git pull and etc.
+
+Next, it gives you ability to store all of your local extensions out from applications root ```composer.json``` file:
+- All newly installed extensions will be stored in ```@app/extensions/composer.json``` file which is ignored from git.
+- All other stuff, such as autoloading, etc. will work as usual.
+- And your applications root ```composer.json``` and ```composer.lock``` will be clean and ready for git pull and etc.
 
 >to be continued...
 
 ## Usage
 Extensions manager has several options. It is strongly recommended to configure them, before you start.
+
 Go to your-site.com/extensions-manager/extensions/config and fill fields with your own values:
- - Github API access token - your personal Github API token. Without it you will be able to process only up to  
- 60 requests per hour [see](https://developer.github.com/v3/#rate-limiting).   
- - Github application name - [see](https://developer.github.com/v3/#user-agent-required)
- - Path to Composer - your system path to composer. For Unix-like operating system you can simply run 
+- Github API access token - your personal Github API token. Without it you will be able to process only up to 
+  60 requests per hour [see](https://developer.github.com/v3/#rate-limiting).   
+- Github application name - [see](https://developer.github.com/v3/#user-agent-required)
+- Path to Composer - your system path to composer. For Unix-like operating system you can simply run 
   ```which composer``` in console and copy/paste output to this field
 
-Other fields you can left with default values:
+Other fields you can leave with default values:
  - Packagist URL
  - Github API URL
  - Extensions storage
  - Extensions per page
  - Verbose output
-## License
-TBD
+ 
+### Console commands
+
+Each command can be run with standard `./yii` command:
+
+#### `extension/activate`
+
+Activates extension by it's composer name.
+Example: 
+```
+./yii extension/activate devgroup/yii2-media-storage
+```
+
+#### `extension/deactivate`
+
+Deactivates extension by it's composer name. 
+
+#### `extension/update-config`
+
+Updates config.
+Calculates differences between `@vengor/composer/installed.json` and `ExtensionsManager::$extensionsStorage`
+and writes new `ExtensionsManager::$extensionsStorage`.
+That should be done when you are out of sync and you don't see your extension in list.
+
+#### `extension/list`
+
+Show the list of all installed extensions, it's active state and composer package type.
+
+
 ## Dependencies
 TBD

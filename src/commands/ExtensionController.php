@@ -4,9 +4,10 @@ namespace DevGroup\ExtensionsManager\commands;
 
 use DevGroup\ExtensionsManager\ExtensionsManager;
 use DevGroup\ExtensionsManager\helpers\ApplicationConfigWriter;
+use DevGroup\ExtensionsManager\helpers\ExtensionFileWriter;
 use yii\console\Controller;
-use Symfony\Component\Process\ProcessBuilder;
 use Yii;
+use yii\helpers\Console;
 
 class ExtensionController extends Controller
 {
@@ -33,7 +34,7 @@ class ExtensionController extends Controller
      */
     public function actionActivate($packageName)
     {
-        return self::process($packageName, 1);
+        return $this->process($packageName, 1);
     }
 
     /**
@@ -44,7 +45,7 @@ class ExtensionController extends Controller
      */
     public function actionDeactivate($packageName)
     {
-        return self::process($packageName, 0);
+        return $this->process($packageName, 0);
     }
 
     /**
@@ -60,6 +61,59 @@ class ExtensionController extends Controller
     }
 
     /**
+     * Updates config.
+     * Calculates differences between @vengor/composer/installed.json and ExtensionsManager::$extensionsStorage
+     * and writes new ExtensionsManager::$extensionsStorage
+     *
+     */
+    public function actionUpdateConfig()
+    {
+        $result = (int) (ExtensionFileWriter::updateConfig() !== true);
+
+        if ($result === 0) {
+            $this->stdout('Update OK' . PHP_EOL, Console::FG_GREEN);
+        } else {
+            $this->stderr('Error updating extensions storage: ', Console::FG_RED);
+            $this->stderr(ExtensionsManager::module()->extensionsStorage . PHP_EOL);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Lists installed extensions
+     * @param bool $sort Sort extensions alphabetically
+     * @return int
+     */
+    public function actionList($sort = true)
+    {
+        $sort = (bool) $sort;
+        if ($sort) {
+            ksort($this->extensions);
+        }
+        foreach ($this->extensions as $name => $extension) {
+            if ($extension['is_active']) {
+                $this->stdout('[active] ', Console::FG_GREEN);
+            } else {
+                $this->stdout('         ', Console::FG_RED);
+            }
+            $this->stdout(str_pad($name, 50, ' '));
+            $this->stdout(' - ');
+            $color = Console::FG_BLACK;
+            switch ($extension['composer_type']) {
+                case 'yii2-extension':
+                    $color = Console::FG_BLUE;
+                    break;
+                case 'dotplant-extension':
+                    $color = Console::FG_GREEN;
+                    break;
+            }
+            $this->stdout($extension['composer_type'] . PHP_EOL, $color);
+        }
+        return 0;
+    }
+
+    /**
      * Activates/Deactivates Extension
      *
      * @param $packageName
@@ -68,18 +122,22 @@ class ExtensionController extends Controller
      */
     private function process($packageName, $state = 1)
     {
-        $actionText = 0 == $state
+        $actionText = 0 === (int) $state
             ? 'deactivated'
             : 'activated';
         if (true === isset($this->extensions[$packageName]['is_active'])) {
             $this->extensions[$packageName]['is_active'] = $state;
             if (true === $this->writeConfig()) {
-                $this->stdout(str_replace('{actionText}', $actionText, 'Extension successfully {actionText}.') . PHP_EOL);
+                $this->stdout(
+                    str_replace('{actionText}', $actionText, 'Extension successfully {actionText}.') . PHP_EOL
+                );
                 //this means successfully termination. Because process starts in command line shell
                 return 0;
             }
         } else {
-            $this->stdout(str_replace('{actionText}', $actionText, 'You trying to {actionText} not existing extension!') . PHP_EOL);
+            $this->stdout(
+                str_replace('{actionText}', $actionText, 'You trying to {actionText} not existing extension!') . PHP_EOL
+            );
         }
         return 1;
     }
