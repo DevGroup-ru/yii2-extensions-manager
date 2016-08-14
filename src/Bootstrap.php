@@ -3,6 +3,9 @@
 namespace DevGroup\ExtensionsManager;
 
 use DevGroup\DeferredTasks\events\DeferredQueueEvent;
+use DevGroup\ExtensionsManager\components\ComposerInstalledSet;
+use DevGroup\ExtensionsManager\helpers\ExtensionDataHelper;
+use DevGroup\ExtensionsManager\models\Extension;
 use Yii;
 use yii\base\Application;
 use yii\base\BootstrapInterface;
@@ -29,6 +32,29 @@ class Bootstrap implements BootstrapInterface
         );
         if ($app instanceof \yii\console\Application) {
             $app->controllerMap['extension'] = ExtensionController::className();
+            $app->on(Application::EVENT_BEFORE_ACTION, function () {
+                $module = ExtensionsManager::module();
+                if ($module->autoDiscoverMigrations === true) {
+                    if (isset(Yii::$app->params['yii.migrations']) === false) {
+                        Yii::$app->params['yii.migrations'] = [];
+                    }
+                    /** @var array $extensions */
+                    $extensions = $module->getExtensions();
+                    foreach ($extensions as $name => $ext) {
+                        $extData = ComposerInstalledSet::get()->getInstalled($ext['composer_name']);
+                        $packageMigrations = ExtensionDataHelper::getInstalledExtraData(
+                            $extData,
+                            'migrationPath',
+                            true
+                        );
+                        $packagePath = '@vendor' . DIRECTORY_SEPARATOR . $ext['composer_name'];
+                        foreach ($packageMigrations as $migrationPath) {
+                            Yii::$app->params['yii.migrations'][] = "$packagePath/$migrationPath";
+                        }
+
+                    }
+                }
+            });
         }
     }
 }

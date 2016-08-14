@@ -16,6 +16,11 @@ use yii\helpers\FileHelper;
 class ExtensionsManager extends Module
 {
     /**
+     * @var bool Automatically discover migration paths for using with dmstr/yii2-migrate-command package
+     */
+    public $autoDiscoverMigrations = true;
+
+    /**
      * Set of constant listed below describes DeferredGroup. Using them we can define what kind of activity was performed.
      * COMPOSER_INSTALL_DEFERRED_GROUP and COMPOSER_UNINSTALL_DEFERRED_GROUP are used in
      * DeferredQueueCompleteHandler as identifiers to rewrite self::$extensionsStorage file after
