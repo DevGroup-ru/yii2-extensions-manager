@@ -41,6 +41,12 @@ class Bootstrap implements BootstrapInterface
                     /** @var array $extensions */
                     $extensions = $module->getExtensions();
                     foreach ($extensions as $name => $ext) {
+                        if (
+                            $ext['composer_type'] === Extension::TYPE_DOTPLANT
+                            && $module->discoverDotPlantMigrations === false
+                        ) {
+                            continue;
+                        }
                         $extData = ComposerInstalledSet::get()->getInstalled($ext['composer_name']);
                         $packageMigrations = ExtensionDataHelper::getInstalledExtraData(
                             $extData,

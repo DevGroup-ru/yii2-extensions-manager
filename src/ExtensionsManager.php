@@ -21,6 +21,11 @@ class ExtensionsManager extends Module
     public $autoDiscoverMigrations = true;
 
     /**
+     * @var bool Discover dotplant extensions migrations. Normally this should be false.
+     */
+    public $discoverDotPlantMigrations = false;
+
+    /**
      * Set of constant listed below describes DeferredGroup. Using them we can define what kind of activity was performed.
      * COMPOSER_INSTALL_DEFERRED_GROUP and COMPOSER_UNINSTALL_DEFERRED_GROUP are used in
      * DeferredQueueCompleteHandler as identifiers to rewrite self::$extensionsStorage file after
