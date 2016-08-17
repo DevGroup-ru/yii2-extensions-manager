@@ -255,6 +255,7 @@ class ExtensionsController extends BaseController
                         $module->composerPath,
                         'require',
                         $packageName,
+                        '--no-interaction',
                         "--working-dir={$module->getLocalExtensionsPath()}",
                         '--prefer-dist',
                         '-o',
@@ -380,6 +381,8 @@ class ExtensionsController extends BaseController
                 [
                     realpath(Yii::getAlias('@app') . '/yii'),
                     'extension/dummy',
+                    '--no-interaction',
+                    '-o',
                     'You are unable to uninstall core extensions!',
                 ],
                 ExtensionsManager::EXTENSION_DUMMY_DEFERRED_GROUP
