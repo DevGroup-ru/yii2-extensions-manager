@@ -20,7 +20,7 @@ class ExtensionFileWriter extends Component
         /** @var ExtensionsManager $module */
         $module = ExtensionsManager::module();
         $extensions = $module->getExtensions();
-        $installed = ComposerInstalledSet::get()->getInstalled();
+        $installed = ComposerInstalledSet::get(true)->getInstalled();
         $fileName = Yii::getAlias($module->extensionsStorage);
         $writer = new ApplicationConfigWriter(['filename' => $fileName]);
         $config = self::rebuldConfig($installed);
