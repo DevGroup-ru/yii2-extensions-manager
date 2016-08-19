@@ -117,21 +117,20 @@ class ExtensionsManager extends Module
         "name" => "devgroup/ext-meta-package",
         "description" => "File to store local extensions",
         "minimum-stability" => "dev",
-        "require" => [
-
+        "require" => [],
+        "config" => [
+            "vendor-dir" => "../vendor",
+            "process-timeout" => 1800,
+            "preferred-install" => "dist",
+            "store-auths" => true,
         ],
-        'config' => [
-            'vendor-dir' => '../vendor',
-            'process-timeout' => 1800,
-            'preferred-install' => 'dist',
-            'store-auths' => true
+        "extra" => [
+            "merge-plugin" => [
+                "include" => [
+                    "../composer.json",
+                ],
+            ],
         ],
-        'extra' => [
-            'asset-installer-paths' => [
-                'npm-asset-library' => '../vendor/npm',
-                'bower-asset-library' => '../vendor/bower'
-            ]
-        ]
     ];
 
     /**
