@@ -3,7 +3,8 @@
 
 Данное расширение позволяет вам устанавливать, удалять, активировать и деактивировать расширения типа `yii2-extension` и `dotplant-extension` прямо из браузера.
 
-- Установка
+- [Установка](installation.md)
 - Описание работы расширения (workflow)
-- Работа в backend
+- [Backend](backend.md)
+- Консоль
 - [Создание расширения для DotPlant CMS](package-creation.md)
