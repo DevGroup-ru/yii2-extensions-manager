@@ -6,5 +6,5 @@
 - [Установка](installation.md)
 - Описание работы расширения (workflow)
 - [Backend](backend.md)
-- Консоль
+- [Консоль](console.md)
 - [Создание расширения для DotPlant CMS](package-creation.md)
