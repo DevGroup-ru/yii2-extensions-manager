@@ -2,8 +2,13 @@
 [![codecov.io](https://codecov.io/github/DevGroup-ru/yii2-extensions-manager/coverage.svg?branch=master)](https://codecov.io/github/DevGroup-ru/yii2-extensions-manager?branch=master)
 
 yii2-extensions-manager
-==========================
+=======================
 Extension that allows you to install, uninstall, activate and deactivate Yii2 or DotPlant extensions right through your web browser.
+
+## Documentation
+
+- [Russian](docs/ru/README.md)
+- English
 
 ## Installation
 
