@@ -25,8 +25,15 @@ or add
 ```
 "devgroup/yii2-extensions-manager": "*"
 ```
-## Module
-The extension has been created as a module. To enable access to all features you should configure the module with a name of `extensions-manager` as shown below:
+
+After it you should execute migrations:
+
+```bash
+/usr/bin/php yii migrate --migrationPath=@DevGroup/DeferredTasks/migrations
+```
+
+This extension is a yii module because you should add the next code to your configuration file for an activation:
+
 ```php
 'modules' => [
    'extensions-manager' => [
@@ -34,6 +41,9 @@ The extension has been created as a module. To enable access to all features you
         ],
 ],
 ```
+
+Now the extension as available by route `/extensions-manager/extensions/index`.
+
 **WARNING**
 > Extension is now on the development stage. 
 > You can use it at your own risk.
@@ -43,31 +53,8 @@ The extension has been created as a module. To enable access to all features you
 > equal or above 0.3.1. And double check  ```MigrateController::getMigrationHistory()``` method supports 
 > ```MigrateController::$disableLookup``` property
 
-
-## Requirements
-Extension now works with [wikimedia/composer-merge-plugin](https://github.com/wikimedia/composer-merge-plugin).
-This means, first of all, that you have to add
-```
-"wikimedia/composer-merge-plugin": "dev-master"
-```
-in your composer ```required``` section, and at least
-```
- "merge-plugin": {
-    "include": [
-      "extensions/composer.json"
-    ]
- }
-```
-to the ```composer.json``` ```extra``` section. For more information, please see previous link.
-
-Next, it gives you ability to store all of your local extensions out from applications root ```composer.json``` file:
-- All newly installed extensions will be stored in ```@app/extensions/composer.json``` file which is ignored from git.
-- All other stuff, such as autoloading, etc. will work as usual.
-- And your applications root ```composer.json``` and ```composer.lock``` will be clean and ready for git pull and etc.
-
->to be continued...
-
 ## Usage
+
 Extensions manager has several options. It is strongly recommended to configure them, before you start.
 
 Go to your-site.com/extensions-manager/extensions/config and fill fields with your own values:
