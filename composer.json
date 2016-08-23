@@ -34,7 +34,6 @@
   },
   "require-dev": {
     "dmstr/yii2-adminlte-asset": "~2.2",
-    "devgroup/yii2-admin-utils": "*",
     "devgroup/dotplant-dev": "*",
     "yiisoft/yii2-bootstrap": "^2.0@dev"
   },

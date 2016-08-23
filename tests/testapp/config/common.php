@@ -18,7 +18,6 @@ return [
         '@testsHelper' => realpath(dirname(dirname(__DIR__)) . '/testhelper'),
         '@DevGroup/ExtensionsManager' => realpath(dirname(dirname(dirname(__DIR__))) . '/src'),
         '@bower' => $vendorPath . DIRECTORY_SEPARATOR . 'bower-asset',
-        '@adminUtils' => $vendorPath . DIRECTORY_SEPARATOR . '/devgroup/yii2-admin-utils/src',
     ],
     'modules' => [
         'extensions-manager' => [
