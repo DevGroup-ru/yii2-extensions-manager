@@ -83,4 +83,4 @@ php yii extension/activate devgroup/yii2-extensions-manager
   Подробнее [здесь](https://developer.github.com/v3/#rate-limiting).   
 - Имя приложения Github - смотри [тут](https://developer.github.com/v3/#user-agent-required)
 - Путь до composer - ваш системный путо до composer-а.
-  Для unix подобных систем вы можете просто выполнить ```which composer``` в консоли, скопировать ркзультат и вставить в поле.
+  Для unix подобных систем вы можете просто выполнить ```which composer``` в консоли (Для windows систем - выполнить `echo %HOMEPATH%`), скопировать ркзультат и вставить в поле.
