@@ -30,7 +30,7 @@ php yii migrate --migrationPath=@DevGroup/DeferredTasks/migrations
 'params' => [
     // ...
     'deferred.env' => [ // все указанные здесь поля будут установлены в виде параметров окружения для выполняемого скрипта
-        'HOME' => '/path/to/home', // путь до локальной директории. Необходим для корректной работы composer-а
+        'HOME' => '/path/to/home', // путь до домашней директории. Необходим для корректной работы composer-а
     ],
     // ...
 ],
@@ -43,7 +43,7 @@ php yii migrate --migrationPath=@DevGroup/DeferredTasks/migrations
 'components' => [
     // ...
     'mutex' => [
-        'class' => 'yii\mutex\MysqlMutex',
+        'class' => 'yii\mutex\MysqlMutex', // в большинстве случаев это MySQL
         'autoRelease' => false,
     ],
     // ..
