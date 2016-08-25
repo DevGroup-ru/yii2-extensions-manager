@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "c6f45bed38821c5389d4b8f0aac9ccb4",
-    "content-hash": "47b185ec5ebdeaed4ccf4d29c20e2319",
+    "hash": "63a1394cc559df3979ebff203a1d2671",
+    "content-hash": "28dcce55fa371128c63a059f57c638cc",
     "packages": [
         {
             "name": "bower-asset/bootstrap",
@@ -395,12 +395,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/DevGroup-ru/yii2-admin-utils.git",
-                "reference": "21cab67c83f82f5fe1583a358ec4a154319dd300"
+                "reference": "43fbf34e48cba394b9ff5c34ec82c1f2ba494bb3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DevGroup-ru/yii2-admin-utils/zipball/21cab67c83f82f5fe1583a358ec4a154319dd300",
-                "reference": "21cab67c83f82f5fe1583a358ec4a154319dd300",
+                "url": "https://api.github.com/repos/DevGroup-ru/yii2-admin-utils/zipball/43fbf34e48cba394b9ff5c34ec82c1f2ba494bb3",
+                "reference": "43fbf34e48cba394b9ff5c34ec82c1f2ba494bb3",
                 "shasum": ""
             },
             "require": {
@@ -438,7 +438,7 @@
                 "extension",
                 "yii2"
             ],
-            "time": "2016-07-12 12:21:51"
+            "time": "2016-08-23 11:19:44"
         },
         {
             "name": "devgroup/yii2-deferred-tasks",
@@ -446,12 +446,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/DevGroup-ru/yii2-deferred-tasks.git",
-                "reference": "6415e537401d5c6af5d541a00fcb61dda8348624"
+                "reference": "52171be4cd1df1be13b09b4a265323a9be52d531"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/DevGroup-ru/yii2-deferred-tasks/zipball/6415e537401d5c6af5d541a00fcb61dda8348624",
-                "reference": "6415e537401d5c6af5d541a00fcb61dda8348624",
+                "url": "https://api.github.com/repos/DevGroup-ru/yii2-deferred-tasks/zipball/52171be4cd1df1be13b09b4a265323a9be52d531",
+                "reference": "52171be4cd1df1be13b09b4a265323a9be52d531",
                 "shasum": ""
             },
             "require": {
@@ -494,7 +494,7 @@
                 "extension",
                 "yii2"
             ],
-            "time": "2016-01-31 11:51:07"
+            "time": "2016-08-22 10:58:31"
         },
         {
             "name": "devgroup/yii2-frontend-utils",
@@ -1060,12 +1060,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/kartik-v/yii2-krajee-base.git",
-                "reference": "473fb568ff1144dc49bdb74f40a5d7f025fc72e4"
+                "reference": "713a1c4ad5b3f9be2832586584679c4b094c6937"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/kartik-v/yii2-krajee-base/zipball/473fb568ff1144dc49bdb74f40a5d7f025fc72e4",
-                "reference": "473fb568ff1144dc49bdb74f40a5d7f025fc72e4",
+                "url": "https://api.github.com/repos/kartik-v/yii2-krajee-base/zipball/713a1c4ad5b3f9be2832586584679c4b094c6937",
+                "reference": "713a1c4ad5b3f9be2832586584679c4b094c6937",
                 "shasum": ""
             },
             "require": {
@@ -1103,7 +1103,7 @@
                 "widget",
                 "yii2"
             ],
-            "time": "2016-06-02 16:20:24"
+            "time": "2016-08-19 17:48:27"
         },
         {
             "name": "knplabs/packagist-api",
@@ -1458,12 +1458,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/yiisoft/yii2-framework.git",
-                "reference": "6282868b9a6c785511d4be44d8b801ef3d606d2a"
+                "reference": "8ed2f318c9d2eefdbaf2296cdaacf38a63133da6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/yiisoft/yii2-framework/zipball/6282868b9a6c785511d4be44d8b801ef3d606d2a",
-                "reference": "6282868b9a6c785511d4be44d8b801ef3d606d2a",
+                "url": "https://api.github.com/repos/yiisoft/yii2-framework/zipball/8ed2f318c9d2eefdbaf2296cdaacf38a63133da6",
+                "reference": "8ed2f318c9d2eefdbaf2296cdaacf38a63133da6",
                 "shasum": ""
             },
             "require": {
@@ -1544,7 +1544,7 @@
                 "framework",
                 "yii2"
             ],
-            "time": "2016-08-16 07:15:21"
+            "time": "2016-08-23 09:08:34"
         },
         {
             "name": "yiisoft/yii2-bootstrap",
@@ -2273,12 +2273,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/dbunit.git",
-                "reference": "1174eec88a8300487675b78a090a3fc4ce9b4e76"
+                "reference": "38f88a393cbdb50c78287a7b84dc1439a3afa518"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/dbunit/zipball/1174eec88a8300487675b78a090a3fc4ce9b4e76",
-                "reference": "1174eec88a8300487675b78a090a3fc4ce9b4e76",
+                "url": "https://api.github.com/repos/sebastianbergmann/dbunit/zipball/38f88a393cbdb50c78287a7b84dc1439a3afa518",
+                "reference": "38f88a393cbdb50c78287a7b84dc1439a3afa518",
                 "shasum": ""
             },
             "require": {
@@ -2320,7 +2320,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2016-06-09 07:00:08"
+            "time": "2016-08-18 09:31:47"
         },
         {
             "name": "phpunit/php-code-coverage",
@@ -2571,12 +2571,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "c062dddcb68e44b563f66ee319ddae2b5a322a90"
+                "reference": "5d5239416615e317a9ae693002253b0f5588e389"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/c062dddcb68e44b563f66ee319ddae2b5a322a90",
-                "reference": "c062dddcb68e44b563f66ee319ddae2b5a322a90",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/5d5239416615e317a9ae693002253b0f5588e389",
+                "reference": "5d5239416615e317a9ae693002253b0f5588e389",
                 "shasum": ""
             },
             "require": {
@@ -2635,7 +2635,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2016-07-21 06:48:14"
+            "time": "2016-08-17 04:23:12"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -2695,16 +2695,16 @@
         },
         {
             "name": "rmrevin/yii2-fontawesome",
-            "version": "2.15.1",
+            "version": "2.15.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rmrevin/yii2-fontawesome.git",
-                "reference": "d2777130bc926bc670a4e50c2f504a0fb782efb1"
+                "reference": "23e282eadeaec70ea7a0241eabf5d672568f26ba"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rmrevin/yii2-fontawesome/zipball/d2777130bc926bc670a4e50c2f504a0fb782efb1",
-                "reference": "d2777130bc926bc670a4e50c2f504a0fb782efb1",
+                "url": "https://api.github.com/repos/rmrevin/yii2-fontawesome/zipball/23e282eadeaec70ea7a0241eabf5d672568f26ba",
+                "reference": "23e282eadeaec70ea7a0241eabf5d672568f26ba",
                 "shasum": ""
             },
             "require": {
@@ -2742,7 +2742,7 @@
                 "font",
                 "yii"
             ],
-            "time": "2016-05-28 21:18:32"
+            "time": "2016-08-19 14:09:51"
         },
         {
             "name": "sebastian/comparator",
@@ -2866,12 +2866,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/environment.git",
-                "reference": "622c5dc0a8036cfc4ccd73c7b1b668a431e69d96"
+                "reference": "be2c607e43ce4c89ecd60e75c6a85c126e754aea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/622c5dc0a8036cfc4ccd73c7b1b668a431e69d96",
-                "reference": "622c5dc0a8036cfc4ccd73c7b1b668a431e69d96",
+                "url": "https://api.github.com/repos/sebastianbergmann/environment/zipball/be2c607e43ce4c89ecd60e75c6a85c126e754aea",
+                "reference": "be2c607e43ce4c89ecd60e75c6a85c126e754aea",
                 "shasum": ""
             },
             "require": {
@@ -2908,7 +2908,7 @@
                 "environment",
                 "hhvm"
             ],
-            "time": "2016-06-11 08:21:19"
+            "time": "2016-08-18 05:49:44"
         },
         {
             "name": "sebastian/exporter",
@@ -3177,16 +3177,16 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/webmozart/assert.git",
-                "reference": "0a64afb2cfaf22a36bb4c917849cdee2d008f26a"
+                "reference": "8444f2ac9f86342665cdae47b6d3ea6e07794456"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/webmozart/assert/zipball/0a64afb2cfaf22a36bb4c917849cdee2d008f26a",
-                "reference": "0a64afb2cfaf22a36bb4c917849cdee2d008f26a",
+                "url": "https://api.github.com/repos/webmozart/assert/zipball/8444f2ac9f86342665cdae47b6d3ea6e07794456",
+                "reference": "8444f2ac9f86342665cdae47b6d3ea6e07794456",
                 "shasum": ""
             },
             "require": {
-                "php": "^5.3.3|^7.0"
+                "php": "^5.3.3 || ^7.0"
             },
             "require-dev": {
                 "phpunit/phpunit": "^4.6",
@@ -3219,7 +3219,7 @@
                 "check",
                 "validate"
             ],
-            "time": "2016-08-15 15:30:25"
+            "time": "2016-08-18 09:30:53"
         },
         {
             "name": "yiisoft/yii2-codeception",

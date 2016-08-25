@@ -15,6 +15,7 @@ use yii\helpers\Html;
 
 \DevGroup\ExtensionsManager\assets\AdminBundle::register($this);
 \DevGroup\DeferredTasks\assets\AdminBundle::register($this);
+\kartik\icons\FontAwesomeAsset::register($this);
 
 $nameBlockTpl = <<<TPL
 <div class="panel panel-default box box-solid">
@@ -137,7 +138,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                     'data-package-name' => $data["composer_name"],
                                 ])
                             . Html::button(Yii::t('extensions-manager', 'Details') .
-                                '  ' . Icon::show('refresh fa-spin', ['style' => 'display: none;']),
+                                '  ' . Icon::show('refresh fa-spin', ['style' => 'display: none;'], 'fa'),
                                 [
                                     'class' => 'btn btn-info btn-xs',
                                     'data-package-name' => $data["composer_name"],

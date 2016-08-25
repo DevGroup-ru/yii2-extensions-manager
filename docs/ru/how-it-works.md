@@ -1,11 +1,6 @@
 Как это работает
 ================
 
-Yii2 extensions manager успользует composer-пакет [wikimedia/composer-merge-plugin](https://github.com/wikimedia/composer-merge-plugin).
-Он позволяет работать с несколькими `composer.json` файлами одновременно.
-Это позволяет не модифицировать `composer.json` и `composer.lock` вашего приложения, а значит исключает возможность конфликта при выполнении `git pull`.
-Основные работы производятся с локальными файлами, путь до которых задается в `ExtensionsManager::$localExtensionsPath` (по умолчанию `@app/extensions`).
-
 Ниже описан процесс работы extension manager-а с расширениями.
 
 ### Стандартные расширения типа yii2-extension
@@ -16,6 +11,7 @@ Yii2 extensions manager успользует composer-пакет [wikimedia/comp
 Для стандартизации механизма применения миграций расширений yii2 мы предлагаем использовать тот же синтаксис, что и для расширений типа `dotplant-extension`.
 
 Для этого в секцию extra файла composer.json расширения необходимо добавить путь к миграциям `migrationPath` относительно папки расширения, например:
+
 ```json
 {
   "extra": {
@@ -24,9 +20,6 @@ Yii2 extensions manager успользует composer-пакет [wikimedia/comp
   }
 }
 ```
-
-Для более удобного управления миграциями мы рекомендуем использовать пакет [dmstr/yii2-migrate-command](https://github.com/dmstr/yii2-migrate-command) и выставлять параметр модуля `ExtensionsManager::$autoDiscoverMigrations` в `true`.
-Таким образом, все миграции всех расширений будут автоматически добавляться в область видимости `yii2-migrate-command`.
 
 ### Расширения типа dotplant-extension
 
@@ -47,3 +40,30 @@ Yii2 extensions manager успользует composer-пакет [wikimedia/comp
     - Деактивация расширения, если оно активно
     - Выполнение воманды `php composer.phar remove package-vendor/package-name --working-dir=/path/to/application/extensions`
     - Удаление записи из `Extensions`
+
+## Зависимости
+
+#### `wikimedia/composer-merge-plugin`
+
+Yii2 extensions manager успользует composer-пакет [wikimedia/composer-merge-plugin](https://github.com/wikimedia/composer-merge-plugin).
+Он позволяет работать с несколькими `composer.json` файлами одновременно.
+Это позволяет не модифицировать `composer.json` и `composer.lock` вашего приложения, а значит исключает возможность конфликта при выполнении `git pull`.
+Основные работы производятся с локальными файлами, путь до которых задается в `ExtensionsManager::$localExtensionsPath` (по умолчанию `@app/extensions`).
+
+#### `devgroup/yii2-deferred-tasks`
+
+[Данный пакет](https://github.com/DevGroup-ru/yii2-deferred-tasks) позволяет выполнять команды в фоне с перенаправлением всего вывода в файл.
+Он используется при установке, удалении, активации и деактивации расширений.
+При выполнение этих операций пользователь может наблюдать за текущим состоянием процесса в модальном окне.
+
+#### `dmstr/yii2-migrate-command`
+
+Для более удобного управления миграциями мы рекомендуем использовать пакет [dmstr/yii2-migrate-command](https://github.com/dmstr/yii2-migrate-command) и выставлять параметр модуля `ExtensionsManager::$autoDiscoverMigrations` в `true`.
+Таким образом, все миграции всех расширений будут автоматически добавляться в область видимости `yii2-migrate-command`.
+
+## Ограничения
+
+Некоторые операции менеджера требуют обращения к github API, который имее [ограничение](https://developer.github.com/v3/#rate-limiting) - 60 запросов в час.
+Для снятия этого лимита необходимо указать свой `access token` в настройках менеджера расширений.
+
+Для корректной работы необходима версия пакета `dmstr/yii2-migrate-command` более или равная 0.3.1.
