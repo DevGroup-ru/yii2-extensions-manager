@@ -53,7 +53,7 @@ class Bootstrap implements BootstrapInterface
                             'migrationPath',
                             true
                         );
-                        $packagePath = '@vendor' . DIRECTORY_SEPARATOR . $ext['composer_name'];
+                        $packagePath = '@vendor/' . $ext['composer_name'];
                         foreach ($packageMigrations as $migrationPath) {
                             Yii::$app->params['yii.migrations'][] = "$packagePath/$migrationPath";
                         }

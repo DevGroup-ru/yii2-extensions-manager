@@ -472,7 +472,7 @@ class ExtensionsController extends BaseController
         }
         $task = new ReportingTask();
         $task->model()->deferred_group_id = $group->id;
-        $task->cliCommand(PHP_BINDIR . '/php', $command);
+        $task->cliCommand(DeferredHelper::getPhpBinary(), $command);
         return $task;
     }
 

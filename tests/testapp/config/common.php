@@ -50,5 +50,9 @@ return [
             'class' => 'yii2tech\filedb\Connection',
             'path' => __DIR__ . '/data',
         ],
+        'mutex' => [
+            'class' => yii\mutex\MysqlMutex::class,
+            'autoRelease' => false,
+        ],
     ],
 ];
