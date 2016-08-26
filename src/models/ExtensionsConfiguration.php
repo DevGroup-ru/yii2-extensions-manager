@@ -2,7 +2,6 @@
 
 namespace DevGroup\ExtensionsManager\models;
 
-use DevGroup\ExtensionsManager\controllers\ExtensionsController;
 use DevGroup\ExtensionsManager\ExtensionsManager;
 use DevGroup\ExtensionsManager\commands\ExtensionController;
 use Yii;

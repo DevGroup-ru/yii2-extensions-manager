@@ -1,16 +1,17 @@
 <?php
+
 namespace DevGroup\ExtensionsManager\helpers;
 
 use cebe\markdown\GithubMarkdown;
 use Packagist\Api\Result\Package\Version;
-use yii\base\Component;
 use Yii;
+use yii\base\Component;
 use yii\helpers\Json;
 
 class ExtensionDataHelper extends Component
 {
     /** @var  string package current version */
-    private static $currentVersion;
+    private static $_currentVersion;
 
     /**
      * @param $data
@@ -58,12 +59,12 @@ class ExtensionDataHelper extends Component
     {
         $string = '';
         $langId = Yii::$app->language;
-        if (false === empty($data['package']['versions'][self::$currentVersion]['extra'][$type][$field . '_' . $langId])) {
-            $string = $data['package']['versions'][self::$currentVersion]['extra'][$type][$field . '_' . $langId];
-        } elseif (false === empty($data['package']['versions'][self::$currentVersion]['extra'][$type][$field])) {
-            $string = $data['package']['versions'][self::$currentVersion]['extra'][$type][$field];
-        } elseif (false === empty($data['package']['versions'][self::$currentVersion][$field])) {
-            $string = $data['package']['versions'][self::$currentVersion][$field];
+        if (false === empty($data['package']['versions'][self::$_currentVersion]['extra'][$type][$field . '_' . $langId])) {
+            $string = $data['package']['versions'][self::$_currentVersion]['extra'][$type][$field . '_' . $langId];
+        } elseif (false === empty($data['package']['versions'][self::$_currentVersion]['extra'][$type][$field])) {
+            $string = $data['package']['versions'][self::$_currentVersion]['extra'][$type][$field];
+        } elseif (false === empty($data['package']['versions'][self::$_currentVersion][$field])) {
+            $string = $data['package']['versions'][self::$_currentVersion][$field];
         } elseif (false === empty($data['package'][$field])) {
             $string = $data['package'][$field];
         }
@@ -102,8 +103,8 @@ class ExtensionDataHelper extends Component
     public static function getOtherPackageVersionedData($data, $key, $asArray = true)
     {
         $out = [];
-        if (false === empty($data['package']['versions'][self::$currentVersion][$key])) {
-            $out = $data['package']['versions'][self::$currentVersion][$key];
+        if (false === empty($data['package']['versions'][self::$_currentVersion][$key])) {
+            $out = $data['package']['versions'][self::$_currentVersion][$key];
         }
         if (true === $asArray) {
             $out = is_array($out) ? $out : [$out];
@@ -183,7 +184,7 @@ class ExtensionDataHelper extends Component
             $current = key($versions);
             $versions['current'] = $current;
         }
-        self::$currentVersion = $current;
+        self::$_currentVersion = $current;
         return $versions;
     }
 }

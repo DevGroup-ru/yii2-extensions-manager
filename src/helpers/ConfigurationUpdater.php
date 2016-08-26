@@ -17,6 +17,13 @@ use yii\base\Component;
 class ConfigurationUpdater extends Component
 {
     /**
+     * Array of configurables sections.
+     *
+     * @var array
+     */
+    private $_configurables = [];
+
+    /**
      * BaseConfigurationModel states(all attributes) are saved in separated files.
      * This is a path to folder where to place this states files.
      * Yii2 aliases can be used.
@@ -41,13 +48,6 @@ class ConfigurationUpdater extends Component
     public $configs = [];
 
     /**
-     * Array of configurables sections.
-     *
-     * @var array
-     */
-    private $configurables = [];
-
-    /**
      * @inheritdoc
      */
     public function init()
@@ -64,8 +64,8 @@ class ConfigurationUpdater extends Component
      */
     protected function getConfigurables($ignoreCache = false)
     {
-        if (count($this->configurables) === 0 || true === $ignoreCache) {
-            $this->configurables = ExtensionsHelper::getConfigurables();
+        if (count($this->_configurables) === 0 || true === $ignoreCache) {
+            $this->_configurables = ExtensionsHelper::getConfigurables();
         }
     }
 
@@ -92,7 +92,7 @@ class ConfigurationUpdater extends Component
         $isValid = true;
         $errorSection = '';
 
-        foreach ($this->configurables as $configurable) {
+        foreach ($this->_configurables as $configurable) {
             if (!isset($configurable['configurationModel'])) {
                 continue;
             }

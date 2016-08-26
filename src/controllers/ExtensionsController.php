@@ -1,4 +1,5 @@
 <?php
+
 namespace DevGroup\ExtensionsManager\controllers;
 
 use DevGroup\AdminUtils\controllers\BaseController;
@@ -11,11 +12,11 @@ use DevGroup\ExtensionsManager\actions\ConfigurationIndex;
 use DevGroup\ExtensionsManager\components\ComposerInstalledSet;
 use DevGroup\ExtensionsManager\ExtensionsManager;
 use DevGroup\ExtensionsManager\helpers\ExtensionDataHelper;
+use DevGroup\ExtensionsManager\models\Extension;
 use Packagist\Api\Client;
+use Yii;
 use yii\base\InvalidParamException;
 use yii\data\ArrayDataProvider;
-use DevGroup\ExtensionsManager\models\Extension;
-use Yii;
 use yii\helpers\Json;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;

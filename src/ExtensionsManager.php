@@ -6,7 +6,6 @@ use DevGroup\ExtensionsManager\helpers\ExtensionFileWriter;
 use DevGroup\ExtensionsManager\models\Extension;
 use Yii;
 use yii\base\Module;
-use yii\helpers\FileHelper;
 
 /**
  * Class ExtensionsManager is the main module in extensions-manager package.
@@ -110,10 +109,10 @@ class ExtensionsManager extends Module
     public $verbose = 0;
 
     /** @var string path to store ignored from git local composer.json file */
-    private $localExtensionsPath = '@app/extensions';
+    private $_localExtensionsPath = '@app/extensions';
 
     /** @var array default contents of local ignored composer.json */
-    private $composerArray = [
+    private $_composerArray = [
         "name" => "devgroup/ext-meta-package",
         "description" => "File to store local extensions",
         "minimum-stability" => "dev",
@@ -136,7 +135,7 @@ class ExtensionsManager extends Module
     /**
      * @var array Array of extensions descriptions
      */
-    private $extensions = [];
+    private $_extensions = [];
 
     /**
      * @inheritdoc
@@ -144,8 +143,8 @@ class ExtensionsManager extends Module
     public function init()
     {
         ExtensionFileWriter::checkLocalStorage(
-            Yii::getAlias($this->localExtensionsPath),
-            $this->composerArray
+            Yii::getAlias($this->_localExtensionsPath),
+            $this->_composerArray
         );
         parent::init();
         $this->configurationUpdater = Yii::createObject($this->configurationUpdater);
@@ -160,7 +159,7 @@ class ExtensionsManager extends Module
      */
     public function getExtensions($packageName = '', $ignoreCache = false)
     {
-        if (count($this->extensions) === 0 || true === $ignoreCache) {
+        if (count($this->_extensions) === 0 || true === $ignoreCache) {
             $fileName = Yii::getAlias($this->extensionsStorage);
             $canLoad = false;
             if (true === file_exists($fileName) && true === is_readable($fileName)) {
@@ -169,15 +168,15 @@ class ExtensionsManager extends Module
                 $canLoad = ExtensionFileWriter::generateConfig();
             }
             if (true === $canLoad) {
-                $this->extensions = include $fileName;
+                $this->_extensions = include $fileName;
             } else {
                 Yii::$app->session->setFlash('error', Yii::t('extensions-manager', 'Unable to create extensions file'));
             }
         }
         if (false === empty($packageName)) {
-            return isset($this->extensions[$packageName]) ? $this->extensions[$packageName] : [];
+            return isset($this->_extensions[$packageName]) ? $this->_extensions[$packageName] : [];
         }
-        return $this->extensions;
+        return $this->_extensions;
     }
 
     /**
@@ -233,7 +232,7 @@ class ExtensionsManager extends Module
      */
     public function getLocalExtensionsPath()
     {
-        return Yii::getAlias($this->localExtensionsPath);
+        return Yii::getAlias($this->_localExtensionsPath);
     }
 
     /**

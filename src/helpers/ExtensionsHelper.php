@@ -40,7 +40,6 @@ class ExtensionsHelper
                 $configurables = ArrayHelper::merge($configurables, $packageConfigurables);
             }
         }
-
         return $configurables;
     }
 }

@@ -1,15 +1,35 @@
 <?php
+
 namespace DevGroup\ExtensionsManager\helpers;
 
 use DevGroup\ExtensionsManager\ExtensionsManager;
 use DevGroup\ExtensionsManager\components\ComposerInstalledSet;
-use yii\base\Component;
 use Yii;
+use yii\base\Component;
 use yii\helpers\FileHelper;
 use yii\helpers\Json;
 
 class ExtensionFileWriter extends Component
 {
+    /**
+     * @param $config
+     * @return array
+     */
+    private static function rebuldConfig($config)
+    {
+        $config = is_array($config) ? $config : [];
+        foreach ($config as $i => $ext) {
+            $config[$ext['name']] = [
+                'composer_name' => $ext['name'],
+                'composer_type' => $ext['type'],
+                'is_active' => 0,
+                //TODO implement core extensions checking
+                'is_core' => 0,
+            ];
+        }
+        return $config;
+    }
+
     /**
      * Calculates differences between @vengor/composer/installed.json and ExtensionsManager::$extensionsStorage
      * and writes new ExtensionsManager::$extensionsStorage
@@ -49,25 +69,6 @@ class ExtensionFileWriter extends Component
         $config = self::rebuldConfig($installed);
         $writer->addValues($config);
         return $writer->commit();
-    }
-
-    /**
-     * @param $config
-     * @return array
-     */
-    private static function rebuldConfig($config)
-    {
-        $config = is_array($config) ? $config : [];
-        foreach ($config as $i => $ext) {
-            $config[$ext['name']] = [
-                'composer_name' => $ext['name'],
-                'composer_type' => $ext['type'],
-                'is_active' => 0,
-                //TODO implement core extensions checking
-                'is_core' => 0,
-            ];
-        }
-        return $config;
     }
 
     /**
