@@ -21,7 +21,7 @@ use DevGroup\ExtensionsManager\ExtensionsManager;
                 <?= Yii::t('extensions-manager', '{extName} detailed information', ['extName' => $name]) ?>
             </h3>
             <?php if (false === $installed) : ?>
-                <?php if (Yii::$app->user->can('extensions-manager-install-extension')): ?>
+                <?php if (Yii::$app->user->can('extensions-manager-install-extension')) : ?>
                     <button class="btn btn-success btn-xs pull-right" data-action="run-ext-task"
                             data-ext-task="<?= ExtensionsManager::INSTALL_DEFERRED_TASK ?>"
                             data-package-name="<?= $packageName ?>">
@@ -31,7 +31,7 @@ use DevGroup\ExtensionsManager\ExtensionsManager;
                     <div class="label label-warning pull-right"><?= Yii::t('extensions-manager', 'No installed') ?></div>
                 <?php endif; ?>
             <?php else : ?>
-                <?php if (Yii::$app->user->can('extensions-manager-uninstall-extension')): ?>
+                <?php if (Yii::$app->user->can('extensions-manager-uninstall-extension')) : ?>
                     <button class="btn btn-danger btn-xs pull-right" data-action="run-ext-task"
                             data-ext-task="<?= ExtensionsManager::UNINSTALL_DEFERRED_TASK ?>"
                             data-package-name="<?= $packageName ?>">
@@ -91,7 +91,7 @@ use DevGroup\ExtensionsManager\ExtensionsManager;
                                     </dt>
                                     <dd><?= $time ?></dd>
                                 </dl>
-                            <?php endforeach; ?>
+                            <?php                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         endforeach; ?>
                         </div>
                     </div>
                 </div>

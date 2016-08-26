@@ -26,7 +26,8 @@ class Bootstrap implements BootstrapInterface
             'class' => 'yii\i18n\PhpMessageSource',
             'basePath' => __DIR__ . DIRECTORY_SEPARATOR . 'messages',
         ];
-        DeferredQueueEvent::on(DeferredController::className(),
+        DeferredQueueEvent::on(
+            DeferredController::className(),
             DeferredController::EVENT_DEFERRED_QUEUE_COMPLETE,
             [DeferredQueueCompleteHandler::className(), 'handleEvent']
         );
@@ -41,8 +42,7 @@ class Bootstrap implements BootstrapInterface
                     /** @var array $extensions */
                     $extensions = $module->getExtensions();
                     foreach ($extensions as $name => $ext) {
-                        if (
-                            $ext['composer_type'] === Extension::TYPE_DOTPLANT
+                        if ($ext['composer_type'] === Extension::TYPE_DOTPLANT
                             && $module->discoverDotPlantMigrations === false
                         ) {
                             continue;
@@ -57,7 +57,6 @@ class Bootstrap implements BootstrapInterface
                         foreach ($packageMigrations as $migrationPath) {
                             Yii::$app->params['yii.migrations'][] = "$packagePath/$migrationPath";
                         }
-
                     }
                 }
             });

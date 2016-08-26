@@ -14,8 +14,8 @@ use yii\helpers\Json;
  */
 class ComposerInstalledSet
 {
-    private $set = [];
-    private static $instance;
+    private $_set = [];
+    private static $_instance;
 
     /**
      * @inheritdoc
@@ -34,7 +34,7 @@ class ComposerInstalledSet
                 unset($installed[$i]);
             }
         }
-        $this->set = $installed;
+        $this->_set = $installed;
     }
 
     /**
@@ -43,20 +43,21 @@ class ComposerInstalledSet
      */
     public static function get($force = false)
     {
-        if (false === self::$instance instanceof self || $force === true) {
-            self::$instance = new self;
+        if (false === self::$_instance instanceof self || $force === true) {
+            self::$_instance = new self;
         }
-        return self::$instance;
+        return self::$_instance;
     }
 
     /**
      * @param string $name
      * @return array
      */
-    public function getInstalled($name = ''){
+    public function getInstalled($name = '')
+    {
         if (false === empty($name)) {
-            return true === isset($this->set[$name]) ? $this->set[$name] : [];
+            return true === isset($this->_set[$name]) ? $this->_set[$name] : [];
         }
-        return $this->set;
+        return $this->_set;
     }
 }

@@ -25,7 +25,7 @@ use yii\web\ServerErrorHttpException;
 class ExtensionsController extends BaseController
 {
     /** @var  Client packagist.org API client instance */
-    private static $packagist;
+    private static $_packagist;
 
     /**
      * @inheritdoc
@@ -156,12 +156,12 @@ class ExtensionsController extends BaseController
      */
     private static function getPackagist()
     {
-        if (true === empty(self::$packagist) || false === self::$packagist instanceof Client) {
+        if (true === empty(self::$_packagist) || false === self::$_packagist instanceof Client) {
             $packagist = new Client();
             $packagist->setPackagistUrl(ExtensionsManager::module()->packagistUrl);
-            self::$packagist = $packagist;
+            self::$_packagist = $packagist;
         }
-        return self::$packagist;
+        return self::$_packagist;
     }
 
     /**
@@ -464,8 +464,8 @@ class ExtensionsController extends BaseController
         ReportingChain $chain,
         $way = ExtensionsManager::MIGRATE_TYPE_UP,
         $group
-    )
-    {
+    ) {
+    
         if ($ext['composer_type'] == Extension::TYPE_DOTPLANT) {
             $extData = ComposerInstalledSet::get()->getInstalled($ext['composer_name']);
             $packageMigrations = ExtensionDataHelper::getInstalledExtraData($extData, 'migrationPath', true);

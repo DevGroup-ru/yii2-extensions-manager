@@ -104,12 +104,14 @@ class ExtensionFileWriter extends Component
                 );
             }
             if (false === $created) {
-                Yii::$app->session->setFlash('error',
+                Yii::$app->session->setFlash(
+                    'error',
                     Yii::t('extensions-manager', 'Unable to create local composer.json file')
                 );
             }
         } else {
-            Yii::$app->session->setFlash('error',
+            Yii::$app->session->setFlash(
+                'error',
                 Yii::t('extensions-manager', 'Unable to create folder to store local composer.json file')
             );
             $created = false;

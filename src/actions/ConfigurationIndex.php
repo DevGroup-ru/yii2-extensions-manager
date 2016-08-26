@@ -122,7 +122,6 @@ class ConfigurationIndex extends TabbedFormCombinedAction
                 $navItem['active'] = true;
             }
             $configItems[] = $navItem;
-
         }
         if (true === isset($navItems['config'])) {
             $navItems['config']['items'] = $configItems;

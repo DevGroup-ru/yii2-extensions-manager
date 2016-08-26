@@ -14,4 +14,4 @@
 <?= $form->field($model, 'githubApiUrl') ?>
 <?= $form->field($model, 'extensionsPerPage') ?>
 <?= $form->field($model, 'composerPath') ?>
-<?= $form->field($model, 'verbose')->checkbox() ?>
+<?= $form->field($model, 'verbose')->checkbox();

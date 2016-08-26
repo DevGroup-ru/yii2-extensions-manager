@@ -21,7 +21,7 @@ class ExtensionDataHelper extends Component
         $type = '';
         if (true === isset($data['package']['type'])) {
             $type = $data['package']['type'];
-        } else if (true === isset($data['type'])) {
+        } elseif (true === isset($data['type'])) {
             $type = $data['type'];
         }
         return $type;
@@ -60,11 +60,11 @@ class ExtensionDataHelper extends Component
         $langId = Yii::$app->language;
         if (false === empty($data['package']['versions'][self::$currentVersion]['extra'][$type][$field . '_' . $langId])) {
             $string = $data['package']['versions'][self::$currentVersion]['extra'][$type][$field . '_' . $langId];
-        } else if (false === empty($data['package']['versions'][self::$currentVersion]['extra'][$type][$field])) {
+        } elseif (false === empty($data['package']['versions'][self::$currentVersion]['extra'][$type][$field])) {
             $string = $data['package']['versions'][self::$currentVersion]['extra'][$type][$field];
-        } else if (false === empty($data['package']['versions'][self::$currentVersion][$field])) {
+        } elseif (false === empty($data['package']['versions'][self::$currentVersion][$field])) {
             $string = $data['package']['versions'][self::$currentVersion][$field];
-        } else if (false === empty($data['package'][$field])) {
+        } elseif (false === empty($data['package'][$field])) {
             $string = $data['package'][$field];
         }
         return $string;
@@ -84,9 +84,9 @@ class ExtensionDataHelper extends Component
         $langId = Yii::$app->language;
         if (false === empty($data['extra'][$type][$field . '_' . $langId])) {
             $string = $data['extra'][$type][$field . '_' . $langId];
-        } else if (false === empty($data['extra'][$type][$field])) {
+        } elseif (false === empty($data['extra'][$type][$field])) {
             $string = $data['extra'][$type][$field];
-        } else if (false === empty($data[$field])) {
+        } elseif (false === empty($data[$field])) {
             $string = $data[$field];
         }
         return $string;
@@ -167,7 +167,7 @@ class ExtensionDataHelper extends Component
         if (null !== $gitCurrent) {
             if (false === empty($gitCurrent['tag_name'])) {
                 $current = $gitCurrent['tag_name'];
-            } else if (false === empty ($gitCurrent['name'])) {
+            } elseif (false === empty($gitCurrent['name'])) {
                 $current = $gitCurrent['name'];
             }
         }
