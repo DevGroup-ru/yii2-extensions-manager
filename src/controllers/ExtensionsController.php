@@ -17,6 +17,7 @@ use yii\data\ArrayDataProvider;
 use DevGroup\ExtensionsManager\models\Extension;
 use Yii;
 use yii\helpers\Json;
+use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\web\ServerErrorHttpException;
@@ -37,6 +38,31 @@ class ExtensionsController extends BaseController
             ],
             'deferred-report-queue-item' => [
                 'class' => ReportQueueItem::className(),
+            ],
+        ];
+    }
+
+    public function behaviors()
+    {
+        return [
+            'accessControl' => [
+                'class' => '\yii\filters\AccessControl',
+                'rules' => [
+                    [
+                        'allow' => true,
+                        'actions' => ['index', 'details', 'deferred-report-queue-item', 'search', 'run-task'],
+                        'roles' => ['extensions-manager-view-extensions'],
+                    ],
+                    [
+                        'allow' => true,
+                        'actions' => ['config'],
+                        'roles' => ['extensions-manager-configure-extension'],
+                    ],
+                    [
+                        'allow' => false,
+                        'roles' => ['*'],
+                    ]
+                ],
             ],
         ];
     }
@@ -247,9 +273,19 @@ class ExtensionsController extends BaseController
                 ExtensionsManager::EXTENSION_DUMMY_DEFERRED_GROUP
             );
         }
+        if ($module->extensionIsCore($packageName)
+            && !Yii::$app->user->can('extensions-manager-access-to-core-extension')
+        ) {
+            throw new ForbiddenHttpException;
+        }
         $chain = new ReportingChain();
         switch ($taskType) {
             case ExtensionsManager::INSTALL_DEFERRED_TASK :
+                if ($module->extensionIsCore($packageName)
+                    || !Yii::$app->user->can('extensions-manager-install-extension')
+                ) {
+                    throw new ForbiddenHttpException;
+                }
                 return self::runTask(
                     [
                         $module->composerPath,
@@ -264,12 +300,23 @@ class ExtensionsController extends BaseController
                     ExtensionsManager::COMPOSER_INSTALL_DEFERRED_GROUP
                 );
             case ExtensionsManager::UNINSTALL_DEFERRED_TASK :
+                if ($module->extensionIsCore($packageName)
+                    || !Yii::$app->user->can('extensions-manager-uninstall-extension')
+                ) {
+                    throw new ForbiddenHttpException;
+                }
                 self::uninstall($extension, $chain);
                 break;
             case ExtensionsManager::ACTIVATE_DEFERRED_TASK :
+                if (!Yii::$app->user->can('extensions-manager-activate-extension')) {
+                    throw new ForbiddenHttpException;
+                }
                 self::activate($extension, $chain);
                 break;
             case ExtensionsManager::DEACTIVATE_DEFERRED_TASK :
+                if (!Yii::$app->user->can('extensions-manager-deactivate-extension')) {
+                    throw new ForbiddenHttpException;
+                }
                 self::deactivate($extension, $chain);
                 break;
             default:

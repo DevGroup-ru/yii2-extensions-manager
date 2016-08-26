@@ -66,6 +66,15 @@ php yii migrate --migrationPath=@DevGroup/DeferredTasks/migrations
 // ...
 ```
 
+Доступ к web контроллеру осуществляется через разрешения на основе [rbac](http://www.yiiframework.com/doc-2.0/guide-security-authorization.html#rbac), поэтому необходимо добавить компонент `authManager` в ваше приложение и выполнить миграции
+
+```bash
+php yii migrate --migrationPath=@DevGroup/ExtensionsManager/migrations
+```
+
+При этом создастся роль `ExtensionsManagerAdministrator` и ряд разрешений (все они начинаются с префикса `extensions-manager-`).
+Данную роль необходимо добавить к учетной записи администратора вашего сайта.
+
 Далее требуется создать папки для хранения конфигураций. По умолчанию это
 
 - `@app/config/configurables-state`
@@ -74,7 +83,9 @@ php yii migrate --migrationPath=@DevGroup/DeferredTasks/migrations
 но вы можете изменить их в настройках модуля следующим образом
 
 ```php
+// ...
 'modules' => [
+    // ...
     'extensions-manager' => [
         'class' => 'DevGroup\ExtensionsManager\ExtensionsManager',
         'configurationUpdater' => [
@@ -82,7 +93,9 @@ php yii migrate --migrationPath=@DevGroup/DeferredTasks/migrations
             'generatedConfigsPath' => '@app/config/generated',
         ],
     ],
+    // ...
 ],
+// ...
 ```
 
 Для автоматического обноаления настроек придется модифицировать все файлы в директории `config` следующим образом.

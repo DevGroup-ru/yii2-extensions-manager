@@ -223,6 +223,7 @@ class ExtensionsManager extends Module
             'config' => [
                 'label' => Yii::t('extensions-manager', 'Configuration'),
                 'url' => ['config', 'sectionIndex' => 0],
+                'visible' => Yii::$app->user->can('extensions-manager-configure-extension')
             ],
         ];
     }

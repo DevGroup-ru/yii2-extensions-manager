@@ -21,17 +21,25 @@ use DevGroup\ExtensionsManager\ExtensionsManager;
                 <?= Yii::t('extensions-manager', '{extName} detailed information', ['extName' => $name]) ?>
             </h3>
             <?php if (false === $installed) : ?>
-                <button class="btn btn-success btn-xs pull-right" data-action="run-ext-task"
-                        data-ext-task="<?= ExtensionsManager::INSTALL_DEFERRED_TASK ?>"
-                        data-package-name="<?= $packageName ?>">
-                    <?= Yii::t('extensions-manager', 'Install') ?>
-                </button>
+                <?php if (Yii::$app->user->can('extensions-manager-install-extension')): ?>
+                    <button class="btn btn-success btn-xs pull-right" data-action="run-ext-task"
+                            data-ext-task="<?= ExtensionsManager::INSTALL_DEFERRED_TASK ?>"
+                            data-package-name="<?= $packageName ?>">
+                        <?= Yii::t('extensions-manager', 'Install') ?>
+                    </button>
+                <?php else : ?>
+                    <div class="label label-warning pull-right"><?= Yii::t('extensions-manager', 'No installed') ?></div>
+                <?php endif; ?>
             <?php else : ?>
-                <button class="btn btn-danger btn-xs pull-right" data-action="run-ext-task"
-                        data-ext-task="<?= ExtensionsManager::UNINSTALL_DEFERRED_TASK ?>"
-                        data-package-name="<?= $packageName ?>">
-                    <?= Yii::t('extensions-manager', 'Uninstall') ?>
-                </button>
+                <?php if (Yii::$app->user->can('extensions-manager-uninstall-extension')): ?>
+                    <button class="btn btn-danger btn-xs pull-right" data-action="run-ext-task"
+                            data-ext-task="<?= ExtensionsManager::UNINSTALL_DEFERRED_TASK ?>"
+                            data-package-name="<?= $packageName ?>">
+                        <?= Yii::t('extensions-manager', 'Uninstall') ?>
+                    </button>
+                <?php else : ?>
+                    <div class="label label-success pull-right"><?= Yii::t('extensions-manager', 'Installed') ?></div>
+                <?php endif; ?>
             <?php endif; ?>
         </div>
         <div class="panel-body">

@@ -10,6 +10,7 @@ use Yii;
 use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\helpers\VarDumper;
+use yii\web\ForbiddenHttpException;
 
 /**
  * Class ConfigurationIndex
@@ -56,6 +57,12 @@ class ConfigurationIndex extends TabbedFormCombinedAction
         $this->currentConfigurable = isset($this->configurables[$this->sectionIndex])
             ? $this->configurables[$this->sectionIndex]
             : null;
+        if ($this->currentConfigurable !== null
+            && ExtensionsManager::module()->extensionIsCore($this->currentConfigurable['package'])
+            && !Yii::$app->user->can('extensions-manager-access-to-core-extension')
+        ) {
+            throw new ForbiddenHttpException;
+        }
         if (null !== $this->currentConfigurable) {
             $this->currentConfigurationModel = ArrayHelper::getValue($this->currentConfigurable, 'configurationModel');
             $this->currentConfigurationView = ArrayHelper::getValue($this->currentConfigurable, 'configurationView');

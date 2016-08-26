@@ -62,4 +62,6 @@ return [
     'Unable to create folder to store local composer.json file' => 'Невозможно создать папку для хранения локального composer.json файла',
     'Path to Composer' => 'Путь до composer',
     'Verbose output' => 'Подробный вывод',
+    'Installed' => 'Установлено',
+    'No installed' => 'Не установлено',
 ];

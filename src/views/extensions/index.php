@@ -105,45 +105,62 @@ $this->params['breadcrumbs'][] = $this->title;
                             Extension::TYPE_YII,
                             'description'
                         );
-                        $activateButton = (0 == $data['is_active']) ?
-                            Html::button(Yii::t('extensions-manager', 'Activate'),
-                                [
-                                    'class' => 'btn btn-success btn-xs',
-                                    'data-action' => 'run-ext-task',
-                                    'data-ext-task' => ExtensionsManager::ACTIVATE_DEFERRED_TASK,
-                                    'data-package-name' => $data["composer_name"],
-                                ])
-                            : Html::button(Yii::t('extensions-manager', 'Deactivate'),
-                                [
-                                    'class' => 'btn btn-warning btn-xs',
-                                    'data-action' => 'run-ext-task',
-                                    'data-ext-task' => ExtensionsManager::DEACTIVATE_DEFERRED_TASK,
-                                    'data-package-name' => $data["composer_name"],
-                                ]);
-                        $removeButton = $data['is_core'] == 0 ?
-                            Html::button(Yii::t('extensions-manager', 'Uninstall'),
+                        $activateButton = (0 == $data['is_active']) ? (
+                            Yii::$app->user->can('extensions-manager-activate-extension')
+                                ? Html::button(
+                                    Yii::t('extensions-manager', 'Activate'),
+                                    [
+                                        'class' => 'btn btn-success btn-xs',
+                                        'data-action' => 'run-ext-task',
+                                        'data-ext-task' => ExtensionsManager::ACTIVATE_DEFERRED_TASK,
+                                        'data-package-name' => $data["composer_name"],
+                                    ]
+                                )
+                                : ''
+                            )
+                            : (
+                                Yii::$app->user->can('extensions-manager-deactivate-extension')
+                                    ? Html::button(
+                                        Yii::t('extensions-manager', 'Deactivate'),
+                                        [
+                                            'class' => 'btn btn-warning btn-xs',
+                                            'data-action' => 'run-ext-task',
+                                            'data-ext-task' => ExtensionsManager::DEACTIVATE_DEFERRED_TASK,
+                                            'data-package-name' => $data["composer_name"],
+                                        ]
+                                    )
+                                    : ''
+                            );
+                        $removeButton = $data['is_core'] == 0 && Yii::$app->user->can('extensions-manager-uninstall-extension') ?
+                            Html::button(
+                                Yii::t('extensions-manager', 'Uninstall'),
                                 [
                                     'class' => 'btn btn-danger btn-xs',
                                     'data-action' => 'run-ext-task',
                                     'data-ext-task' => ExtensionsManager::UNINSTALL_DEFERRED_TASK,
                                     'data-package-name' => $data["composer_name"],
-                                ])
+                                ]
+                            )
                             : '';
                         $buttons = $removeButton
-                            . Html::button(Yii::t('extensions-manager', 'Check updates'),
+                            . Html::button(
+                                Yii::t('extensions-manager', 'Check updates'),
                                 [
                                     'class' => 'btn btn-warning btn-xs',
                                     'data-action' => 'run-ext-task',
                                     'data-ext-task' => ExtensionsManager::CHECK_UPDATES_DEFERRED_TASK,
                                     'data-package-name' => $data["composer_name"],
-                                ])
-                            . Html::button(Yii::t('extensions-manager', 'Details') .
+                                ]
+                            )
+                            . Html::button(
+                                Yii::t('extensions-manager', 'Details') .
                                 '  ' . Icon::show('refresh fa-spin', ['style' => 'display: none;'], 'fa'),
                                 [
                                     'class' => 'btn btn-info btn-xs',
                                     'data-package-name' => $data["composer_name"],
                                     'data-action' => 'ext-info'
-                                ])
+                                ]
+                            )
                             . $activateButton;
                         return sprintf($nameBlockTpl, $name, $description, $buttons, str_replace(['\\', '/'], '', $data["composer_name"]));
                     }

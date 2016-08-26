@@ -53,5 +53,9 @@ return [
             'class' => yii\mutex\MysqlMutex::class,
             'autoRelease' => false,
         ],
+        'authManager' => [
+            'class' => '\yii\rbac\PhpManager',
+            'defaultRoles' => !isset($_GET['guest']) ? ['ExtensionsManagerAdministrator'] : ['Guest'],
+        ],
     ],
 ];
