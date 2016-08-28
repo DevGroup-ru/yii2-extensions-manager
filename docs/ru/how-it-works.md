@@ -45,7 +45,7 @@
 
 #### `wikimedia/composer-merge-plugin`
 
-Yii2 extensions manager успользует composer-пакет [wikimedia/composer-merge-plugin](https://github.com/wikimedia/composer-merge-plugin).
+Yii2 extensions manager использует composer-пакет [wikimedia/composer-merge-plugin](https://github.com/wikimedia/composer-merge-plugin).
 Он позволяет работать с несколькими `composer.json` файлами одновременно.
 Это позволяет не модифицировать `composer.json` и `composer.lock` вашего приложения, а значит исключает возможность конфликта при выполнении `git pull`.
 Основные работы производятся с локальными файлами, путь до которых задается в `ExtensionsManager::$localExtensionsPath` (по умолчанию `@app/extensions`).
