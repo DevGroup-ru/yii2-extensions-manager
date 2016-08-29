@@ -31,6 +31,7 @@ php yii migrate --migrationPath=@DevGroup/DeferredTasks/migrations
     // ...
     'deferred.env' => [ // все указанные здесь поля будут установлены в виде параметров окружения для выполняемого скрипта
         'HOME' => '/path/to/home', // путь до домашней директории. Необходим для корректной работы composer-а
+        // 'APPDATA' => 'C:\Users\<USER>\AppData\Roaming', // Для ОС Windows
     ],
     // ...
 ],
