@@ -118,19 +118,11 @@ use Yii;
 class Configuration extends BaseConfigurationModel
 {
     /**
-     * @param array $config
+     * Полное имя класса модуля
      */
-    public function __construct($config = [])
+    public function getModuleClassName()
     {
-        $attributes = [ // массив доступных параметров
-            'someProperty'
-        ];
-
-        parent::__construct($attributes, $config);
-        /** @var Module $module */
-        $module = Module::module();
-        // ниже загрузка всех параметров из модуля в модель
-        $this->someProperty = $module->someProperty;
+        return '\VendorNameSpace\ExtensionNameSpace\Module';
     }
 
     /**

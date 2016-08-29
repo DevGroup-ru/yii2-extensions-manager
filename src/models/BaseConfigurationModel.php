@@ -5,6 +5,7 @@ namespace DevGroup\ExtensionsManager\models;
 use DevGroup\ExtensionsManager\helpers\ApplicationConfigWriter;
 use Yii;
 use yii\base\DynamicModel;
+use yii\helpers\ArrayHelper;
 use yii\helpers\StringHelper;
 
 /**
@@ -13,6 +14,11 @@ use yii\helpers\StringHelper;
  */
 abstract class BaseConfigurationModel extends DynamicModel
 {
+    /**
+     * Get a module name for this configuration model
+     * @return string
+     */
+    abstract public function getModuleClassName();
 
     /**
      * Returns array of module configuration that should be stored in application config.
@@ -53,6 +59,25 @@ abstract class BaseConfigurationModel extends DynamicModel
      * @return array
      */
     abstract public function aliases();
+
+    /**
+     * BaseConfigurationModel constructor.
+     * There are a building of rules, a building of attributeLabels and attributes definition here.
+     * @param array $config
+     */
+    public function __construct(array $config = [])
+    {
+        $attributes = [];
+        foreach ($this->rules() as $rules) {
+            $attributes = ArrayHelper::merge($attributes, (array) $rules[0]);
+        }
+        $attributes = array_unique($attributes);
+        parent::__construct($attributes, $config);
+        $module = call_user_func([$this->getModuleClassName(), 'module']);
+        foreach ($attributes as $name) {
+            $this->$name = $module->$name;
+        }
+    }
 
     /**
      * The name of event that is triggered when this configuration is being saved.

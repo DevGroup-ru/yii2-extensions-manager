@@ -8,15 +8,9 @@ use Yii;
 
 class FakeConfiguration extends BaseConfigurationModel
 {
-    public function __construct($config = [])
+    public function getModuleClassName()
     {
-        $attributes = ['testConfigName', 'testConfigNumber', 'testConfigDescription'];
-
-        parent::__construct($attributes, $config);
-        $module = FakeTwoModule::module();
-        $this->testConfigName = $module->testConfigName;
-        $this->testConfigNumber = $module->testConfigNumber;
-        $this->testConfigDescription = $module->testConfigDescription;
+        return FakeTwoModule::className();
     }
 
     /**

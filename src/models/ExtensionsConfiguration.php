@@ -14,36 +14,14 @@ use Yii;
  */
 class ExtensionsConfiguration extends BaseConfigurationModel
 {
-    public function __construct($config = [])
+    /**
+     * @inheritdoc
+     */
+    public function getModuleClassName()
     {
-        $attributes = [
-            'extensionsStorage',
-            'packagistUrl',
-            'githubAccessToken',
-            'applicationName',
-            'githubApiUrl',
-            'extensionsPerPage',
-            'composerPath',
-            'verbose',
-        ];
-
-        parent::__construct($attributes, $config);
-        $module = ExtensionsManager::module();
-        $this->extensionsStorage = $module->extensionsStorage;
-        $this->packagistUrl = $module->packagistUrl;
-        $this->githubAccessToken = $module->githubAccessToken;
-        $this->githubApiUrl = $module->githubApiUrl;
-        $this->applicationName = $module->applicationName;
-        $this->extensionsPerPage = $module->extensionsPerPage;
-        $this->composerPath = $module->composerPath;
-        $this->verbose = $module->verbose;
+        return ExtensionsManager::className();
     }
 
-    /**
-     * Validation rules for this model
-     *
-     * @return array
-     */
     public function rules()
     {
         return [
