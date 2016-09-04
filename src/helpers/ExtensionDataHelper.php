@@ -3,6 +3,13 @@
 namespace DevGroup\ExtensionsManager\helpers;
 
 use cebe\markdown\GithubMarkdown;
+use DevGroup\DeferredTasks\helpers\DeferredHelper;
+use DevGroup\DeferredTasks\helpers\ReportingChain;
+use DevGroup\DeferredTasks\helpers\ReportingTask;
+use DevGroup\DeferredTasks\models\DeferredGroup;
+use DevGroup\ExtensionsManager\components\ComposerInstalledSet;
+use DevGroup\ExtensionsManager\ExtensionsManager;
+use DevGroup\ExtensionsManager\models\Extension;
 use Packagist\Api\Result\Package\Version;
 use Yii;
 use yii\base\Component;
@@ -11,7 +18,7 @@ use yii\helpers\Json;
 class ExtensionDataHelper extends Component
 {
     /** @var  string package current version */
-    private static $_currentVersion;
+    private static $currentVersion;
 
     /**
      * @param $data
@@ -59,12 +66,12 @@ class ExtensionDataHelper extends Component
     {
         $string = '';
         $langId = Yii::$app->language;
-        if (false === empty($data['package']['versions'][self::$_currentVersion]['extra'][$type][$field . '_' . $langId])) {
-            $string = $data['package']['versions'][self::$_currentVersion]['extra'][$type][$field . '_' . $langId];
-        } elseif (false === empty($data['package']['versions'][self::$_currentVersion]['extra'][$type][$field])) {
-            $string = $data['package']['versions'][self::$_currentVersion]['extra'][$type][$field];
-        } elseif (false === empty($data['package']['versions'][self::$_currentVersion][$field])) {
-            $string = $data['package']['versions'][self::$_currentVersion][$field];
+        if (false === empty($data['package']['versions'][self::$currentVersion]['extra'][$type][$field . '_' . $langId])) {
+            $string = $data['package']['versions'][self::$currentVersion]['extra'][$type][$field . '_' . $langId];
+        } elseif (false === empty($data['package']['versions'][self::$currentVersion]['extra'][$type][$field])) {
+            $string = $data['package']['versions'][self::$currentVersion]['extra'][$type][$field];
+        } elseif (false === empty($data['package']['versions'][self::$currentVersion][$field])) {
+            $string = $data['package']['versions'][self::$currentVersion][$field];
         } elseif (false === empty($data['package'][$field])) {
             $string = $data['package'][$field];
         }
@@ -103,8 +110,8 @@ class ExtensionDataHelper extends Component
     public static function getOtherPackageVersionedData($data, $key, $asArray = true)
     {
         $out = [];
-        if (false === empty($data['package']['versions'][self::$_currentVersion][$key])) {
-            $out = $data['package']['versions'][self::$_currentVersion][$key];
+        if (false === empty($data['package']['versions'][self::$currentVersion][$key])) {
+            $out = $data['package']['versions'][self::$currentVersion][$key];
         }
         if (true === $asArray) {
             $out = is_array($out) ? $out : [$out];
@@ -184,7 +191,79 @@ class ExtensionDataHelper extends Component
             $current = key($versions);
             $versions['current'] = $current;
         }
-        self::$_currentVersion = $current;
+        self::$currentVersion = $current;
         return $versions;
+    }
+
+    /**
+     * Prepares migration command
+     *
+     * @param array $ext
+     * @param ReportingChain $chain
+     * @param string $way
+     * @param $group
+     */
+    public static function prepareMigrationTask(
+        array $ext,
+        ReportingChain $chain,
+        $way = ExtensionsManager::MIGRATE_TYPE_UP,
+        $group
+    ) {
+
+        if ($ext['composer_type'] == Extension::TYPE_DOTPLANT) {
+            $extData = ComposerInstalledSet::get()->getInstalled($ext['composer_name']);
+            $packageMigrations = ExtensionDataHelper::getInstalledExtraData($extData, 'migrationPath', true);
+            $packagePath = '@vendor' . DIRECTORY_SEPARATOR . $ext['composer_name'] . DIRECTORY_SEPARATOR;
+            foreach ($packageMigrations as $migrationPath) {
+                $migrateTask = self::buildTask(
+                    [
+                        realpath(Yii::getAlias('@app') . '/yii'),
+                        'migrate/' . $way,
+                        '--migrationPath=' . $packagePath . $migrationPath,
+                        '--color=0',
+                        '--interactive=0',
+                        '--disableLookup=true',
+                        (ExtensionsManager::MIGRATE_TYPE_DOWN == $way ? 68888 : ''),
+                    ],
+                    $group
+                );
+                $chain->addTask($migrateTask);
+            }
+        }
+    }
+
+    /**
+     * Builds ReportingTask and places it into certain group. Also if group is not exists yet, it will be created
+     * with necessary parameters, such as group_notifications=0.
+     *
+     * @param array $command
+     * @param string $groupName
+     * @return ReportingTask
+     */
+    public static function buildTask($command, $groupName)
+    {
+        $groupConfig = [
+            'email_notification' => 0,
+            'allow_parallel_run' => 0,
+            'group_notifications' => 0,
+            'run_last_command_only' => 0,
+        ];
+        if (null === $group = DeferredGroup::findOne(['name' => $groupName])) {
+            $group = new DeferredGroup();
+            $group->loadDefaultValues();
+            $group->setAttributes($groupConfig);
+            $group->name = $groupName;
+            $group->save();
+        }
+        if ((int)$group->group_notifications !== 0) {
+            // otherwise DeferredController 'deferred-queue-complete' event will not trigger
+            // and we'll unable to write config
+            $group->setAttributes($groupConfig);
+            $group->save(array_keys($groupConfig));
+        }
+        $task = new ReportingTask();
+        $task->model()->deferred_group_id = $group->id;
+        $task->cliCommand(DeferredHelper::getPhpBinary(), $command);
+        return $task;
     }
 }

@@ -2,8 +2,11 @@
 
 namespace DevGroup\ExtensionsManager\commands;
 
+use DevGroup\DeferredTasks\helpers\DeferredHelper;
+use DevGroup\DeferredTasks\helpers\ReportingChain;
 use DevGroup\ExtensionsManager\ExtensionsManager;
 use DevGroup\ExtensionsManager\helpers\ApplicationConfigWriter;
+use DevGroup\ExtensionsManager\helpers\ExtensionDataHelper;
 use DevGroup\ExtensionsManager\helpers\ExtensionFileWriter;
 use yii\console\Controller;
 use Yii;
@@ -30,22 +33,24 @@ class ExtensionController extends Controller
      * Starts extension activation process
      *
      * @param string $packageName
+     * @param int $runMigrations
      * @return bool|int
      */
-    public function actionActivate($packageName)
+    public function actionActivate($packageName, $runMigrations = 1)
     {
-        return $this->process($packageName, 1);
+        return $this->process($packageName, 1, (int) $runMigrations);
     }
 
     /**
      * Starts extension deactivation process
      *
      * @param string $packageName
+     * @param int $runMigrations
      * @return bool|int
      */
-    public function actionDeactivate($packageName)
+    public function actionDeactivate($packageName, $runMigrations = 1)
     {
-        return $this->process($packageName, 0);
+        return $this->process($packageName, 0, (int) $runMigrations);
     }
 
     /**
@@ -118,14 +123,30 @@ class ExtensionController extends Controller
      *
      * @param $packageName
      * @param integer $state
+     * @param integer $runMigrations
      * @return bool
      */
-    private function process($packageName, $state = 1)
+    private function process($packageName, $state = 1, $runMigrations = 1)
     {
         $actionText = 0 === (int) $state
             ? 'deactivated'
             : 'activated';
         if (true === isset($this->extensions[$packageName]['is_active'])) {
+            if ($runMigrations === 1) {
+                $chain = new ReportingChain();
+
+                ExtensionDataHelper::prepareMigrationTask(
+                    $this->extensions[$packageName],
+                    $chain,
+                    (int) $state ? ExtensionsManager::MIGRATE_TYPE_UP : ExtensionsManager::MIGRATE_TYPE_DOWN,
+                    ExtensionsManager::EXTENSION_DEACTIVATE_DEFERRED_GROUP
+                );
+                if (null !== $firstTaskId = $chain->registerChain()) {
+                    DeferredHelper::runImmediateTask($firstTaskId);
+                } else {
+                    $this->stderr("Unable to run task chain\n");
+                }
+            }
             $this->extensions[$packageName]['is_active'] = $state;
             if (true === $this->writeConfig()) {
                 $this->stdout(

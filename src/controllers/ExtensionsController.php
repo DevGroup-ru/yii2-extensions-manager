@@ -6,10 +6,7 @@ use DevGroup\AdminUtils\controllers\BaseController;
 use DevGroup\DeferredTasks\actions\ReportQueueItem;
 use DevGroup\DeferredTasks\helpers\DeferredHelper;
 use DevGroup\DeferredTasks\helpers\ReportingChain;
-use DevGroup\DeferredTasks\helpers\ReportingTask;
-use DevGroup\DeferredTasks\models\DeferredGroup;
 use DevGroup\ExtensionsManager\actions\ConfigurationIndex;
-use DevGroup\ExtensionsManager\components\ComposerInstalledSet;
 use DevGroup\ExtensionsManager\ExtensionsManager;
 use DevGroup\ExtensionsManager\helpers\ExtensionDataHelper;
 use DevGroup\ExtensionsManager\models\Extension;
@@ -26,7 +23,7 @@ use yii\web\ServerErrorHttpException;
 class ExtensionsController extends BaseController
 {
     /** @var  Client packagist.org API client instance */
-    private static $_packagist;
+    private static $packagist;
 
     /**
      * @inheritdoc
@@ -157,12 +154,12 @@ class ExtensionsController extends BaseController
      */
     private static function getPackagist()
     {
-        if (true === empty(self::$_packagist) || false === self::$_packagist instanceof Client) {
+        if (true === empty(self::$packagist) || false === self::$packagist instanceof Client) {
             $packagist = new Client();
             $packagist->setPackagistUrl(ExtensionsManager::module()->packagistUrl);
-            self::$_packagist = $packagist;
+            self::$packagist = $packagist;
         }
-        return self::$_packagist;
+        return self::$packagist;
     }
 
     /**
@@ -232,7 +229,11 @@ class ExtensionsController extends BaseController
                     Extension::TYPE_YII,
                     'description'
                 ),
-                'name' => ExtensionDataHelper::getLocalizedVersionedDataField($packageData, Extension::TYPE_YII, 'name'),
+                'name' => ExtensionDataHelper::getLocalizedVersionedDataField(
+                    $packageData,
+                    Extension::TYPE_YII,
+                    'name'
+                ),
                 'dependencies' => [
                     'require' => ExtensionDataHelper::getOtherPackageVersionedData($packageData, 'require'),
                     'require-dev' => ExtensionDataHelper::getOtherPackageVersionedData($packageData, 'require-dev'),
@@ -350,13 +351,13 @@ class ExtensionsController extends BaseController
     private static function deactivate($extension, ReportingChain $chain)
     {
         if ($extension['is_active'] == 1) {
-            self::prepareMigrationTask(
+            ExtensionDataHelper::prepareMigrationTask(
                 $extension,
                 $chain,
                 ExtensionsManager::MIGRATE_TYPE_DOWN,
                 ExtensionsManager::EXTENSION_DEACTIVATE_DEFERRED_GROUP
             );
-            $deactivationTask = self::buildTask(
+            $deactivationTask = ExtensionDataHelper::buildTask(
                 [
                     realpath(Yii::getAlias('@app') . '/yii'),
                     'extension/deactivate',
@@ -366,7 +367,7 @@ class ExtensionsController extends BaseController
             );
             $chain->addTask($deactivationTask);
         } else {
-            $dummyTask = self::buildTask(
+            $dummyTask = ExtensionDataHelper::buildTask(
                 [
                     realpath(Yii::getAlias('@app') . '/yii'),
                     'extension/dummy',
@@ -387,13 +388,13 @@ class ExtensionsController extends BaseController
     private static function activate($extension, ReportingChain $chain)
     {
         if ($extension['is_active'] == 0) {
-            self::prepareMigrationTask(
+            ExtensionDataHelper::prepareMigrationTask(
                 $extension,
                 $chain,
                 ExtensionsManager::MIGRATE_TYPE_UP,
                 ExtensionsManager::EXTENSION_ACTIVATE_DEFERRED_GROUP
             );
-            $activationTask = self::buildTask(
+            $activationTask = ExtensionDataHelper::buildTask(
                 [
                     realpath(Yii::getAlias('@app') . '/yii'),
                     'extension/activate',
@@ -403,7 +404,7 @@ class ExtensionsController extends BaseController
             );
             $chain->addTask($activationTask);
         } else {
-            $dummyTask = self::buildTask(
+            $dummyTask = ExtensionDataHelper::buildTask(
                 [
                     realpath(Yii::getAlias('@app') . '/yii'),
                     'extension/dummy',
@@ -425,7 +426,7 @@ class ExtensionsController extends BaseController
     {
         $module = ExtensionsManager::module();
         if (true === $module->extensionIsCore($extension['composer_name'])) {
-            $dummyTask = self::buildTask(
+            $dummyTask = ExtensionDataHelper::buildTask(
                 [
                     realpath(Yii::getAlias('@app') . '/yii'),
                     'extension/dummy',
@@ -438,7 +439,7 @@ class ExtensionsController extends BaseController
             $chain->addTask($dummyTask);
         } else {
             self::deactivate($extension, $chain);
-            $uninstallTask = self::buildTask(
+            $uninstallTask = ExtensionDataHelper::buildTask(
                 [
                     $module->composerPath,
                     'remove',
@@ -452,77 +453,9 @@ class ExtensionsController extends BaseController
         }
     }
 
-    /**
-     * Prepares migration command
-     *
-     * @param array $ext
-     * @param ReportingChain $chain
-     * @param string $way
-     * @param $group
-     */
-    private static function prepareMigrationTask(
-        array $ext,
-        ReportingChain $chain,
-        $way = ExtensionsManager::MIGRATE_TYPE_UP,
-        $group
-    ) {
-    
-        if ($ext['composer_type'] == Extension::TYPE_DOTPLANT) {
-            $extData = ComposerInstalledSet::get()->getInstalled($ext['composer_name']);
-            $packageMigrations = ExtensionDataHelper::getInstalledExtraData($extData, 'migrationPath', true);
-            $packagePath = '@vendor' . DIRECTORY_SEPARATOR . $ext['composer_name'] . DIRECTORY_SEPARATOR;
-            foreach ($packageMigrations as $migrationPath) {
-                $migrateTask = self::buildTask(
-                    [
-                        realpath(Yii::getAlias('@app') . '/yii'),
-                        'migrate/' . $way,
-                        '--migrationPath=' . $packagePath . $migrationPath,
-                        '--color=0',
-                        '--interactive=0',
-                        '--disableLookup=true',
-                        (ExtensionsManager::MIGRATE_TYPE_DOWN == $way ? 68888 : ''),
-                    ],
-                    $group
-                );
-                $chain->addTask($migrateTask);
-            }
-        }
-    }
 
-    /**
-     * Builds ReportingTask and places it into certain group. Also if group is not exists yet, it will be created
-     * with necessary parameters, such as group_notifications=0.
-     *
-     * @param array $command
-     * @param string $groupName
-     * @return ReportingTask
-     */
-    private static function buildTask($command, $groupName)
-    {
-        $groupConfig = [
-            'email_notification' => 0,
-            'allow_parallel_run' => 0,
-            'group_notifications' => 0,
-            'run_last_command_only' => 0,
-        ];
-        if (null === $group = DeferredGroup::findOne(['name' => $groupName])) {
-            $group = new DeferredGroup();
-            $group->loadDefaultValues();
-            $group->setAttributes($groupConfig);
-            $group->name = $groupName;
-            $group->save();
-        }
-        if (intval($group->group_notifications) != 0) {
-            // otherwise DeferredController 'deferred-queue-complete' event will not trigger
-            // and we'll unable to write config
-            $group->setAttributes($groupConfig);
-            $group->save(array_keys($groupConfig));
-        }
-        $task = new ReportingTask();
-        $task->model()->deferred_group_id = $group->id;
-        $task->cliCommand(DeferredHelper::getPhpBinary(), $command);
-        return $task;
-    }
+
+
 
     /**
      * Runs separated ReportingTask
@@ -534,7 +467,7 @@ class ExtensionsController extends BaseController
      */
     private static function runTask($command, $groupName)
     {
-        $task = self::buildTask($command, $groupName);
+        $task = ExtensionDataHelper::buildTask($command, $groupName);
         if ($task->registerTask()) {
             DeferredHelper::runImmediateTask($task->model()->id);
             Yii::$app->response->format = Response::FORMAT_JSON;

@@ -8,6 +8,7 @@ use Yii;
 
 class ExtensionControllerTest extends \PHPUnit_Framework_TestCase
 {
+    protected static $migrationPath;
     protected static function writeExtFile()
     {
         $fn = __DIR__ . '/../../testapp/config/extensions.php';
@@ -23,12 +24,17 @@ class ExtensionControllerTest extends \PHPUnit_Framework_TestCase
         $config = include __DIR__ . '/../../testapp/config/console.php';
         new Application($config);
         Yii::$app->cache->flush();
+
+        self::$migrationPath = Yii::getAlias('@vendor') . '/devgroup/yii2-deferred-tasks/src/migrations';
+        Yii::$app->runAction('migrate/down', [99999, 'interactive' => 0, 'migrationPath' => self::$migrationPath]);
+        Yii::$app->runAction('migrate/up', ['interactive' => 0, 'migrationPath' => self::$migrationPath]);
         Yii::setAlias('@vendor', __DIR__ . '/../../testapp/vendor');
         parent::setUp();
     }
 
     public function tearDown()
     {
+        Yii::$app->runAction('migrate/down', [99999, 'interactive' => 0, 'migrationPath' => self::$migrationPath]);
         parent::tearDown();
         if (Yii::$app && Yii::$app->has('session', true)) {
             Yii::$app->session->close();
