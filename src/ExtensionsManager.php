@@ -147,6 +147,7 @@ class ExtensionsManager extends Module
             $this->_composerArray
         );
         parent::init();
+        $this->configurationUpdater['class'] = 'DevGroup\ExtensionsManager\helpers\ConfigurationUpdater';
         $this->configurationUpdater = Yii::createObject($this->configurationUpdater);
     }
 
