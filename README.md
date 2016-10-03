@@ -37,7 +37,7 @@ This extension is a yii module because you should add the next code to your conf
 ```php
 'modules' => [
    'extensions-manager' => [
-            'class' => 'DevGroup\ExtensionsManager\ExtensionsManager',
+            'class' => 'DevGroup/ExtensionsManager/ExtensionsManager',
         ],
 ],
 ```
