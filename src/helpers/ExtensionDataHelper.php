@@ -213,7 +213,7 @@ class ExtensionDataHelper extends Component
         if ($ext['composer_type'] == Extension::TYPE_DOTPLANT) {
             $extData = ComposerInstalledSet::get()->getInstalled($ext['composer_name']);
             $packageMigrations = ExtensionDataHelper::getInstalledExtraData($extData, 'migrationPath', true);
-            $packagePath = '@vendor' . DIRECTORY_SEPARATOR . $ext['composer_name'] . DIRECTORY_SEPARATOR;
+            $packagePath = '@vendor' . '/' . $ext['composer_name'] . '/';
             foreach ($packageMigrations as $migrationPath) {
                 $migrateTask = self::buildTask(
                     [
