@@ -101,7 +101,7 @@ class ExtensionFileWriter extends Component
             if (false === file_exists($fn)) {
                 $created = file_put_contents(
                     $fn,
-                    Json::encode($data, JSON_FORCE_OBJECT | 320)
+                    Json::encode($data, JSON_FORCE_OBJECT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT)
                 );
             }
             if (false === $created) {

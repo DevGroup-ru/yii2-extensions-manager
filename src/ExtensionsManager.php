@@ -128,6 +128,8 @@ class ExtensionsManager extends Module
                 "include" => [
                     "../composer.json",
                 ],
+                "merge-extra" => true,
+                "merge-extra-deep" => true,
             ],
         ],
     ];
